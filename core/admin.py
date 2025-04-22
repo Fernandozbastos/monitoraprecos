@@ -3,6 +3,13 @@ from core.models import (
     Cliente, Usuario, Grupo, UsuarioGrupo, ClienteGrupo,
     Produto, HistoricoPreco, Dominio, Plataforma, Agendamento
 )
+from django.http import HttpResponseRedirect
+from django.urls import path
+from django.contrib import messages
+from scraper.tasks import verificar_preco
+from django.utils.safestring import mark_safe
+
+
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
@@ -22,9 +29,38 @@ class GrupoAdmin(admin.ModelAdmin):
 
 @admin.register(Produto)
 class ProdutoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'cliente', 'concorrente', 'plataforma', 'ultima_verificacao')
+    list_display = ('nome', 'cliente', 'concorrente', 'plataforma', 'ultima_verificacao', 'acao_verificar_preco')
     list_filter = ('verificacao_manual', 'plataforma')
     search_fields = ('nome', 'url', 'concorrente')
+
+    def acao_verificar_preco(self, obj):
+        return mark_safe(f'<a href="{obj.id}/verificar-preco/" class="button">Verificar Preço</a>')
+    acao_verificar_preco.short_description = 'Verificar Preço'
+    acao_verificar_preco.allow_tags = True  # Isso é obsoleto, mas mantido por compatibilidade
+    
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('<path:object_id>/verificar-preco/', self.admin_site.admin_view(self.verificar_preco_view), name='produto-verificar-preco'),
+        ]
+        return custom_urls + urls
+        
+    def verificar_preco_view(self, request, object_id):
+        try:
+            produto = self.get_queryset(request).get(pk=object_id)
+            task = verificar_preco.delay(produto.id)
+            self.message_user(
+                request, 
+                f"Verificação de preço agendada para '{produto}'. Task ID: {task.id}", 
+                messages.SUCCESS
+            )
+        except Exception as e:
+            self.message_user(
+                request,
+                f"Erro ao agendar verificação: {str(e)}",
+                messages.ERROR
+            )
+        return HttpResponseRedirect("../../")
 
 @admin.register(HistoricoPreco)
 class HistoricoPrecoAdmin(admin.ModelAdmin):

@@ -172,8 +172,25 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 300  # 5 minutos de limite para tarefas
+CELERY_TASK_TIME_LIMIT = 60  # 5 minutos de limite para tarefas
 CELERY_WORKER_CONCURRENCY = 4  # Número de workers
+CELERY_TASK_ACKS_LATE = True  # Confirma tarefa apenas após conclusão
+CELERY_TASK_REJECT_ON_WORKER_LOST = True  # Recoloca na fila se o worker falhar
+CELERY_TASK_SOFT_TIME_LIMIT = 50  # Aviso de timeout aos 4 minutos
+
+# Configurações de taxa de requisições (rate limiting)
+CELERY_TASK_ROUTES = {
+    'scraper.tasks.verificar_preco': {'rate_limit': '20/m'},  # 20 requisições por minuto
+    'scraper.tasks.verificar_lote_produtos': {'rate_limit': '5/m'},  # 5 lotes por minuto
+}
+
+# Configurações de retry
+CELERY_TASK_ANNOTATIONS = {
+    'scraper.tasks.*': {
+        'autoretry_for': (Exception,),
+        'retry_kwargs': {'max_retries': 3, 'countdown': 60},  # Tenta 3 vezes com 1 minuto entre tentativas
+    },
+}
 
 # Cache settings
 CACHES = {

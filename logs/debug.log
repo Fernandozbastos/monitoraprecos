@@ -224,3 +224,323 @@ INFO 2025-04-21 23:58:46,586 basehttp 7 281472728625568 "GET /static/admin/img/s
 INFO 2025-04-21 23:58:46,588 basehttp 7 281472843968928 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
 INFO 2025-04-21 23:58:46,589 basehttp 7 281472728625568 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
 INFO 2025-04-21 23:58:46,590 basehttp 7 281472739111328 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:03:53,065 autoreload 7 281472947875872 /app/monitoraprecos/celery.py changed, reloading.
+INFO 2025-04-22 00:03:53,751 autoreload 77 281473277743136 Watching for file changes with StatReloader
+INFO 2025-04-22 00:04:38,088 autoreload 7 281473010143264 Watching for file changes with StatReloader
+ERROR 2025-04-22 00:04:57,930 tasks 8 281472992612384 Erro ao verificar preço: Produto matching query does not exist.
+INFO 2025-04-22 00:08:12,372 basehttp 7 281472927855008 "GET /admin/core/produto/ HTTP/1.1" 200 14066
+INFO 2025-04-22 00:08:12,417 basehttp 7 281472906883488 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,421 basehttp 7 281472917369248 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,430 basehttp 7 281472906883488 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,440 basehttp 7 281472927855008 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:08:12,439 basehttp 7 281472806220192 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,440 basehttp 7 281472827191712 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,434 basehttp 7 281472816705952 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,443 basehttp 7 281472906883488 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,451 basehttp 7 281472917369248 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,452 basehttp 7 281472806220192 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,454 basehttp 7 281472927855008 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,457 basehttp 7 281472816705952 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,457 basehttp 7 281472827191712 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,459 basehttp 7 281472917369248 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,459 basehttp 7 281472906883488 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,469 basehttp 7 281472917369248 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,470 basehttp 7 281472827191712 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,474 basehttp 7 281472906883488 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,498 basehttp 7 281472927855008 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:12,508 basehttp 7 281472816705952 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:14,974 basehttp 7 281472816705952 "GET /admin/core/produto/add/ HTTP/1.1" 200 23422
+INFO 2025-04-22 00:08:15,002 basehttp 7 281472827191712 "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:15,003 basehttp 7 281472917369248 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:15,005 basehttp 7 281472906883488 "GET /static/admin/js/calendar.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:15,006 basehttp 7 281472927855008 "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:15,006 basehttp 7 281472806220192 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:15,007 basehttp 7 281472816705952 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:08:15,007 basehttp 7 281472917369248 "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:15,009 basehttp 7 281472917369248 "GET /static/admin/css/widgets.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:15,009 basehttp 7 281472816705952 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:15,010 basehttp 7 281472816705952 "GET /static/admin/js/change_form.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:15,038 basehttp 7 281472917369248 "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:15,039 basehttp 7 281472816705952 "GET /static/admin/img/icon-clock.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:39,869 basehttp 7 281472906883488 "POST /admin/core/produto/add/ HTTP/1.1" 302 0
+INFO 2025-04-22 00:08:39,888 basehttp 7 281472906883488 "GET /admin/core/produto/ HTTP/1.1" 200 16231
+INFO 2025-04-22 00:08:39,923 basehttp 7 281472906883488 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:08:39,930 basehttp 7 281472906883488 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:08:47,508 basehttp 7 281472906883488 "GET /admin/core/historicopreco/ HTTP/1.1" 200 14043
+INFO 2025-04-22 00:08:47,527 basehttp 7 281472906883488 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:08:48,822 basehttp 7 281472906883488 "GET /admin/core/historicopreco/add/ HTTP/1.1" 200 16347
+INFO 2025-04-22 00:08:48,842 basehttp 7 281472906883488 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:08:53,350 basehttp 7 281472906883488 "GET /admin/core/historicopreco/ HTTP/1.1" 200 14043
+INFO 2025-04-22 00:08:53,373 basehttp 7 281472906883488 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:08:53,991 basehttp 7 281472906883488 "GET /admin/core/plataforma/ HTTP/1.1" 200 14955
+INFO 2025-04-22 00:08:54,006 basehttp 7 281472906883488 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:08:54,014 basehttp 7 281472906883488 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:09:54,626 tasks 8 281472992612384 Iniciando verificação de preço para: Teste (https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc)
+ERROR 2025-04-22 00:09:54,856 price_scraper 8 281472992612384 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc: 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+WARNING 2025-04-22 00:09:54,857 tasks 8 281472992612384 Não foi possível extrair o preço para Teste (https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc)
+INFO 2025-04-22 00:21:42,909 autoreload 7 281473010143264 /app/core/admin.py changed, reloading.
+INFO 2025-04-22 00:21:43,682 autoreload 33 281473835966496 Watching for file changes with StatReloader
+INFO 2025-04-22 00:21:44,903 autoreload 33 281473835966496 /app/core/admin.py changed, reloading.
+INFO 2025-04-22 00:21:45,524 autoreload 35 281473388199968 Watching for file changes with StatReloader
+INFO 2025-04-22 00:22:03,100 autoreload 7 281472913522720 Watching for file changes with StatReloader
+INFO 2025-04-22 00:22:05,670 basehttp 7 281472755888544 "GET /admin/core/plataforma/ HTTP/1.1" 200 14955
+INFO 2025-04-22 00:22:05,721 basehttp 7 281472745402784 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,727 basehttp 7 281472734917024 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,730 basehttp 7 281472734917024 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,730 basehttp 7 281472745402784 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,733 basehttp 7 281472724431264 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,732 basehttp 7 281472734917024 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,732 basehttp 7 281472755888544 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:22:05,736 basehttp 7 281472724431264 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,734 basehttp 7 281472625865120 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,736 basehttp 7 281472713945504 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,734 basehttp 7 281472745402784 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,738 basehttp 7 281472734917024 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,740 basehttp 7 281472724431264 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,740 basehttp 7 281472755888544 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,741 basehttp 7 281472745402784 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,745 basehttp 7 281472724431264 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,745 basehttp 7 281472745402784 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,747 basehttp 7 281472724431264 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,751 basehttp 7 281472724431264 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,751 basehttp 7 281472755888544 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:05,751 basehttp 7 281472745402784 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:08,327 basehttp 7 281472734917024 "GET /admin/core/produto/ HTTP/1.1" 200 16023
+INFO 2025-04-22 00:22:08,344 basehttp 7 281472734917024 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:22:12,526 basehttp 7 281472734917024 "GET /admin/core/produto/1/change/ HTTP/1.1" 200 24088
+INFO 2025-04-22 00:22:12,545 basehttp 7 281472755888544 "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:12,551 basehttp 7 281472724431264 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:12,552 basehttp 7 281472713945504 "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:12,554 basehttp 7 281472745402784 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:12,555 basehttp 7 281472755888544 "GET /static/admin/css/widgets.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:12,555 basehttp 7 281472625865120 "GET /static/admin/js/calendar.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:12,556 basehttp 7 281472734917024 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:22:12,556 basehttp 7 281472724431264 "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:12,559 basehttp 7 281472724431264 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:12,561 basehttp 7 281472724431264 "GET /static/admin/js/change_form.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:12,591 basehttp 7 281472734917024 "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:12,591 basehttp 7 281472724431264 "GET /static/admin/img/icon-clock.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:22:18,923 basehttp 7 281472625865120 "GET /admin/core/produto/ HTTP/1.1" 200 16023
+INFO 2025-04-22 00:22:21,333 basehttp 7 281472625865120 "GET /admin/core/produto/ HTTP/1.1" 200 16023
+INFO 2025-04-22 00:22:21,351 basehttp 7 281472625865120 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:22:25,915 autoreload 7 281472913522720 /app/core/admin.py changed, reloading.
+INFO 2025-04-22 00:22:26,585 autoreload 27 281473375088672 Watching for file changes with StatReloader
+INFO 2025-04-22 00:22:54,547 autoreload 27 281473375088672 /app/core/admin.py changed, reloading.
+INFO 2025-04-22 00:22:55,202 autoreload 29 281473708314656 Watching for file changes with StatReloader
+INFO 2025-04-22 00:23:03,851 autoreload 6 281473388154912 Watching for file changes with StatReloader
+INFO 2025-04-22 00:23:05,959 basehttp 6 281473229844896 "GET /admin/core/produto/ HTTP/1.1" 200 16312
+INFO 2025-04-22 00:23:05,991 basehttp 6 281473229844896 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:24:35,505 autoreload 6 281473388154912 /app/core/admin.py changed, reloading.
+INFO 2025-04-22 00:24:36,336 autoreload 10 281473573482528 Watching for file changes with StatReloader
+INFO 2025-04-22 00:25:17,603 autoreload 10 281473573482528 /app/core/admin.py changed, reloading.
+INFO 2025-04-22 00:25:18,266 autoreload 12 281473088569376 Watching for file changes with StatReloader
+INFO 2025-04-22 00:25:25,599 autoreload 6 281473795317792 Watching for file changes with StatReloader
+INFO 2025-04-22 00:25:26,134 basehttp 6 281473622012320 "GET /admin/core/produto/ HTTP/1.1" 200 16280
+INFO 2025-04-22 00:25:26,176 basehttp 6 281473622012320 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:25:27,872 basehttp 6 281473622012320 "GET /admin/core/produto/1/verificar-preco/ HTTP/1.1" 302 0
+INFO 2025-04-22 00:25:27,886 basehttp 6 281473622012320 "GET /admin/core/produto/ HTTP/1.1" 200 16497
+INFO 2025-04-22 00:25:27,908 basehttp 6 281473622012320 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:25:27,915 basehttp 6 281473622012320 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:25:31,663 basehttp 6 281473622012320 "GET /admin/core/historicopreco/ HTTP/1.1" 200 14043
+INFO 2025-04-22 00:25:31,679 basehttp 6 281473622012320 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:26:49,246 basehttp 6 281473622012320 "GET /admin/core/produto/ HTTP/1.1" 200 16280
+INFO 2025-04-22 00:26:49,284 basehttp 6 281473632498080 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,288 basehttp 6 281473622012320 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:26:49,294 basehttp 6 281473632498080 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,296 basehttp 6 281473611526560 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,301 basehttp 6 281473590555040 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,301 basehttp 6 281473622012320 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,303 basehttp 6 281473601040800 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,304 basehttp 6 281473580069280 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,305 basehttp 6 281473611526560 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,308 basehttp 6 281473632498080 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,309 basehttp 6 281473590555040 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,310 basehttp 6 281473580069280 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,311 basehttp 6 281473622012320 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,312 basehttp 6 281473601040800 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,313 basehttp 6 281473611526560 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,318 basehttp 6 281473580069280 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,320 basehttp 6 281473601040800 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:49,324 basehttp 6 281473611526560 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:26:50,810 basehttp 6 281473611526560 "GET /admin/core/produto/1/verificar-preco/ HTTP/1.1" 302 0
+INFO 2025-04-22 00:26:50,823 basehttp 6 281473611526560 "GET /admin/core/produto/ HTTP/1.1" 200 16497
+INFO 2025-04-22 00:26:50,841 basehttp 6 281473611526560 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:31:36,157 autoreload 6 281473795317792 /app/scraper/tasks.py changed, reloading.
+INFO 2025-04-22 00:31:36,891 autoreload 19 281473437827104 Watching for file changes with StatReloader
+INFO 2025-04-22 00:32:59,508 autoreload 19 281473437827104 /app/monitoraprecos/settings.py changed, reloading.
+INFO 2025-04-22 00:33:00,190 autoreload 21 281473332854816 Watching for file changes with StatReloader
+INFO 2025-04-22 00:33:53,843 autoreload 21 281473332854816 /app/monitoraprecos/settings.py changed, reloading.
+INFO 2025-04-22 00:33:54,590 autoreload 23 281472823902240 Watching for file changes with StatReloader
+INFO 2025-04-22 00:34:41,156 autoreload 23 281472823902240 /app/monitoraprecos/celery.py changed, reloading.
+INFO 2025-04-22 00:34:41,822 autoreload 25 281473039548448 Watching for file changes with StatReloader
+INFO 2025-04-22 00:36:40,027 autoreload 25 281473039548448 /app/monitoraprecos/celery.py changed, reloading.
+INFO 2025-04-22 00:36:40,698 autoreload 27 281473678614560 Watching for file changes with StatReloader
+INFO 2025-04-22 00:36:56,768 autoreload 6 281473596948512 Watching for file changes with StatReloader
+INFO 2025-04-22 00:36:57,712 tasks 10 281473573556256 Iniciando verificação de preço para: Teste (https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc)
+INFO 2025-04-22 00:36:57,713 tasks 8 281473573556256 Iniciando verificação de preço para: Teste (https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc)
+ERROR 2025-04-22 00:36:59,239 price_scraper 10 281473573556256 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc: 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+ERROR 2025-04-22 00:36:59,947 price_scraper 8 281473573556256 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc: 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+INFO 2025-04-22 00:37:00,553 basehttp 6 281473431171488 "GET /admin/core/produto/ HTTP/1.1" 200 16280
+INFO 2025-04-22 00:37:00,593 basehttp 6 281473431171488 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:37:00,600 basehttp 6 281473420685728 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,612 basehttp 6 281473431171488 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,616 basehttp 6 281473389228448 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,616 basehttp 6 281473399714208 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,619 basehttp 6 281473431171488 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,619 basehttp 6 281473420685728 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,619 basehttp 6 281473410199968 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,624 basehttp 6 281473399714208 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,624 basehttp 6 281473389228448 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,625 basehttp 6 281473378742688 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,626 basehttp 6 281473431171488 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,629 basehttp 6 281473420685728 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,629 basehttp 6 281473410199968 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,631 basehttp 6 281473431171488 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,633 basehttp 6 281473431171488 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,634 basehttp 6 281473431171488 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,639 basehttp 6 281473431171488 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,643 basehttp 6 281473431171488 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:00,648 basehttp 6 281473410199968 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:37:01,862 basehttp 6 281473410199968 "GET /admin/core/produto/1/verificar-preco/ HTTP/1.1" 302 0
+INFO 2025-04-22 00:37:01,883 basehttp 6 281473410199968 "GET /admin/core/produto/ HTTP/1.1" 200 16497
+INFO 2025-04-22 00:37:01,905 basehttp 6 281473410199968 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:37:01,911 tasks 9 281473573556256 Iniciando verificação de preço para: Teste (https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc)
+INFO 2025-04-22 00:37:01,915 basehttp 6 281473410199968 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+ERROR 2025-04-22 00:37:04,005 price_scraper 8 281473573556256 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc: 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+INFO 2025-04-22 00:37:04,539 basehttp 6 281473410199968 "GET /admin/core/historicopreco/ HTTP/1.1" 200 14043
+INFO 2025-04-22 00:37:04,554 basehttp 6 281473410199968 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+ERROR 2025-04-22 00:37:04,613 price_scraper 9 281473573556256 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc: 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+ERROR 2025-04-22 00:37:06,120 price_scraper 10 281473573556256 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc: 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+ERROR 2025-04-22 00:37:08,234 price_scraper 8 281473573556256 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc: 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+WARNING 2025-04-22 00:37:08,248 tasks 8 281473573556256 Não foi possível extrair o preço para Teste (https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc)
+ERROR 2025-04-22 00:37:09,515 price_scraper 9 281473573556256 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc: 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+ERROR 2025-04-22 00:37:11,635 price_scraper 10 281473573556256 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc: 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+WARNING 2025-04-22 00:37:11,637 tasks 10 281473573556256 Não foi possível extrair o preço para Teste (https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc)
+ERROR 2025-04-22 00:37:12,903 price_scraper 9 281473573556256 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc: 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+WARNING 2025-04-22 00:37:12,905 tasks 9 281473573556256 Não foi possível extrair o preço para Teste (https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc)
+INFO 2025-04-22 00:40:58,851 autoreload 6 281473596948512 /app/scraper/tasks.py changed, reloading.
+INFO 2025-04-22 00:40:59,605 autoreload 16 281473403007008 Watching for file changes with StatReloader
+INFO 2025-04-22 00:41:09,073 autoreload 16 281473403007008 /app/scraper/tasks.py changed, reloading.
+INFO 2025-04-22 00:41:09,816 autoreload 18 281473582628896 Watching for file changes with StatReloader
+INFO 2025-04-22 00:47:28,984 autoreload 18 281473582628896 /app/scraper/services/price_scraper.py changed, reloading.
+INFO 2025-04-22 00:47:29,741 autoreload 20 281472840953888 Watching for file changes with StatReloader
+INFO 2025-04-22 00:47:48,485 autoreload 20 281472840953888 /app/scraper/services/price_scraper.py changed, reloading.
+INFO 2025-04-22 00:47:49,183 autoreload 22 281473847283744 Watching for file changes with StatReloader
+INFO 2025-04-22 00:48:03,506 autoreload 7 281473709490208 Watching for file changes with StatReloader
+INFO 2025-04-22 00:48:06,740 basehttp 7 281473609429408 "GET /admin/core/historicopreco/ HTTP/1.1" 200 14043
+INFO 2025-04-22 00:48:06,821 basehttp 7 281473598943648 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,824 basehttp 7 281473619915168 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,824 basehttp 7 281473588457888 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,828 basehttp 7 281473609429408 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:48:06,829 basehttp 7 281473619915168 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,829 basehttp 7 281473577972128 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,831 basehttp 7 281473588457888 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,832 basehttp 7 281473498280352 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,832 basehttp 7 281473609429408 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,833 basehttp 7 281473598943648 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,833 basehttp 7 281473619915168 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,837 basehttp 7 281473577972128 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,838 basehttp 7 281473498280352 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,840 basehttp 7 281473588457888 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,841 basehttp 7 281473598943648 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,854 basehttp 7 281473588457888 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,855 basehttp 7 281473598943648 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,871 basehttp 7 281473598943648 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,878 basehttp 7 281473598943648 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:06,880 basehttp 7 281473598943648 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 304 0
+INFO 2025-04-22 00:48:18,690 basehttp 7 281473609429408 "GET /admin/core/produto/ HTTP/1.1" 200 16280
+INFO 2025-04-22 00:48:18,714 basehttp 7 281473609429408 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:48:20,099 basehttp 7 281473609429408 "GET /admin/core/produto/1/verificar-preco/ HTTP/1.1" 302 0
+INFO 2025-04-22 00:48:20,121 basehttp 7 281473609429408 "GET /admin/core/produto/ HTTP/1.1" 200 16497
+INFO 2025-04-22 00:48:20,141 basehttp 7 281473609429408 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 00:48:20,150 basehttp 7 281473609429408 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+ERROR 2025-04-22 00:48:28,645 price_scraper 8 281473700790304 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc (tentativa 1/3): 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+INFO 2025-04-22 00:48:28,647 price_scraper 8 281473700790304 Esperando 5.04 segundos antes de tentar novamente...
+ERROR 2025-04-22 00:48:43,286 price_scraper 8 281473700790304 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc (tentativa 2/3): 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+INFO 2025-04-22 00:48:43,288 price_scraper 8 281473700790304 Esperando 15.26 segundos antes de tentar novamente...
+ERROR 2025-04-22 00:49:10,115 price_scraper 8 281473700790304 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc (tentativa 3/3): SoftTimeLimitExceeded()
+INFO 2025-04-22 00:57:44,547 autoreload 7 281473709490208 /app/scraper/tasks.py changed, reloading.
+INFO 2025-04-22 00:57:45,850 autoreload 18 281473445765152 Watching for file changes with StatReloader
+INFO 2025-04-22 01:05:38,782 autoreload 7 281472853737504 Watching for file changes with StatReloader
+INFO 2025-04-22 01:05:56,982 basehttp 7 281472692973984 "GET /admin/core/produto/ HTTP/1.1" 200 16280
+INFO 2025-04-22 01:05:57,041 basehttp 7 281472661516704 "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2025-04-22 01:05:57,046 basehttp 7 281472692973984 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:05:57,050 basehttp 7 281472651030944 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+INFO 2025-04-22 01:05:57,054 basehttp 7 281472672002464 "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+INFO 2025-04-22 01:05:57,058 basehttp 7 281472682488224 "GET /static/admin/css/base.css HTTP/1.1" 200 21310
+INFO 2025-04-22 01:05:57,059 basehttp 7 281472640545184 "GET /static/admin/js/core.js HTTP/1.1" 200 5682
+INFO 2025-04-22 01:05:57,062 basehttp 7 281472661516704 "GET /static/admin/css/changelists.css HTTP/1.1" 200 6566
+INFO 2025-04-22 01:05:57,064 basehttp 7 281472682488224 "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+INFO 2025-04-22 01:05:57,065 basehttp 7 281472692973984 "GET /static/admin/css/responsive.css HTTP/1.1" 200 18559
+INFO 2025-04-22 01:05:57,067 basehttp 7 281472672002464 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 8943
+INFO 2025-04-22 01:05:57,068 basehttp 7 281472661516704 "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+INFO 2025-04-22 01:05:57,069 basehttp 7 281472640545184 "GET /static/admin/js/actions.js HTTP/1.1" 200 7872
+INFO 2025-04-22 01:05:57,072 basehttp 7 281472692973984 "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2025-04-22 01:05:57,077 basehttp 7 281472651030944 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 292458
+INFO 2025-04-22 01:05:57,081 basehttp 7 281472682488224 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 232381
+INFO 2025-04-22 01:05:57,084 basehttp 7 281472651030944 "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+INFO 2025-04-22 01:05:57,099 basehttp 7 281472682488224 "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2025-04-22 01:05:57,100 basehttp 7 281472651030944 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO 2025-04-22 01:05:57,103 basehttp 7 281472651030944 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2025-04-22 01:05:57,104 basehttp 7 281472682488224 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2025-04-22 01:05:58,599 basehttp 7 281472682488224 "GET /admin/core/produto/1/verificar-preco/ HTTP/1.1" 302 0
+INFO 2025-04-22 01:05:58,625 basehttp 7 281472682488224 "GET /admin/core/produto/ HTTP/1.1" 200 16497
+INFO 2025-04-22 01:05:58,667 basehttp 7 281472682488224 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:05:58,681 basehttp 7 281472682488224 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+INFO 2025-04-22 01:05:58,736 tasks 7 281473442045984 Iniciando verificação de preço para: Teste (https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc)
+ERROR 2025-04-22 01:06:06,790 price_scraper 7 281473442045984 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc (tentativa 1/3): 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+INFO 2025-04-22 01:06:06,792 price_scraper 7 281473442045984 Esperando 7.96 segundos antes de tentar novamente...
+ERROR 2025-04-22 01:06:27,336 price_scraper 7 281473442045984 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc (tentativa 2/3): 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+INFO 2025-04-22 01:06:27,340 price_scraper 7 281473442045984 Esperando 16.98 segundos antes de tentar novamente...
+INFO 2025-04-22 01:06:45,819 basehttp 7 281472640545184 "GET /admin/core/produto/1/change/ HTTP/1.1" 200 24088
+INFO 2025-04-22 01:06:45,842 basehttp 7 281472682488224 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,845 basehttp 7 281472661516704 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,847 basehttp 7 281472682488224 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,852 basehttp 7 281472672002464 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,852 basehttp 7 281472640545184 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:06:45,852 basehttp 7 281472682488224 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,853 basehttp 7 281472651030944 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,853 basehttp 7 281472692973984 "GET /static/admin/css/forms.css HTTP/1.1" 200 9090
+INFO 2025-04-22 01:06:45,854 basehttp 7 281472661516704 "GET /static/admin/js/calendar.js HTTP/1.1" 200 8466
+INFO 2025-04-22 01:06:45,856 basehttp 7 281472672002464 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,857 basehttp 7 281472682488224 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,861 basehttp 7 281472682488224 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,858 basehttp 7 281472692973984 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,859 basehttp 7 281472651030944 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,860 basehttp 7 281472640545184 "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 200 19319
+INFO 2025-04-22 01:06:45,860 basehttp 7 281472672002464 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,857 basehttp 7 281472661516704 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,863 basehttp 7 281472692973984 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO 2025-04-22 01:06:45,866 basehttp 7 281472682488224 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2025-04-22 01:06:45,867 basehttp 7 281472692973984 "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+INFO 2025-04-22 01:06:45,869 basehttp 7 281472661516704 "GET /static/admin/css/widgets.css HTTP/1.1" 200 11921
+INFO 2025-04-22 01:06:45,871 basehttp 7 281472661516704 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,871 basehttp 7 281472692973984 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:06:45,877 basehttp 7 281472692973984 "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+INFO 2025-04-22 01:06:45,877 basehttp 7 281472661516704 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 200 392
+INFO 2025-04-22 01:06:45,910 basehttp 7 281472692973984 "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 200 1086
+INFO 2025-04-22 01:06:45,911 basehttp 7 281472661516704 "GET /static/admin/img/icon-clock.svg HTTP/1.1" 200 677
+ERROR 2025-04-22 01:06:48,623 price_scraper 7 281473442045984 Erro ao raspar preço da URL https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc (tentativa 3/3): SoftTimeLimitExceeded()
+INFO 2025-04-22 01:06:48,631 tasks 7 281473442045984 Método simples falhou. Tentando com Playwright para: Teste
+INFO 2025-04-22 01:06:50,706 playwright_service 7 281473442045984 Acessando página inicial: https://www.tuningparts.com.br
+INFO 2025-04-22 01:06:55,194 playwright_service 7 281473442045984 Acessando URL do produto: https://www.tuningparts.com.br/ponteira-de-escapamento-luzian-p021-aco-inox-burned-dupla-3-5-polegadas?_pid=fzcdc
+INFO 2025-04-22 01:07:05,817 basehttp 7 281472661516704 "POST /admin/core/produto/1/change/ HTTP/1.1" 302 0
+INFO 2025-04-22 01:07:05,831 basehttp 7 281472661516704 "GET /admin/core/produto/ HTTP/1.1" 200 16486
+INFO 2025-04-22 01:07:05,860 basehttp 7 281472640545184 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:07:05,861 basehttp 7 281472682488224 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:07:05,863 basehttp 7 281472661516704 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:07:05,864 basehttp 7 281472682488224 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:07:05,871 basehttp 7 281472682488224 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:07:21,351 basehttp 7 281472682488224 "GET /admin/core/produto/1/verificar-preco/ HTTP/1.1" 302 0
+INFO 2025-04-22 01:07:21,380 basehttp 7 281472682488224 "GET /admin/core/produto/ HTTP/1.1" 200 16497
+INFO 2025-04-22 01:07:21,413 basehttp 7 281472682488224 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:07:21,451 tasks 162 281473442045984 Iniciando verificação de preço para: Teste (https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc)
+ERROR 2025-04-22 01:07:27,074 price_scraper 162 281473442045984 Erro ao raspar preço da URL https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc (tentativa 1/3): 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc
+INFO 2025-04-22 01:07:27,089 price_scraper 162 281473442045984 Esperando 8.05 segundos antes de tentar novamente...
+ERROR 2025-04-22 01:07:44,885 price_scraper 162 281473442045984 Erro ao raspar preço da URL https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc (tentativa 2/3): 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc
+INFO 2025-04-22 01:07:44,889 price_scraper 162 281473442045984 Esperando 13.20 segundos antes de tentar novamente...
+ERROR 2025-04-22 01:08:10,159 price_scraper 162 281473442045984 Erro ao raspar preço da URL https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc (tentativa 3/3): 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc
+INFO 2025-04-22 01:08:10,165 tasks 162 281473442045984 Método simples falhou. Tentando com Playwright para: Teste
+INFO 2025-04-22 01:08:10,686 playwright_service 162 281473442045984 Acessando página inicial: https://www.tuningparts.com.br
+WARNING 2025-04-22 01:08:11,362 playwright_service 162 281473442045984 Erro ao acessar página inicial: SoftTimeLimitExceeded(). Tentando diretamente a URL do produto.
+INFO 2025-04-22 01:08:11,364 playwright_service 162 281473442045984 Acessando URL do produto: https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc
