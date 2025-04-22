@@ -11,6 +11,59 @@ services:
       - POSTGRES_PASSWORD=senha_segura
     ports:
       - "5432:5432"
+  
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+  
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DJANGO_DEBUG=True
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+      - DATABASE_URL=postgres://monitoraprecos:senha_segura@db:5432/monitoraprecos
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+  
+  celery:
+    build: .
+    command: celery -A monitoraprecos worker -l INFO
+    volumes:
+      - .:/app
+    depends_on:
+      - web
+      - redis
+    environment:
+      - DJANGO_DEBUG=True
+      - DATABASE_URL=postgres://monitoraprecos:senha_segura@db:5432/monitoraprecos
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+  
+  celery-beat:
+    build: .
+    command: celery -A monitoraprecos beat -l INFO
+    volumes:
+      - .:/app
+    depends_on:
+      - web
+      - redis
+    environment:
+      - DJANGO_DEBUG=True
+      - DATABASE_URL=postgres://monitoraprecos:senha_segura@db:5432/monitoraprecos
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
 volumes:
   postgres_data:
+  redis_data:
