@@ -544,3 +544,159 @@ INFO 2025-04-22 01:08:10,165 tasks 162 281473442045984 Método simples falhou. T
 INFO 2025-04-22 01:08:10,686 playwright_service 162 281473442045984 Acessando página inicial: https://www.tuningparts.com.br
 WARNING 2025-04-22 01:08:11,362 playwright_service 162 281473442045984 Erro ao acessar página inicial: SoftTimeLimitExceeded(). Tentando diretamente a URL do produto.
 INFO 2025-04-22 01:08:11,364 playwright_service 162 281473442045984 Acessando URL do produto: https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc
+ERROR 2025-04-22 01:30:03,254 price_scraper 26 281473326522400 Erro ao raspar preço da URL https://loja.tparts.com.br/ (tentativa 1/3): 403 Client Error: Forbidden for url: https://loja.tparts.com.br/
+INFO 2025-04-22 01:30:03,258 price_scraper 26 281473326522400 Esperando 9.90 segundos antes de tentar novamente...
+ERROR 2025-04-22 01:30:21,693 price_scraper 26 281473326522400 Erro ao raspar preço da URL https://loja.tparts.com.br/ (tentativa 2/3): 403 Client Error: Forbidden for url: https://loja.tparts.com.br/
+INFO 2025-04-22 01:30:21,696 price_scraper 26 281473326522400 Esperando 16.54 segundos antes de tentar novamente...
+ERROR 2025-04-22 01:30:38,949 selenium_service 32 281473402122272 Erro ao raspar preço com Selenium da URL https://loja.tparts.com.br/: Message: Service /root/.wdm/drivers/chromedriver/linux64/114.0.5735.90/chromedriver unexpectedly exited. Status code was: -5
+
+INFO 2025-04-22 01:34:28,688 playwright_service 69 281473461317664 Acessando página inicial: https://loja.tparts.com.br
+INFO 2025-04-22 01:34:34,247 playwright_service 69 281473461317664 Acessando URL do produto: https://loja.tparts.com.br/
+ERROR 2025-04-22 01:35:06,223 playwright_service 69 281473461317664 Erro ao localizar elemento com seletor .strong.preco-novo span[itemprop=price]: Timeout 30000ms exceeded.
+INFO 2025-04-22 01:35:06,556 playwright_service 69 281473461317664 Screenshot salvo em: /app/logs/screenshot_1745296506.png
+INFO 2025-04-22 01:35:41,892 playwright_service 226 281473753194528 Acessando página inicial: https://loja.tparts.com.br
+INFO 2025-04-22 01:35:48,345 playwright_service 226 281473753194528 Acessando URL do produto: https://loja.tparts.com.br/lanterna-traseiro-esquerdo-simples-hilux-2-5-16v-2-7-16v-3-0-16v-2004-2012?_pid=UCybc
+ERROR 2025-04-22 01:36:21,642 playwright_service 226 281473753194528 Erro ao localizar elemento com seletor .strong.preco-novo span[itemprop=price]: Timeout 30000ms exceeded.
+INFO 2025-04-22 01:36:21,831 playwright_service 226 281473753194528 Screenshot salvo em: /app/logs/screenshot_1745296581.png
+INFO 2025-04-22 01:37:50,204 playwright_service 399 281473407995936 Acessando página inicial: https://loja.tparts.com.br
+WARNING 2025-04-22 01:38:20,240 playwright_service 399 281473407995936 Erro ao acessar página inicial: Timeout 30000ms exceeded.. Tentando diretamente a URL do produto.
+INFO 2025-04-22 01:38:20,243 playwright_service 399 281473407995936 Acessando URL do produto: https://loja.tparts.com.br/lanterna-traseiro-esquerdo-simples-hilux-2-5-16v-2-7-16v-3-0-16v-2004-2012?_pid=UCybc
+WARNING 2025-04-22 01:38:26,494 playwright_service 399 281473407995936 Seletor CSS encontrado, mas não foi possível extrair preço do texto: 217,42
+INFO 2025-04-22 01:38:26,705 playwright_service 399 281473407995936 Screenshot salvo em: /app/logs/screenshot_1745296706.png
+INFO 2025-04-22 01:40:01,770 playwright_service 570 281473395933216 Acessando página inicial: https://loja.tparts.com.br
+INFO 2025-04-22 01:40:08,466 playwright_service 570 281473395933216 Acessando URL do produto: https://loja.tparts.com.br/lanterna-traseiro-esquerdo-simples-hilux-2-5-16v-2-7-16v-3-0-16v-2004-2012?_pid=UCybc
+INFO 2025-04-22 01:40:12,785 playwright_service 570 281473395933216 Preço encontrado com Playwright: R$ 217.42
+INFO 2025-04-22 01:40:18,119 basehttp 7 281472682488224 "GET /admin/core/produto/ HTTP/1.1" 200 16280
+INFO 2025-04-22 01:40:18,196 basehttp 7 281472661516704 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,196 basehttp 7 281472640545184 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,199 basehttp 7 281472661516704 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,199 basehttp 7 281472672002464 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,210 basehttp 7 281472651030944 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,215 basehttp 7 281472640545184 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,211 basehttp 7 281472682488224 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:40:18,212 basehttp 7 281472558756256 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,215 basehttp 7 281472672002464 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,211 basehttp 7 281472661516704 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,216 basehttp 7 281472651030944 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,217 basehttp 7 281472682488224 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,220 basehttp 7 281472558756256 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,220 basehttp 7 281472661516704 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,222 basehttp 7 281472651030944 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,238 basehttp 7 281472661516704 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,239 basehttp 7 281472651030944 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,247 basehttp 7 281472651030944 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,250 basehttp 7 281472651030944 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:18,250 basehttp 7 281472661516704 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:20,954 basehttp 7 281472661516704 "GET /admin/core/historicopreco/ HTTP/1.1" 200 14043
+INFO 2025-04-22 01:40:20,968 basehttp 7 281472661516704 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:40:23,452 basehttp 7 281472661516704 "GET /admin/core/produto/ HTTP/1.1" 200 16280
+INFO 2025-04-22 01:40:23,467 basehttp 7 281472661516704 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:40:27,766 basehttp 7 281472661516704 "GET /admin/core/produto/1/change/ HTTP/1.1" 200 24241
+INFO 2025-04-22 01:40:27,791 basehttp 7 281472640545184 "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:27,792 basehttp 7 281472672002464 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:27,792 basehttp 7 281472661516704 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:40:27,793 basehttp 7 281472651030944 "GET /static/admin/js/calendar.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:27,793 basehttp 7 281472682488224 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:27,795 basehttp 7 281472661516704 "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:27,797 basehttp 7 281472651030944 "GET /static/admin/css/widgets.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:27,797 basehttp 7 281472558756256 "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:27,798 basehttp 7 281472558756256 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:27,801 basehttp 7 281472558756256 "GET /static/admin/js/change_form.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:27,841 basehttp 7 281472558756256 "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:27,841 basehttp 7 281472651030944 "GET /static/admin/img/icon-clock.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:34,846 basehttp 7 281472651030944 "GET /admin/core/plataforma/ HTTP/1.1" 200 14955
+INFO 2025-04-22 01:40:34,863 basehttp 7 281472651030944 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:40:34,877 basehttp 7 281472651030944 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+INFO 2025-04-22 01:40:35,867 basehttp 7 281472651030944 "GET /admin/core/plataforma/1/change/ HTTP/1.1" 200 15847
+INFO 2025-04-22 01:40:35,891 basehttp 7 281472651030944 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:40:46,025 basehttp 7 281472558756256 "POST /admin/core/plataforma/1/change/ HTTP/1.1" 302 0
+INFO 2025-04-22 01:40:46,042 basehttp 7 281472558756256 "GET /admin/core/plataforma/ HTTP/1.1" 200 15160
+INFO 2025-04-22 01:40:46,066 basehttp 7 281472558756256 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:40:46,076 basehttp 7 281472558756256 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:40:48,474 basehttp 7 281472558756256 "GET /admin/core/dominio/ HTTP/1.1" 200 14945
+INFO 2025-04-22 01:40:48,490 basehttp 7 281472558756256 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:40:49,864 basehttp 7 281472558756256 "GET /admin/core/dominio/1/change/ HTTP/1.1" 200 15870
+INFO 2025-04-22 01:40:49,881 basehttp 7 281472558756256 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:40:59,241 basehttp 7 281472651030944 "POST /admin/core/dominio/1/change/ HTTP/1.1" 302 0
+INFO 2025-04-22 01:40:59,257 basehttp 7 281472651030944 "GET /admin/core/dominio/ HTTP/1.1" 200 15156
+INFO 2025-04-22 01:40:59,282 basehttp 7 281472651030944 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:41:02,131 basehttp 7 281472651030944 "GET /admin/core/produto/ HTTP/1.1" 200 16280
+INFO 2025-04-22 01:41:02,153 basehttp 7 281472651030944 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:41:04,227 basehttp 7 281472651030944 "GET /admin/core/produto/1/verificar-preco/ HTTP/1.1" 302 0
+INFO 2025-04-22 01:41:04,242 basehttp 7 281472651030944 "GET /admin/core/produto/ HTTP/1.1" 200 16497
+INFO 2025-04-22 01:41:04,265 basehttp 7 281472651030944 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:41:04,535 tasks 314 281473442045984 Iniciando verificação de preço para: Teste (https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc)
+ERROR 2025-04-22 01:41:10,031 price_scraper 314 281473442045984 Erro ao raspar preço da URL https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc (tentativa 1/3): 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc
+INFO 2025-04-22 01:41:10,037 price_scraper 314 281473442045984 Esperando 9.38 segundos antes de tentar novamente...
+ERROR 2025-04-22 01:41:29,374 price_scraper 314 281473442045984 Erro ao raspar preço da URL https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc (tentativa 2/3): 403 Client Error: Forbidden for url: https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc
+INFO 2025-04-22 01:41:29,377 price_scraper 314 281473442045984 Esperando 18.31 segundos antes de tentar novamente...
+ERROR 2025-04-22 01:41:54,326 price_scraper 314 281473442045984 Erro ao raspar preço da URL https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc (tentativa 3/3): SoftTimeLimitExceeded()
+INFO 2025-04-22 01:41:54,338 tasks 314 281473442045984 Método simples falhou. Tentando com Playwright para: Teste
+INFO 2025-04-22 01:41:54,886 playwright_service 314 281473442045984 Acessando página inicial: https://www.tuningparts.com.br
+INFO 2025-04-22 01:41:58,938 playwright_service 314 281473442045984 Acessando URL do produto: https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc
+INFO 2025-04-22 01:42:01,815 playwright_service 314 281473442045984 Preço encontrado com Playwright: R$ 386.91
+INFO 2025-04-22 01:42:01,903 tasks 314 281473442045984 Preço verificado para Teste: R$ 386.91
+INFO 2025-04-22 01:43:49,573 autoreload 7 281472853737504 /app/scraper/tasks.py changed, reloading.
+INFO 2025-04-22 01:43:50,856 autoreload 750 281473377148960 Watching for file changes with StatReloader
+INFO 2025-04-22 01:44:11,361 autoreload 8 281472994549792 Watching for file changes with StatReloader
+INFO 2025-04-22 01:44:12,724 basehttp 8 281472822997408 "GET /admin/core/produto/ HTTP/1.1" 200 16308
+INFO 2025-04-22 01:44:12,756 basehttp 8 281472822997408 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:44:18,307 basehttp 8 281472822997408 "GET /admin/core/historicopreco/ HTTP/1.1" 200 15862
+INFO 2025-04-22 01:44:18,370 basehttp 8 281472802025888 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,373 basehttp 8 281472812511648 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,384 basehttp 8 281472791540128 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,384 basehttp 8 281472822997408 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:44:18,386 basehttp 8 281472802025888 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,390 basehttp 8 281472692973984 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,391 basehttp 8 281472781054368 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,392 basehttp 8 281472791540128 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,393 basehttp 8 281472812511648 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,394 basehttp 8 281472822997408 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,396 basehttp 8 281472692973984 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,397 basehttp 8 281472802025888 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,399 basehttp 8 281472781054368 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,399 basehttp 8 281472812511648 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,400 basehttp 8 281472791540128 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,403 basehttp 8 281472812511648 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,404 basehttp 8 281472791540128 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:18,404 basehttp 8 281472781054368 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:20,567 basehttp 8 281472781054368 "GET /admin/core/historicopreco/1/change/ HTTP/1.1" 200 16632
+INFO 2025-04-22 01:44:20,590 basehttp 8 281472791540128 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:44:20,596 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:44:24,808 basehttp 8 281472812511648 "GET /admin/core/historicopreco/ HTTP/1.1" 200 15862
+INFO 2025-04-22 01:44:36,847 basehttp 8 281472812511648 "GET /admin/core/produto/ HTTP/1.1" 200 16308
+INFO 2025-04-22 01:44:36,880 basehttp 8 281472812511648 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:44:38,815 basehttp 8 281472812511648 "GET /admin/core/produto/1/verificar-preco/ HTTP/1.1" 302 0
+INFO 2025-04-22 01:44:38,843 basehttp 8 281472812511648 "GET /admin/core/produto/ HTTP/1.1" 200 16525
+INFO 2025-04-22 01:44:38,871 basehttp 8 281472812511648 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:44:38,899 tasks 9 281473518460960 Iniciando verificação de preço para: Teste (https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc)
+INFO 2025-04-22 01:44:38,902 tasks 9 281473518460960 Usando Playwright para extrair preço de: Teste
+INFO 2025-04-22 01:44:39,552 playwright_service 9 281473518460960 Acessando página inicial: https://www.tuningparts.com.br
+INFO 2025-04-22 01:44:44,633 playwright_service 9 281473518460960 Acessando URL do produto: https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc
+INFO 2025-04-22 01:44:47,256 playwright_service 9 281473518460960 Preço encontrado com Playwright: R$ 386.91
+INFO 2025-04-22 01:44:47,325 tasks 9 281473518460960 Preço verificado para Teste: R$ 386.91
+INFO 2025-04-22 01:44:51,471 basehttp 8 281472812511648 "GET /admin/core/historicopreco/ HTTP/1.1" 200 16179
+INFO 2025-04-22 01:44:51,496 basehttp 8 281472812511648 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:45:12,674 basehttp 8 281472812511648 "GET /admin/core/usuario/ HTTP/1.1" 200 15819
+INFO 2025-04-22 01:45:12,703 basehttp 8 281472812511648 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:45:14,885 basehttp 8 281472812511648 "GET /admin/core/usuario/2/change/ HTTP/1.1" 200 33591
+INFO 2025-04-22 01:45:14,900 basehttp 8 281472822997408 "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:45:14,906 basehttp 8 281472802025888 "GET /static/admin/js/calendar.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:45:14,906 basehttp 8 281472781054368 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:45:14,919 basehttp 8 281472791540128 "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:45:14,919 basehttp 8 281472822997408 "GET /static/admin/css/widgets.css HTTP/1.1" 304 0
+INFO 2025-04-22 01:45:14,921 basehttp 8 281472692973984 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:45:14,921 basehttp 8 281472812511648 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:45:14,922 basehttp 8 281472781054368 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:45:14,924 basehttp 8 281472812511648 "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:45:14,926 basehttp 8 281472812511648 "GET /static/admin/js/change_form.js HTTP/1.1" 304 0
+INFO 2025-04-22 01:45:14,964 basehttp 8 281472781054368 "GET /static/admin/img/icon-clock.svg HTTP/1.1" 304 0
+INFO 2025-04-22 01:45:14,964 basehttp 8 281472812511648 "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 304 0
+WARNING 2025-04-22 01:45:32,863 log 8 281472812511648 Not Found: /
+WARNING 2025-04-22 01:45:32,864 basehttp 8 281472812511648 "GET / HTTP/1.1" 404 2407
+INFO 2025-04-22 01:45:36,372 basehttp 8 281472812511648 "GET /admin/core/usuario/2/change/ HTTP/1.1" 200 33591
+INFO 2025-04-22 01:45:47,054 basehttp 8 281472812511648 "GET /admin/core/historicopreco/ HTTP/1.1" 200 16179
+INFO 2025-04-22 01:45:47,079 basehttp 8 281472812511648 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:45:51,272 basehttp 8 281472781054368 "GET /admin/core/historicopreco/2/change/ HTTP/1.1" 200 16632
+INFO 2025-04-22 01:45:51,288 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 01:45:52,335 basehttp 8 281472781054368 "GET /admin/core/historicopreco/ HTTP/1.1" 200 16179

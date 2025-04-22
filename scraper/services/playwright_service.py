@@ -8,8 +8,19 @@ logger = logging.getLogger(__name__)
 
 def extract_price_from_text(text):
     """Extrai o preço de um texto usando expressões regulares."""
-    # Remove caracteres não numéricos exceto vírgula e ponto
+    # Primeiro tenta encontrar com o padrão R$
     price_pattern = r'R\$\s*(\d+[.,]?\d*)'
+    match = re.search(price_pattern, text)
+    
+    if match:
+        price_str = match.group(1).replace('.', '').replace(',', '.')
+        try:
+            return float(price_str)
+        except ValueError:
+            return None
+    
+    # Se não encontrar com R$, tenta extrair diretamente o número
+    price_pattern = r'(\d+[.,]\d+)'
     match = re.search(price_pattern, text)
     if match:
         price_str = match.group(1).replace('.', '').replace(',', '.')
@@ -17,6 +28,7 @@ def extract_price_from_text(text):
             return float(price_str)
         except ValueError:
             return None
+            
     return None
 
 def scrape_price_with_playwright(url, selector=None, timeout=30000):

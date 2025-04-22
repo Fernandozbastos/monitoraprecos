@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from core.models import Produto, Plataforma, Dominio
 from scraper.tasks import verificar_preco
 from scraper.services.price_scraper import scrape_price, get_domain
-from scraper.services.selenium_service import scrape_price_with_selenium
+from scraper.services.playwright_service import scrape_price_with_playwright
 import time
 
 class Command(BaseCommand):
@@ -12,22 +12,22 @@ class Command(BaseCommand):
         parser.add_argument('--id', type=int, help='ID do produto específico para testar', required=False)
         parser.add_argument('--url', type=str, help='URL para testar com um seletor específico', required=False)
         parser.add_argument('--seletor', type=str, help='Seletor CSS para usar com a URL de teste', required=False)
-        parser.add_argument('--selenium', action='store_true', help='Força o uso do Selenium')
+        parser.add_argument('--playwright', action='store_true', help='Força o uso do Playwright')
         parser.add_argument('--async', action='store_true', help='Executa de forma assíncrona usando Celery')
         
     def handle(self, *args, **options):
         produto_id = options.get('id')
         url_teste = options.get('url')
         seletor_teste = options.get('seletor')
-        usar_selenium = options.get('selenium')
+        usar_playwright = options.get('playwright')
         executar_async = options.get('async')
         
         # Caso: Testar URL específica com seletor fornecido
         if url_teste and seletor_teste:
             self.stdout.write(self.style.SUCCESS(f'Testando URL: {url_teste} com seletor: {seletor_teste}'))
             
-            if usar_selenium:
-                preco = scrape_price_with_selenium(url_teste, seletor_teste)
+            if usar_playwright:
+                preco = scrape_price_with_playwright(url_teste, seletor_teste)
             else:
                 preco = scrape_price(url_teste, seletor_teste)
                 
@@ -36,13 +36,13 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(self.style.ERROR('Não foi possível extrair o preço'))
                 
-                if not usar_selenium:
-                    self.stdout.write('Tentando com Selenium...')
-                    preco = scrape_price_with_selenium(url_teste, seletor_teste)
+                if not usar_playwright:
+                    self.stdout.write('Tentando com Playwright...')
+                    preco = scrape_price_with_playwright(url_teste, seletor_teste)
                     if preco:
-                        self.stdout.write(self.style.SUCCESS(f'Preço encontrado com Selenium: R$ {preco:.2f}'))
+                        self.stdout.write(self.style.SUCCESS(f'Preço encontrado com Playwright: R$ {preco:.2f}'))
                     else:
-                        self.stdout.write(self.style.ERROR('Não foi possível extrair o preço mesmo com Selenium'))
+                        self.stdout.write(self.style.ERROR('Não foi possível extrair o preço mesmo com Playwright'))
             
             return
             

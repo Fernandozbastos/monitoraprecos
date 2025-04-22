@@ -1,7 +1,8 @@
 from monitoraprecos.celery import app
 from django.utils import timezone
 from core.models import Produto, HistoricoPreco, Plataforma, Dominio
-from scraper.services.price_scraper import scrape_price, get_domain
+from scraper.services.price_scraper import get_domain
+from scraper.services.playwright_service import scrape_price_with_playwright
 from django.db import transaction
 import logging
 import time
@@ -57,14 +58,9 @@ def verificar_preco(self, produto_id):
         # Define um bloqueio para o domínio
         cache.set(domain_lock_id, True, timeout=10)  # Bloqueio de 10 segundos por domínio
         
-        # Tenta primeiro com o método simples
-        preco = scrape_price(produto.url, selector)
-        
-        # Se falhar, tenta com Playwright (alternativa ao Selenium para ARM)
-        if preco is None:
-            logger.info(f"Método simples falhou. Tentando com Playwright para: {produto.nome}")
-            from scraper.services.playwright_service import scrape_price_with_playwright
-            preco = scrape_price_with_playwright(produto.url, selector)
+        # Usa diretamente o Playwright para todas as requisições
+        logger.info(f"Usando Playwright para extrair preço de: {produto.nome}")
+        preco = scrape_price_with_playwright(produto.url, selector)
         
         if preco:
             # Registra o preço no histórico
@@ -121,9 +117,6 @@ def verificar_todos_produtos(tamanho_lote=10, max_produtos=None):
     if total_produtos == 0:
         return "Nenhum produto para verificar"
     
-    # Divide em lotes para melhor controle da concorrência
-    lotes = [produto_ids[i:i+tamanho_lote] for i in range(0, total_produtos, tamanho_lote)]
-    
     # Agenda cada produto individualmente, respeitando a prioridade da fila
     tarefas = []
     for produto_id in produto_ids:
@@ -165,3 +158,20 @@ def atualizar_posicoes_fila():
     except Exception as e:
         logger.error(f"Erro ao atualizar posições na fila: {str(e)}")
         raise
+
+@app.task
+def testar_conectividade(url_teste="https://www.google.com"):
+    """
+    Tarefa para testar se o sistema está conseguindo acessar a internet.
+    Útil para diagnóstico de problemas de rede.
+    """
+    try:
+        logger.info(f"Testando conectividade com {url_teste}")
+        resultado = scrape_price_with_playwright(url_teste, "body")
+        if resultado is not None:
+            return f"Conectividade OK - conseguiu acessar {url_teste}"
+        else:
+            return f"Conseguiu acessar {url_teste}, mas não obteve resultado"
+    except Exception as e:
+        logger.error(f"Erro ao testar conectividade: {str(e)}")
+        return f"Erro de conectividade: {str(e)}"
