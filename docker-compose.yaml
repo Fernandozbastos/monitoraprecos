@@ -24,6 +24,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
+      - /app/logs  # Volume para persistir os logs
     ports:
       - "8000:8000"
     depends_on:
@@ -35,12 +36,14 @@ services:
       - DATABASE_URL=postgres://monitoraprecos:senha_segura@db:5432/monitoraprecos
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - PYTHONUNBUFFERED=1
   
   celery:
     build: .
     command: celery -A monitoraprecos worker -l INFO
     volumes:
       - .:/app
+      - /app/logs  # Volume para persistir os logs
     depends_on:
       - web
       - redis
@@ -49,6 +52,8 @@ services:
       - DATABASE_URL=postgres://monitoraprecos:senha_segura@db:5432/monitoraprecos
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - PYTHONUNBUFFERED=1
+    shm_size: 2gb  # Aumenta o tamanho da memória compartilhada para o Chrome
   
   celery-beat:
     build: .
@@ -63,6 +68,7 @@ services:
       - DATABASE_URL=postgres://monitoraprecos:senha_segura@db:5432/monitoraprecos
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - PYTHONUNBUFFERED=1
 
 volumes:
   postgres_data:

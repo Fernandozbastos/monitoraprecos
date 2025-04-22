@@ -12,9 +12,11 @@ RUN apt-get update \
         gcc \
         postgresql-client \
         wget \
+        gnupg \
         unzip \
         curl \
         ca-certificates \
+        xvfb \
         # Dependências para Playwright
         libnss3 \
         libnspr4 \
@@ -34,8 +36,16 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Criar diretório para logs
-RUN mkdir -p /app/logs && chmod 777 /app/logs
+# Instalar Google Chrome (para Selenium)
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
+
+# Criar diretório para logs e diretório para WebDriver Manager
+RUN mkdir -p /app/logs && chmod 777 /app/logs \
+    && mkdir -p /root/.wdm/drivers/ && chmod 777 /root/.wdm/drivers/
 
 # Instalar dependências Python
 COPY requirements.txt /app/

@@ -700,3 +700,92 @@ INFO 2025-04-22 01:45:47,079 basehttp 8 281472812511648 "GET /admin/jsi18n/ HTTP
 INFO 2025-04-22 01:45:51,272 basehttp 8 281472781054368 "GET /admin/core/historicopreco/2/change/ HTTP/1.1" 200 16632
 INFO 2025-04-22 01:45:51,288 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
 INFO 2025-04-22 01:45:52,335 basehttp 8 281472781054368 "GET /admin/core/historicopreco/ HTTP/1.1" 200 16179
+INFO 2025-04-22 09:41:16,645 basehttp 8 281472781054368 "GET /admin/core/produto/ HTTP/1.1" 200 16308
+INFO 2025-04-22 09:41:16,707 basehttp 8 281472802025888 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,708 basehttp 8 281472822997408 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,719 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:41:16,720 basehttp 8 281472791540128 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,720 basehttp 8 281472812511648 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,721 basehttp 8 281472802025888 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,725 basehttp 8 281472822997408 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,725 basehttp 8 281472781054368 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,727 basehttp 8 281472692973984 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,727 basehttp 8 281472791540128 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,728 basehttp 8 281472812511648 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,731 basehttp 8 281472802025888 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,733 basehttp 8 281472822997408 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,735 basehttp 8 281472781054368 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,742 basehttp 8 281472812511648 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,768 basehttp 8 281472812511648 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,769 basehttp 8 281472781054368 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,774 basehttp 8 281472781054368 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,782 basehttp 8 281472781054368 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:16,782 basehttp 8 281472812511648 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,853 basehttp 8 281472781054368 "GET /admin/core/produto/1/change/ HTTP/1.1" 200 24277
+INFO 2025-04-22 09:41:19,876 basehttp 8 281472822997408 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,879 basehttp 8 281472802025888 "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,879 basehttp 8 281472791540128 "GET /static/admin/js/calendar.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,881 basehttp 8 281472812511648 "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,882 basehttp 8 281472822997408 "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,882 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:41:19,884 basehttp 8 281472812511648 "GET /static/admin/css/widgets.css HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,884 basehttp 8 281472692973984 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,886 basehttp 8 281472812511648 "GET /static/admin/js/change_form.js HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,886 basehttp 8 281472692973984 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,937 basehttp 8 281472812511648 "GET /static/admin/img/icon-clock.svg HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:19,938 basehttp 8 281472692973984 "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:25,465 basehttp 8 281472781054368 "GET /admin/core/plataforma/ HTTP/1.1" 200 14955
+INFO 2025-04-22 09:41:25,494 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:41:25,512 basehttp 8 281472781054368 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 304 0
+INFO 2025-04-22 09:41:26,436 basehttp 8 281472781054368 "GET /admin/core/plataforma/1/change/ HTTP/1.1" 200 15845
+INFO 2025-04-22 09:41:26,462 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:41:30,866 basehttp 8 281472781054368 "GET /admin/core/historicopreco/ HTTP/1.1" 200 16179
+INFO 2025-04-22 09:41:30,887 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:41:32,672 basehttp 8 281472781054368 "GET /admin/core/grupo/ HTTP/1.1" 200 15087
+INFO 2025-04-22 09:41:32,702 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:41:33,654 basehttp 8 281472781054368 "GET /admin/core/dominio/ HTTP/1.1" 200 14945
+INFO 2025-04-22 09:41:33,679 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:41:34,384 basehttp 8 281472781054368 "GET /admin/core/historicopreco/ HTTP/1.1" 200 16179
+INFO 2025-04-22 09:41:34,422 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:41:39,710 basehttp 8 281472802025888 "GET /admin/core/historicopreco/2/change/ HTTP/1.1" 200 16632
+INFO 2025-04-22 09:41:39,741 basehttp 8 281472802025888 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:41:42,532 basehttp 8 281472802025888 "GET /admin/core/historicopreco/ HTTP/1.1" 200 16179
+INFO 2025-04-22 09:41:42,556 basehttp 8 281472802025888 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:42:00,392 basehttp 8 281472802025888 "GET /admin/core/usuario/ HTTP/1.1" 200 15819
+INFO 2025-04-22 09:42:00,427 basehttp 8 281472802025888 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:42:01,529 basehttp 8 281472802025888 "GET /admin/core/usuariogrupo/ HTTP/1.1" 200 14218
+INFO 2025-04-22 09:42:01,558 basehttp 8 281472802025888 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:42:03,159 basehttp 8 281472802025888 "GET /admin/core/produto/ HTTP/1.1" 200 16308
+INFO 2025-04-22 09:42:03,182 basehttp 8 281472802025888 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:42:03,874 basehttp 8 281472802025888 "GET /admin/core/plataforma/ HTTP/1.1" 200 14955
+INFO 2025-04-22 09:42:03,901 basehttp 8 281472802025888 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:42:05,761 basehttp 8 281472781054368 "GET /admin/core/historicopreco/ HTTP/1.1" 200 16179
+INFO 2025-04-22 09:42:05,799 basehttp 8 281472781054368 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:51:15,445 autoreload 8 281472994549792 /app/scraper/tasks.py changed, reloading.
+INFO 2025-04-22 09:51:17,885 autoreload 62 281472939143200 Watching for file changes with StatReloader
+INFO 2025-04-22 09:51:49,679 autoreload 62 281472939143200 /app/scraper/services/playwright_service.py changed, reloading.
+INFO 2025-04-22 09:51:50,760 autoreload 65 281473178951712 Watching for file changes with StatReloader
+INFO 2025-04-22 09:52:12,939 autoreload 65 281473178951712 /app/scraper/services/selenium_service.py changed, reloading.
+INFO 2025-04-22 09:52:13,985 autoreload 68 281472950435872 Watching for file changes with StatReloader
+INFO 2025-04-22 09:52:52,176 autoreload 7 281473478828064 Watching for file changes with StatReloader
+INFO 2025-04-22 09:52:54,368 basehttp 7 281473296953760 "GET /admin/core/historicopreco/ HTTP/1.1" 200 16179
+INFO 2025-04-22 09:52:54,435 basehttp 7 281473296953760 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:53:05,576 basehttp 7 281473296953760 "GET /admin/core/produto/ HTTP/1.1" 200 16308
+INFO 2025-04-22 09:53:05,607 basehttp 7 281473296953760 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:53:06,910 basehttp 7 281473296953760 "GET /admin/core/produto/1/verificar-preco/ HTTP/1.1" 302 0
+INFO 2025-04-22 09:53:06,930 basehttp 7 281473296953760 "GET /admin/core/produto/ HTTP/1.1" 200 16525
+INFO 2025-04-22 09:53:06,959 basehttp 7 281473296953760 "GET /admin/jsi18n/ HTTP/1.1" 200 8876
+INFO 2025-04-22 09:53:06,972 basehttp 7 281473296953760 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+INFO 2025-04-22 09:53:07,017 tasks 8 281473533571104 Iniciando verificação de preço para: Teste (https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc)
+INFO 2025-04-22 09:53:07,022 tasks 8 281473533571104 Usando Playwright para extrair preço de: Teste
+INFO 2025-04-22 09:53:08,144 playwright_service 8 281473533571104 Acessando página inicial: https://www.tuningparts.com.br
+INFO 2025-04-22 09:53:12,239 playwright_service 8 281473533571104 Acessando URL do produto: https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc
+ERROR 2025-04-22 09:53:14,725 playwright_service 8 281473533571104 Erro ao raspar preço com Playwright da URL https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc: 'str' object is not callable
+INFO 2025-04-22 09:53:14,725 tasks 8 281473533571104 Playwright falhou, tentando com Selenium para: Teste
+ERROR 2025-04-22 09:53:17,620 selenium_service 8 281473533571104 Erro ao raspar preço com Selenium da URL https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc: Message: Service /root/.wdm/drivers/chromedriver/linux64/114.0.5735.90/chromedriver unexpectedly exited. Status code was: -5
+
+WARNING 2025-04-22 09:53:17,621 tasks 8 281473533571104 Não foi possível extrair o preço para Teste (https://www.tuningparts.com.br/mini-compressor-automotivo-portatil-digital-otir2000-osram-para-pneu-de-carro-moto-bicicleta-com-iluminacao-led-power-bank?_pid=YSsdc)
+INFO 2025-04-22 09:55:08,578 autoreload 7 281473478828064 /app/scraper/services/playwright_service.py changed, reloading.
+INFO 2025-04-22 09:55:09,704 autoreload 14 281473063075872 Watching for file changes with StatReloader
+INFO 2025-04-22 10:01:45,288 autoreload 14 281473063075872 /app/scraper/services/playwright_service.py changed, reloading.
+INFO 2025-04-22 10:01:46,586 autoreload 17 281473614311456 Watching for file changes with StatReloader
