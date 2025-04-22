@@ -3,6 +3,8 @@ Django>=4.2.0
 djangorestframework>=3.14.0
 django-filter>=23.1
 django-cors-headers>=4.1.0
+djangorestframework-simplejwt==5.2.2
+
 
 # Adicione estes pacotes se ainda não estiverem no seu requirements.txt
 dj-database-url>=1.2.0
