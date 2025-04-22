@@ -1,6 +1,6 @@
-// src/services/api.js
+// src/services/api.js - versão corrigida
 import axios from 'axios'
-import { useStore } from 'vuex'
+import store from '../store' // Importar o store diretamente
 
 // Cria uma instância do axios com URL base
 const apiClient = axios.create({
@@ -14,7 +14,7 @@ const apiClient = axios.create({
 // Intercepta as requisições para adicionar o token JWT
 apiClient.interceptors.request.use(
   config => {
-    const store = useStore()
+    // Usar store diretamente em vez de useStore()
     const token = store.getters['auth/accessToken']
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
@@ -32,7 +32,7 @@ apiClient.interceptors.response.use(
     return response
   },
   async error => {
-    const store = useStore()
+    // Usar store diretamente em vez de useStore()
     const originalRequest = error.config
     
     // Se recebeu 401 (não autorizado) e não for uma tentativa de refresh

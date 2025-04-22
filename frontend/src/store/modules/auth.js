@@ -1,6 +1,6 @@
 // src/store/modules/auth.js
-import authService from '@/services/auth.service'
-import jwtDecode from 'jwt-decode'
+import authService from '@/services/auth_services'
+import { jwtDecode } from 'jwt-decode'
 import router from '@/router'
 
 const state = {

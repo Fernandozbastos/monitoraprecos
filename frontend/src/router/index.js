@@ -1,11 +1,11 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
-import { useStore } from 'vuex'
+import store from '../store' // Importar store diretamente
 
 // Importações de componentes
 import Login from '../views/Login.vue'
 
-// Lazy loading para componentes que não são necessários imediatamente
+// Lazy loading para componentes
 const Dashboard = () => import('../views/Dashboard.vue')
 const ProductList = () => import('../views/ProductList.vue')
 const ProductDetail = () => import('../views/ProductDetail.vue')
@@ -50,13 +50,12 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(),
   routes
 })
 
 // Guarda de navegação para proteger rotas
 router.beforeEach((to, from, next) => {
-  const store = useStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const isAuthenticated = store.getters['auth/isAuthenticated']
   

@@ -3,7 +3,7 @@ from django.utils import timezone
 from core.models import Produto, HistoricoPreco, Plataforma, Dominio
 from urllib.parse import urlparse
 from scraper.services.playwright_service import scrape_price_with_playwright
-from scraper.services.selenium_service import scrape_price_with_selenium
+from scraper.services.price_scraper import scrape_price
 from django.db import transaction
 import logging
 import time
@@ -64,14 +64,14 @@ def verificar_preco(self, produto_id):
         # Define um bloqueio para o domínio
         cache.set(domain_lock_id, True, timeout=10)  # Bloqueio de 10 segundos por domínio
         
-        # Tenta com Playwright primeiro (removido o try/except interno para simplificar)
+        # Prioriza Playwright para extração de preço (melhor compatibilidade com ARM/Apple Silicon)
         logger.info(f"Usando Playwright para extrair preço de: {produto.nome}")
         preco = scrape_price_with_playwright(produto.url, selector)
         
-        # Se falhar com Playwright, tenta com Selenium 
+        # Se falhar com Playwright, tenta com BeautifulSoup (requests)
         if preco is None:
-            logger.info(f"Playwright falhou, tentando com Selenium para: {produto.nome}")
-            preco = scrape_price_with_selenium(produto.url, selector)
+            logger.info(f"Playwright falhou, tentando com BeautifulSoup para: {produto.nome}")
+            preco = scrape_price(produto.url, selector)
         
         if preco:
             # Registra o preço no histórico

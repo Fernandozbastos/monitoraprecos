@@ -36,12 +36,8 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Instalar Google Chrome (para Selenium)
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable \
-    && rm -rf /var/lib/apt/lists/*
+# Remover a instalação do Chrome e usar apenas Playwright
+# (já que Playwright é compatível com ARM e instala seu próprio navegador)
 
 # Criar diretório para logs e diretório para WebDriver Manager
 RUN mkdir -p /app/logs && chmod 777 /app/logs \
