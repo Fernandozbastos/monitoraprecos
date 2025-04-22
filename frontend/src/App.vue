@@ -1,30 +1,87 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view />
+  <v-app>
+    <v-app-bar
+      app
+      color="primary"
+      dark
+      v-if="isAuthenticated"
+    >
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar-title>MonitoraPreços</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon @click="logout">
+        <v-icon>mdi-logout</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      temporary
+      v-if="isAuthenticated"
+    >
+      <v-list-item>
+        <v-list-item-avatar>
+          <v-icon large>mdi-account-circle</v-icon>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title>{{ userName }}</v-list-item-title>
+          <v-list-item-subtitle>{{ userType }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-divider></v-divider>
+
+      <v-list density="compact" nav>
+        <v-list-item
+          v-for="item in menuItems"
+          :key="item.title"
+          :to="item.path"
+          link
+        >
+          <template v-slot:prepend>
+            <v-icon>{{ item.icon }}</v-icon>
+          </template>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-main>
+      <router-view />
+    </v-main>
+
+    <v-footer app>
+      <span>&copy; {{ new Date().getFullYear() }} MonitoraPreços</span>
+    </v-footer>
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+
+const store = useStore()
+const router = useRouter()
+const drawer = ref(false)
+
+const menuItems = [
+  { title: 'Dashboard', path: '/dashboard', icon: 'mdi-view-dashboard' },
+  { title: 'Produtos', path: '/products', icon: 'mdi-package-variant-closed' },
+  { title: 'Meu Perfil', path: '/profile', icon: 'mdi-account-cog' },
+]
+
+// Computed properties
+const isAuthenticated = computed(() => store.getters['auth/isAuthenticated'])
+const user = computed(() => store.getters['auth/user'])
+const userName = computed(() => user.value ? user.value.username : '')
+const userType = computed(() => 
+  user.value ? (user.value.tipo === 'admin' ? 'Administrador' : 'Usuário') : ''
+)
+
+// Métodos
+const logout = () => {
+  store.dispatch('auth/logout')
 }
-
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
+</script>

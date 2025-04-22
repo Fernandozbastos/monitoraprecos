@@ -1,26 +1,72 @@
-import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+// src/router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import { useStore } from 'vuex'
+
+// Importações de componentes
+import Login from '../views/Login.vue'
+
+// Lazy loading para componentes que não são necessários imediatamente
+const Dashboard = () => import('../views/Dashboard.vue')
+const ProductList = () => import('../views/ProductList.vue')
+const ProductDetail = () => import('../views/ProductDetail.vue')
+const UserProfile = () => import('../views/UserProfile.vue')
 
 const routes = [
   {
-    path: "/",
-    name: "home",
-    component: HomeView,
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    meta: { requiresAuth: false }
   },
   {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    path: '/',
+    redirect: '/dashboard'
   },
-];
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Dashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/products',
+    name: 'Products',
+    component: ProductList,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/products/:id',
+    name: 'ProductDetail',
+    component: ProductDetail,
+    props: true,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/profile',
+    name: 'UserProfile',
+    component: UserProfile,
+    meta: { requiresAuth: true }
+  }
+]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes,
-});
+  routes
+})
 
-export default router;
+// Guarda de navegação para proteger rotas
+router.beforeEach((to, from, next) => {
+  const store = useStore()
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const isAuthenticated = store.getters['auth/isAuthenticated']
+  
+  if (requiresAuth && !isAuthenticated) {
+    next('/login')
+  } else if (to.path === '/login' && isAuthenticated) {
+    next('/dashboard')
+  } else {
+    next()
+  }
+})
+
+export default router
