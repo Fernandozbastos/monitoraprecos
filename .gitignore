@@ -1,0 +1,41 @@
+# Ambiente virtual
+.venv/
+venv/
+ENV/
+env/
+
+# Arquivos Python compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos de distribuição
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+bin/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+
+# Logs e banco de dados locais
+*.log
+*.sqlite3
+logs/
+
+# Arquivos de configuração local
+.env
+.env.*
+
+# Arquivos de IDE
+.idea/
+.vscode/
+*.swp
+*.swo
