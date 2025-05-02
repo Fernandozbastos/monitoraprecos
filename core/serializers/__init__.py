@@ -6,7 +6,7 @@ from .grupo_serializers import GrupoSerializer
 __all__ = [
     'ClienteSerializer',
     'ProdutoSerializer',
-    'ProdutoDetalheSerializer',
+    'ProdutoDetalheSerializer',  # Verificar se este import está correto
     'PlataformaSerializer',
     'HistoricoPrecoSerializer',
     'HistoricoPrecoResumoSerializer',

@@ -534,22 +534,69 @@ const carregarProduto = async () => {
 const atualizarProdutoClienteStatus = async () => {
   atualizandoStatus.value = true;
   try {
-    // Se estiver marcando como produto_cliente=true e o tipo for concorrente,
-    // também alterar o tipo para cliente
+    // Verificar se o usuário tem um cliente atual definido
+    const userInfo = await api.get('/user/info/');
+    if (!userInfo.data.cliente_atual) {
+      mostrarSnackbar('Por favor, selecione um cliente atual antes de continuar', 'warning');
+      return;
+    }
+
+    // Obter o ID do cliente atual (pode ser objeto ou ID direto)
+    const clienteId = typeof userInfo.data.cliente_atual === 'object' 
+      ? userInfo.data.cliente_atual.id 
+      : userInfo.data.cliente_atual;
+    
+    // Obter o ID do grupo (pode ser objeto ou ID direto)
+    const grupoId = typeof produto.value.grupo === 'object' 
+      ? produto.value.grupo.id 
+      : produto.value.grupo;
+    
+    // Sempre incluir cliente e grupo no payload do PATCH para evitar erro
     const dadosAtualizacao = {
-      produto_cliente: produto.value.produto_cliente
+      produto_cliente: produto.value.produto_cliente,
+      cliente: clienteId,
+      grupo: grupoId
     };
     
-    // Se estiver ativando a opção produto_cliente e o tipo atual for concorrente
-    if (produto.value.produto_cliente && produto.value.tipo_produto === 'concorrente') {
-      // Incluir a mudança de tipo no payload da atualização
-      dadosAtualizacao.tipo_produto = 'cliente';
+    // Se estiver ativando a opção produto_cliente
+    if (produto.value.produto_cliente) {
+      // Se o tipo atual for concorrente, alterá-lo para cliente
+      if (produto.value.tipo_produto === 'concorrente') {
+        dadosAtualizacao.tipo_produto = 'cliente';
+        // Atualizar também localmente
+        produto.value.tipo_produto = 'cliente';
+        console.log('Alterando o tipo do produto de concorrente para cliente:', dadosAtualizacao);
+      }
       
-      // Atualizar também localmente
-      produto.value.tipo_produto = 'cliente';
-      
-      console.log('Alterando o tipo do produto de concorrente para cliente:', dadosAtualizacao);
+      // Desmarcar outros produtos com o mesmo nome que possam estar marcados como base
+      try {
+        // Obter todos os produtos com o mesmo nome
+        const produtosResponse = await api.get(`/produtos/?nome=${produto.value.nome}`);
+        const produtosDoMesmoNome = produtosResponse.data.results || [];
+        
+        // Filtrar apenas os que estão marcados como produto_cliente e não são o atual
+        const produtosClienteBase = produtosDoMesmoNome.filter(p => 
+          p.id !== produto.value.id && 
+          p.produto_cliente === true && 
+          p.nome === produto.value.nome
+        );
+        
+        // Desmarcar cada um deles
+        for (const produtoAnterior of produtosClienteBase) {
+          console.log(`Desmarcando produto ${produtoAnterior.id} como cliente base`);
+          await api.patch(`/produtos/${produtoAnterior.id}/`, {
+            produto_cliente: false,
+            cliente: clienteId,
+            grupo: grupoId
+          });
+        }
+      } catch (err) {
+        console.error('Erro ao verificar outros produtos marcados como base:', err);
+        // Continuar mesmo se houver falha aqui
+      }
     }
+    
+    console.log('Enviando dados de atualização:', dadosAtualizacao);
     
     // Atualizar o produto com o novo status e tipo (se aplicável)
     await api.patch(`/produtos/${produto.value.id}/`, dadosAtualizacao);
@@ -576,7 +623,8 @@ const atualizarProdutoClienteStatus = async () => {
       produto.value.tipo_produto = 'concorrente';
     }
     
-    mostrarSnackbar('Erro ao atualizar status de produto cliente', 'error');
+    mostrarSnackbar('Erro ao atualizar status de produto cliente: ' + 
+      (error.response?.data?.detail || error.message), 'error');
   } finally {
     atualizandoStatus.value = false;
   }

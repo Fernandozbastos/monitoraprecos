@@ -577,7 +577,9 @@ const mostrarSnackbar = (texto, cor = 'success', timeout = 3000) => {
   }
 }
 
-// Função para definir um produto como produto cliente base
+// Função corrigida para o arquivo frontend/src/views/Dashboard.vue
+// Substitua a função definirProdutoClienteBase existente
+
 const definirProdutoClienteBase = async (produto) => {
   try {
     console.log(`Iniciando atualização do produto ${produto.id} para cliente base`);
@@ -601,6 +603,39 @@ const definirProdutoClienteBase = async (produto) => {
       : produto.grupo;
       
     console.log('Grupo ID:', grupoId);
+    
+    // Encontrar outros produtos com o mesmo nome que já estão marcados como produto_cliente
+    const produtosDoMesmoNome = produtos.value.filter(p => 
+      p.nome === produto.nome && 
+      p.id !== produto.id && 
+      p.produto_cliente === true
+    );
+    
+    // Se encontrar outros produtos marcados como base, desmarcar eles antes
+    if (produtosDoMesmoNome.length > 0) {
+      console.log(`Encontrados ${produtosDoMesmoNome.length} produtos com o mesmo nome marcados como cliente base. Desmarcando...`);
+      
+      // Para cada produto encontrado, desmarcar como produto_cliente
+      for (const produtoAnterior of produtosDoMesmoNome) {
+        try {
+          await api.patch(`/produtos/${produtoAnterior.id}/`, {
+            produto_cliente: false,
+            cliente: clienteId,  // Incluir cliente e grupo
+            grupo: grupoId      // para evitar erro de validação
+          });
+          
+          // Atualizar localmente
+          const idx = produtos.value.findIndex(p => p.id === produtoAnterior.id);
+          if (idx !== -1) {
+            produtos.value[idx].produto_cliente = false;
+          }
+          
+          console.log(`Produto ${produtoAnterior.id} desmarcado como cliente base`);
+        } catch (err) {
+          console.error(`Erro ao desmarcar produto ${produtoAnterior.id}:`, err);
+        }
+      }
+    }
     
     // Preparar os dados de atualização com todos os campos obrigatórios
     const dadosAtualizacao = {

@@ -1,3 +1,5 @@
+# Substitua completamente o arquivo core/views/produto_views.py
+
 from rest_framework import viewsets, permissions, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -6,7 +8,6 @@ from core.models import Produto, HistoricoPreco
 from core.serializers import ProdutoSerializer, ProdutoDetalheSerializer, HistoricoPrecoResumoSerializer
 from django.utils import timezone
 import logging
-from django.db import transaction
 
 # Configurar logger
 logger = logging.getLogger(__name__)
@@ -58,46 +59,58 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         """
         Sobrescreve o método partial_update para lidar com atualizações parciais,
         incluindo a mudança de produto para tipo cliente quando marcado como produto_cliente.
+        Implementação sem usar transaction.
         """
-        instance = self.get_object()
-        
-        # Verificar se o usuário tem um cliente atual definido
-        user = request.user
-        if not user.cliente_atual:
-            return Response(
-                {"detail": "Você precisa selecionar um cliente atual antes de realizar esta operação."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-            
-        # Verificar se o produto pertence ao cliente atual do usuário
-        if instance.cliente.id != user.cliente_atual.id:
-            return Response(
-                {"detail": "Este produto não pertence ao cliente atual selecionado."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        # Log para depuração
-        logger.info(f"Dados recebidos no PATCH: {request.data}")
-        
         try:
-            with transaction.atomic():
-                # Se estiver atualizando para produto_cliente=True
-                if request.data.get('produto_cliente') is True:
-                    # Desmarcar outros produtos com o mesmo nome
-                    Produto.objects.filter(
-                        cliente=instance.cliente,
-                        nome=instance.nome,
-                        produto_cliente=True
-                    ).exclude(id=instance.id).update(produto_cliente=False)
-                    
-                    # Se o tipo for concorrente, alterar para cliente
-                    if instance.tipo_produto == 'concorrente':
-                        if 'tipo_produto' not in request.data:
-                            request.data['tipo_produto'] = 'cliente'
-                            logger.info(f"Alterando automaticamente o tipo para 'cliente'. Dados atualizados: {request.data}")
+            instance = self.get_object()
+            
+            # Verificar se o usuário tem um cliente atual definido
+            user = request.user
+            if not user.cliente_atual:
+                return Response(
+                    {"detail": "Você precisa selecionar um cliente atual antes de realizar esta operação."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
                 
-                # Para atualizações parciais, usar o comportamento padrão
-                return super().partial_update(request, *args, **kwargs)
+            # Verificar se o produto pertence ao cliente atual do usuário
+            if instance.cliente.id != user.cliente_atual.id:
+                return Response(
+                    {"detail": "Este produto não pertence ao cliente atual selecionado."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+            # Log para depuração
+            logger.info(f"Dados recebidos no PATCH: {request.data}")
+            
+            # Adicione o cliente e grupo ao request.data se não estiverem presentes
+            if 'cliente' not in request.data:
+                request.data['cliente'] = instance.cliente.id
+                
+            if 'grupo' not in request.data:
+                request.data['grupo'] = instance.grupo.id
+            
+            # Se estiver atualizando para produto_cliente=True
+            if request.data.get('produto_cliente') is True:
+                # Desmarcar outros produtos com o mesmo nome e do mesmo cliente
+                outros_produtos = Produto.objects.filter(
+                    cliente=instance.cliente,
+                    nome=instance.nome,
+                    produto_cliente=True
+                ).exclude(id=instance.id)
+                
+                # Atualiza cada produto individualmente
+                for p in outros_produtos:
+                    p.produto_cliente = False
+                    p.save()
+                
+                # Se o tipo for concorrente, alterar para cliente
+                if instance.tipo_produto == 'concorrente':
+                    if 'tipo_produto' not in request.data:
+                        request.data['tipo_produto'] = 'cliente'
+                        logger.info(f"Alterando automaticamente o tipo para 'cliente'. Dados atualizados: {request.data}")
+            
+            # Para atualizações parciais, usar o comportamento padrão
+            return super().partial_update(request, *args, **kwargs)
         
         except Exception as e:
             logger.error(f"Erro ao atualizar produto: {str(e)}")

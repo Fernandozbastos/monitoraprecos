@@ -111,3 +111,33 @@ class Produto(models.Model):
         # Diferença percentual (positiva se o cliente for mais caro)
         diferenca = ((self.preco_cliente - menor_preco) / menor_preco) * 100
         return round(diferenca, 1)  # Arredonda para 1 casa decimal
+    
+    def save(self, *args, **kwargs):
+        """
+        Sobrescreve o método save para garantir que apenas um produto com o mesmo nome
+        seja marcado como produto_cliente para o mesmo cliente.
+        """
+        # Se este produto está sendo marcado como produto_cliente
+        if self.produto_cliente:
+            # Se o tipo for concorrente, alterar para cliente
+            if self.tipo_produto == 'concorrente':
+                self.tipo_produto = 'cliente'
+                
+            # Desmarcar outros produtos com o mesmo nome
+            with transaction.atomic():
+                # Primeiro salvamos este produto para garantir que ele existe
+                super().save(*args, **kwargs)
+                
+                # Depois desmarcamos outros produtos com o mesmo nome
+                # Usamos a mesma conexão de transação
+                Produto.objects.filter(
+                    cliente=self.cliente,
+                    nome=self.nome,
+                    produto_cliente=True
+                ).exclude(id=self.id).update(produto_cliente=False)
+                
+                # Não é necessário salvar novamente porque já salvamos acima
+                return
+        
+        # Caso normal, sem produto_cliente=True
+        super().save(*args, **kwargs)

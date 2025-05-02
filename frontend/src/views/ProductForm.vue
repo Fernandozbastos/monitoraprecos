@@ -643,6 +643,35 @@ const onSubmit = async () => {
         return
       }
       
+      // Se estiver marcando como produto_cliente=true, verificar se já existem outros com o mesmo nome
+      if (produtoParaEnviar.produto_cliente) {
+        try {
+          // Obter produtos com o mesmo nome
+          const produtosResponse = await api.get(`/produtos/?nome=${produtoParaEnviar.nome}&cliente=${clienteId}`)
+          const produtosDoMesmoNome = produtosResponse.data.results || []
+          
+          // Filtrar apenas os que estão marcados como produto_cliente
+          const produtosClienteBase = produtosDoMesmoNome.filter(p => 
+            p.produto_cliente === true && 
+            (isEditMode.value ? p.id !== produto.value.id : true)
+          )
+          
+          // Se encontrar outros produtos marcados como base, confirmar com o usuário
+          if (produtosClienteBase.length > 0) {
+            // Perguntar ao usuário usando o snackbar (não ideal, mas funcionará)
+            mostrarSnackbar(
+              `Já existe outro produto "${produtoParaEnviar.nome}" marcado como base. Este será desmarcado automaticamente.`,
+              'info',
+              5000
+            )
+            // Aqui não precisamos desmarcar manualmente, pois o backend já fará isso
+          }
+        } catch (err) {
+          console.error('Erro ao verificar outros produtos marcados como base:', err)
+          // Continuar mesmo se houver falha aqui
+        }
+      }
+      
       let response;
       if (isEditMode.value) {
         response = await api.put(`/produtos/${produto.value.id}/`, produtoParaEnviar)
