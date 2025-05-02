@@ -176,7 +176,11 @@
                   <div class="text-center mx-3 resumo-grupo">
                     <div class="caption grey--text">Preço Cliente</div>
                     <div class="subtitle-1 font-weight-medium primary--text">
-                      {{ formatarPreco(grupo.produtoClienteBase.preco_cliente) }}
+                      {{ 
+                        grupo.produtoClienteBase.preco_cliente ? 
+                        formatarPreco(grupo.produtoClienteBase.preco_cliente) : 
+                        'N/A' 
+                      }}
                     </div>
                   </div>
                   
@@ -184,7 +188,11 @@
                   <div class="text-center mx-3 resumo-grupo">
                     <div class="caption grey--text">Menor Preço</div>
                     <div class="subtitle-1 font-weight-medium">
-                      {{ formatarPreco(grupo.menorPrecoConcorrente) }}
+                      {{ 
+                        grupo.menorPrecoConcorrente ? 
+                        formatarPreco(grupo.menorPrecoConcorrente) : 
+                        'N/A' 
+                      }}
                     </div>
                   </div>
                   
@@ -235,7 +243,8 @@
                 <!-- Concorrente -->
                 <template v-slot:item.concorrente="{ item }">
                   <span :class="{'font-weight-bold': item.tipo_produto === 'cliente'}">
-                    {{ item.tipo_produto === 'cliente' ? 'Meu Cliente' : item.concorrente }}
+                    {{ item.concorrente }}
+                    <span v-if="item.produto_cliente" class="ml-1 caption font-italic">(Produto Cliente)</span>
                   </span>
                 </template>
                 
@@ -363,18 +372,6 @@
         </v-btn>
       </template>
     </v-snackbar>
-    
-    <!-- Botão de debug (discreto no canto inferior) -->
-    <v-btn
-      fab
-      small
-      color="grey lighten-3"
-      class="debug-btn"
-      @click="debug = !debug"
-      v-if="false" <!-- Desativando em produção -->
-    >
-      <v-icon color="grey darken-2">mdi-bug</v-icon>
-    </v-btn>
   </v-container>
 </template>
 
@@ -453,53 +450,66 @@ const produtosAgrupados = computed(() => {
   const grupos = []
   const nomesProdutos = new Set()
   
-  // Primeiro, colete todos os nomes únicos de produtos
+  // Coletar nomes únicos
   produtos.value.forEach(p => nomesProdutos.add(p.nome))
   
-  // Para cada nome de produto, crie um grupo
+  // Para cada nome, criar um grupo
   Array.from(nomesProdutos).forEach(nome => {
     const produtosDesseTipo = produtos.value.filter(p => p.nome === nome)
     
-    // Encontrar produto cliente base (marcado como produto_cliente)
+    // Produto cliente base (marcado como produto_cliente)
     const produtoClienteBase = produtosDesseTipo.find(p => p.produto_cliente === true)
     
     // Produtos concorrentes
     const produtosConcorrentes = produtosDesseTipo.filter(p => p.tipo_produto === 'concorrente')
     
-    // Encontrar o menor preço entre os concorrentes e o concorrente correspondente
+    // Encontrar menor preço entre concorrentes
     let menorPrecoConcorrente = null
     let concorrenteMenorPreco = null
     
     if (produtosConcorrentes.length > 0) {
-      // Encontrar o menor preço e o concorrente correspondente
-      let menorPreco = Number.MAX_SAFE_INTEGER
-      let produtoConcorrenteMenorPreco = null
-      
-      produtosConcorrentes.forEach(p => {
+      // Filtrar produtos concorrentes com preços válidos
+      const concorrentesComPreco = produtosConcorrentes.filter(p => {
         const preco = p.preco_ultimo || p.menor_preco_concorrente
-        if (preco !== null && preco !== undefined && preco < menorPreco) {
-          menorPreco = preco
-          produtoConcorrenteMenorPreco = p
-        }
+        return preco !== null && preco !== undefined && !isNaN(preco) && preco > 0
       })
       
-      if (menorPreco < Number.MAX_SAFE_INTEGER) {
+      if (concorrentesComPreco.length > 0) {
+        // Encontrar o com menor preço
+        let menorPreco = Number.MAX_SAFE_INTEGER
+        let produtoMenorPreco = null
+        
+        concorrentesComPreco.forEach(p => {
+          const preco = p.preco_ultimo || p.menor_preco_concorrente
+          if (preco < menorPreco) {
+            menorPreco = preco
+            produtoMenorPreco = p
+          }
+        })
+        
         menorPrecoConcorrente = menorPreco
-        concorrenteMenorPreco = produtoConcorrenteMenorPreco?.concorrente || null
+        concorrenteMenorPreco = produtoMenorPreco?.concorrente
+        
+        console.log(`Menor preço para ${nome}: ${menorPrecoConcorrente} (${concorrenteMenorPreco})`)
       }
     }
     
-    // Se não temos um produto cliente base, vamos procurar qualquer produto do cliente
-    // para exibir no resumo do grupo
-    let produtoClienteExibicao = produtoClienteBase;
+    // Se não tiver produto cliente base, usar qualquer produto do cliente
+    let produtoClienteExibicao = produtoClienteBase
     if (!produtoClienteExibicao) {
-      produtoClienteExibicao = produtosDesseTipo.find(p => p.tipo_produto === 'cliente');
+      produtoClienteExibicao = produtosDesseTipo.find(p => p.tipo_produto === 'cliente')
     }
     
-    // Calcular a diferença percentual entre o preço do cliente e o menor preço concorrente
-    let diferencaPercentual = null;
-    if (produtoClienteExibicao && produtoClienteExibicao.preco_cliente && menorPrecoConcorrente) {
-      diferencaPercentual = ((produtoClienteExibicao.preco_cliente - menorPrecoConcorrente) / menorPrecoConcorrente) * 100;
+    // Calcular diferença percentual
+    let diferencaPercentual = null
+    if (produtoClienteExibicao && 
+        produtoClienteExibicao.preco_cliente && 
+        !isNaN(produtoClienteExibicao.preco_cliente) && 
+        menorPrecoConcorrente && 
+        !isNaN(menorPrecoConcorrente)) {
+      
+      diferencaPercentual = ((produtoClienteExibicao.preco_cliente - menorPrecoConcorrente) / menorPrecoConcorrente) * 100
+      diferencaPercentual = Math.round(diferencaPercentual * 10) / 10
     }
     
     // Processar cada produto para exibição na tabela
@@ -509,14 +519,15 @@ const produtosAgrupados = computed(() => {
       // Para produtos do cliente, calcular a diferença em relação ao menor preço concorrente
       if (p.tipo_produto === 'cliente' && p.preco_cliente && menorPrecoConcorrente) {
         diferencaIndividual = ((p.preco_cliente - menorPrecoConcorrente) / menorPrecoConcorrente) * 100
+        diferencaIndividual = Math.round(diferencaIndividual * 10) / 10
       }
       
       // Para produtos concorrentes, calcular a diferença em relação ao produto cliente base
-      // ou qualquer produto cliente se não houver um produto cliente base
       if (p.tipo_produto === 'concorrente' && produtoClienteExibicao && produtoClienteExibicao.preco_cliente) {
         const precoConcorrente = p.preco_ultimo || p.menor_preco_concorrente
         if (precoConcorrente) {
           diferencaIndividual = ((precoConcorrente - produtoClienteExibicao.preco_cliente) / produtoClienteExibicao.preco_cliente) * 100
+          diferencaIndividual = Math.round(diferencaIndividual * 10) / 10
         }
       }
       
@@ -532,7 +543,7 @@ const produtosAgrupados = computed(() => {
     grupos.push({
       nome,
       produtos: produtosProcessados,
-      produtoClienteBase: produtoClienteExibicao,  // Usar o produto cliente para exibição
+      produtoClienteBase: produtoClienteExibicao,
       menorPrecoConcorrente,
       concorrenteMenorPreco,
       diferencaPercentual
@@ -577,9 +588,7 @@ const mostrarSnackbar = (texto, cor = 'success', timeout = 3000) => {
   }
 }
 
-// Função corrigida para o arquivo frontend/src/views/Dashboard.vue
-// Substitua a função definirProdutoClienteBase existente
-
+// Função para definir um produto como cliente base
 const definirProdutoClienteBase = async (produto) => {
   try {
     console.log(`Iniciando atualização do produto ${produto.id} para cliente base`);
@@ -620,8 +629,8 @@ const definirProdutoClienteBase = async (produto) => {
         try {
           await api.patch(`/produtos/${produtoAnterior.id}/`, {
             produto_cliente: false,
-            cliente: clienteId,  // Incluir cliente e grupo
-            grupo: grupoId      // para evitar erro de validação
+            cliente: clienteId,
+            grupo: grupoId
           });
           
           // Atualizar localmente
@@ -637,11 +646,11 @@ const definirProdutoClienteBase = async (produto) => {
       }
     }
     
-    // Preparar os dados de atualização com todos os campos obrigatórios
+    // Preparar os dados de atualização
     const dadosAtualizacao = {
       produto_cliente: true,
-      cliente: clienteId,  // Campo obrigatório
-      grupo: grupoId,      // Campo obrigatório
+      cliente: clienteId,
+      grupo: grupoId,
     };
     
     // Se o produto for do tipo concorrente, alterá-lo para cliente
@@ -673,13 +682,10 @@ const definirProdutoClienteBase = async (produto) => {
   } catch (error) {
     console.error('Erro ao definir produto cliente base:', error);
     
-    // Tratamento específico de erros
     if (error.response) {
       console.error('Detalhes do erro:', error.response.data);
       
-      // Mensagens de erro específicas baseadas na resposta do servidor
       if (error.response.status === 400) {
-        // Extrair mensagens de erro para exibição mais clara
         let mensagemErro = '';
         if (typeof error.response.data === 'object') {
           for (const campo in error.response.data) {
@@ -697,47 +703,83 @@ const definirProdutoClienteBase = async (produto) => {
         mostrarSnackbar(`Erro ao definir produto cliente base: ${error.response.data.detail || 'Erro interno do servidor'}`, 'error');
       }
     } else {
-      // Erro de conexão ou outro tipo
       mostrarSnackbar('Erro de conexão ao tentar atualizar o produto', 'error');
     }
   }
 }
 
-// Verificar se o grupo tem um produto do cliente
-const temProdutoCliente = (produtos) => {
-  return produtos.some(p => p.tipo_produto === 'cliente')
-}
-
-// Montar o componente
-onMounted(() => {
-  carregarDados()
-})
-
 // Função para obter o preço do produto (cliente ou concorrente)
 const getPreco = (produto) => {
+  // Para produtos do cliente
   if (produto.tipo_produto === 'cliente') {
-    return formatarPreco(produto.preco_cliente)
-  } else {
-    return formatarPreco(produto.preco_ultimo || produto.menor_preco_concorrente)
+    // Verificar se preco_cliente existe e é válido
+    if (produto.preco_cliente !== null && produto.preco_cliente !== undefined && 
+        !isNaN(produto.preco_cliente) && produto.preco_cliente > 0) {
+      return formatarPreco(produto.preco_cliente);
+    }
+    
+    // Caso não tenha, verificar preco_ultimo
+    if (produto.preco_ultimo !== null && produto.preco_ultimo !== undefined && 
+        !isNaN(produto.preco_ultimo) && produto.preco_ultimo > 0) {
+      return formatarPreco(produto.preco_ultimo);
+    }
+    
+    // Se não tiver nenhum, mostrar placeholder
+    return 'Preço não definido';
+  } 
+  // Para produtos concorrentes
+  else {
+    // Verificar preco_ultimo (do histórico)
+    if (produto.preco_ultimo !== null && produto.preco_ultimo !== undefined && 
+        !isNaN(produto.preco_ultimo) && produto.preco_ultimo > 0) {
+      return formatarPreco(produto.preco_ultimo);
+    }
+    
+    // Verificar menor_preco_concorrente
+    if (produto.menor_preco_concorrente !== null && produto.menor_preco_concorrente !== undefined && 
+        !isNaN(produto.menor_preco_concorrente) && produto.menor_preco_concorrente > 0) {
+      return formatarPreco(produto.menor_preco_concorrente);
+    }
+    
+    // Se não tiver nenhum, mostrar placeholder
+    return 'Preço não verificado';
   }
 }
 
-// Formatar preço
+// Formatação de preço
 const formatarPreco = (valor) => {
-  if (valor === null || valor === undefined) return '-'
-  return `R$ ${Number(valor).toFixed(2).replace('.', ',')}`
+  if (valor === null || valor === undefined || isNaN(valor)) {
+    return 'N/A';
+  }
+  
+  // Garantir que seja tratado como número
+  const numero = Number(valor);
+  if (isNaN(numero)) {
+    return 'N/A';
+  }
+  
+  return `R$ ${numero.toFixed(2).replace('.', ',')}`;
 }
 
-// Formatar percentual
+// Formatação de percentual
 const formatarPercentual = (valor) => {
-  if (valor === null || valor === undefined) return '-'
-  const sinal = valor > 0 ? '+' : ''
-  return `${sinal}${valor.toFixed(1).replace('.', ',')}%`
+  if (valor === null || valor === undefined || isNaN(valor)) {
+    return 'N/A';
+  }
+  
+  // Garantir que seja tratado como número
+  const numero = Number(valor);
+  if (isNaN(numero)) {
+    return 'N/A';
+  }
+  
+  const sinal = numero > 0 ? '+' : '';
+  return `${sinal}${numero.toFixed(1).replace('.', ',')}%`;
 }
 
 // Determinar a cor da diferença
 const getCorDiferenca = (diferenca) => {
-  if (diferenca === null || diferenca === undefined) return 'grey'
+  if (diferenca === null || diferenca === undefined || isNaN(diferenca)) return 'grey'
   return diferenca <= 0 ? 'success' : 'error'
 }
 
@@ -755,73 +797,81 @@ const formatDate = (dateString) => {
 
 // Função para carregar dados
 const carregarDados = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    // Limpar os dados atuais para garantir que não haja mistura de dados antigos
-    produtos.value = []
+    // Limpar os dados atuais
+    produtos.value = [];
     
-    // Adicionar um timestamp aleatório para prevenir cache
-    const timestamp = new Date().getTime()
+    // Usar timestamp para evitar cache
+    const timestamp = new Date().getTime();
     
     // Buscar produtos
-    const produtosResponse = await api.get(`/produtos/?t=${timestamp}`)
-    console.log('Resposta da API de produtos:', produtosResponse.data)
+    const produtosResponse = await api.get(`/produtos/?t=${timestamp}`);
+    console.log('Resposta da API de produtos:', produtosResponse.data);
     
-    // Armazenar produtos
     if (produtosResponse.data.results && Array.isArray(produtosResponse.data.results)) {
-      produtos.value = produtosResponse.data.results
-      console.log('Produtos carregados:', produtos.value.length)
+      produtos.value = produtosResponse.data.results;
+      console.log('Produtos carregados:', produtos.value.length);
       
       // Para cada produto, recuperar o histórico de preços
-      await Promise.all(produtos.value.map(async (produto) => {
+      const produtosPromises = produtos.value.map(async (produto) => {
         try {
-          // Recuperar histórico de preços para este produto
-          const historicoResponse = await api.get(`/produtos/${produto.id}/historico/?t=${timestamp}`)
-          produto.historico_precos = historicoResponse.data
+          // Recuperar histórico usando o endpoint correto
+          const historicoResponse = await api.get(`/historico/?produto=${produto.id}&limit=1`);
           
-          // Definir o preço mais recente como preco_ultimo
-          if (historicoResponse.data.length > 0) {
-            produto.preco_ultimo = parseFloat(historicoResponse.data[0].preco)
-            console.log(`Preço mais recente para ${produto.nome}: ${produto.preco_ultimo}`)
+          // Verificar se há resultados e se eles estão no formato esperado
+          if (historicoResponse.data && 
+              historicoResponse.data.results && 
+              historicoResponse.data.results.length > 0) {
+            
+            // Obter o preço do histórico mais recente
+            const precoHistorico = parseFloat(historicoResponse.data.results[0].preco);
+            console.log(`Preço do histórico para ${produto.nome}: ${precoHistorico}`);
+            
+            // Atribuir ao produto
+            produto.preco_ultimo = precoHistorico;
+            
+            // Para produtos do cliente sem preço, usar o do histórico
+            if (produto.tipo_produto === 'cliente' && 
+                (!produto.preco_cliente || produto.preco_cliente === 0)) {
+              produto.preco_cliente = precoHistorico;
+              
+              // Atualizar no backend
+              try {
+                await api.patch(`/produtos/${produto.id}/`, {
+                  preco_cliente: precoHistorico,
+                  cliente: produto.cliente,
+                  grupo: produto.grupo
+                });
+                console.log(`Preço do produto ${produto.id} atualizado no backend`);
+              } catch (err) {
+                console.error(`Erro ao atualizar preço no backend:`, err);
+              }
+            }
+          } else {
+            console.log(`Sem histórico de preço para produto ${produto.id}`);
           }
         } catch (error) {
-          console.error(`Erro ao carregar histórico do produto ${produto.id}:`, error)
+          console.error(`Erro ao carregar histórico do produto ${produto.id}:`, error);
         }
-      }))
+      });
       
-      // Verificar se há produtos marcados como produto_cliente
-      const produtosClienteBase = produtos.value.filter(p => p.produto_cliente === true)
-      console.log('Produtos marcados como produto_cliente:', produtosClienteBase.length)
+      // Aguardar todas as promessas
+      await Promise.all(produtosPromises);
       
-      // Verificar se há produtos do tipo cliente
-      const produtosTipoCliente = produtos.value.filter(p => p.tipo_produto === 'cliente')
-      console.log('Produtos do tipo cliente:', produtosTipoCliente.length)
-      
-      // Verificar inconsistências (produto_cliente = true, mas tipo_produto = 'concorrente')
-      const produtosInconsistentes = produtos.value.filter(
-        p => p.produto_cliente === true && p.tipo_produto === 'concorrente'
-      )
-      if (produtosInconsistentes.length > 0) {
-        console.warn('Produtos inconsistentes (marcados como base mas tipo concorrente):', 
-          produtosInconsistentes.map(p => ({ id: p.id, nome: p.nome }))
-        )
-      }
-      
-      // Abrir automaticamente o primeiro grupo se houver produtos
+      // Abrir o primeiro grupo
       if (produtosAgrupados.value.length > 0 && gruposAbertos.value.length === 0) {
-        gruposAbertos.value.push(0)
+        gruposAbertos.value.push(0);
       }
-      
     } else {
-      produtos.value = []
-      console.warn('Nenhum produto retornado da API')
+      produtos.value = [];
+      console.warn('Nenhum produto retornado da API');
     }
   } catch (error) {
-    console.error('Erro ao carregar dados:', error)
-    console.error('Detalhes do erro:', error.response?.data)
-    mostrarSnackbar('Erro ao carregar dados', 'error')
+    console.error('Erro ao carregar dados:', error);
+    mostrarSnackbar('Erro ao carregar dados', 'error');
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
@@ -847,6 +897,11 @@ const verDetalhes = (produtoId) => {
     router.push(`/products/${produtoId}`)
   }
 }
+
+// Montar o componente
+onMounted(() => {
+  carregarDados()
+})
 </script>
 
 <style scoped>
@@ -937,15 +992,7 @@ const verDetalhes = (produtoId) => {
   background-color: #fcfcfc;
 }
 
-.debug-btn {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  z-index: 100;
-  opacity: 0.6;
-}
-
-.debug-btn:hover {
-  opacity: 1;
+.rounded-circle {
+  border-radius: 50% !important;
 }
 </style>
