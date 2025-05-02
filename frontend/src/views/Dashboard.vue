@@ -105,6 +105,18 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-row class="mt-4">
+      <v-col cols="12" class="text-right">
+        <v-btn
+          color="success"
+          @click="$router.push('/products/add')"
+          class="text-white"
+        >
+          <v-icon left>mdi-plus</v-icon>
+          Adicionar Novo Produto
+        </v-btn>
+      </v-col>
+    </v-row>
     </v-container>
   </template>
   

@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from core.models import Usuario
+from core.models import Usuario, Cliente
 from core.serializers.usuario_serializers import UsuarioSerializer
 
 @api_view(['GET'])
@@ -27,3 +27,23 @@ def change_password(request):
     user.set_password(new_password)
     user.save()
     return Response({'detail': 'Senha alterada com sucesso'})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def set_cliente_atual(request):
+    """Endpoint para definir o cliente atual do usuário"""
+    cliente_id = request.data.get('cliente_atual')
+    
+    try:
+        cliente = Cliente.objects.get(id=cliente_id)
+    except Cliente.DoesNotExist:
+        return Response({'detail': 'Cliente não encontrado'}, status=400)
+    
+    # Atualiza o cliente atual do usuário
+    user = request.user
+    user.cliente_atual = cliente
+    user.save()
+    
+    # Retorna os dados atualizados do usuário
+    serializer = UsuarioSerializer(user)
+    return Response(serializer.data)

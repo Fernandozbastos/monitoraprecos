@@ -33,11 +33,25 @@
                   v-model="produto.url"
                   :rules="[
                     v => !!v || 'URL é obrigatória',
-                    v => /^https?:\/\/.+/.test(v) || 'URL deve começar com http:// ou https://'
+                    v => /^https?:\/\/.+/.test(v) || 'URL deve começar com http:// ou https://',
+                    v => v.length <= 1000 || 'URL não pode exceder 1000 caracteres'
                   ]"
                   label="URL do Produto"
+                  hint="Insira a URL completa da página do produto"
+                  persistent-hint
                   required
-                ></v-text-field>
+                >
+                  <template v-slot:append>
+                    <v-btn 
+                      icon 
+                      small 
+                      v-if="produto.url" 
+                      @click="abrirUrlPrevia"
+                    >
+                      <v-icon>mdi-open-in-new</v-icon>
+                    </v-btn>
+                  </template>
+                </v-text-field>
               </v-col>
               
               <v-col cols="12" md="6">
@@ -109,6 +123,13 @@
   const route = useRoute()
   const router = useRouter()
   
+  const abrirUrlPrevia = () => {
+  if (produto.value.url) {
+    window.open(produto.value.url, '_blank');
+  }
+}
+
+
   // Estado do formulário
   const form = ref(null)
   const valid = ref(false)
@@ -199,18 +220,40 @@
     if (isValid?.valid) {
       loading.value = true
       try {
+        // Obtém o cliente atual do usuário
+        const userInfo = await api.get('/user/info/')
+        
+        // Verifica se o cliente_atual está definido
+        if (!userInfo.data.cliente_atual) {
+          mostrarSnackbar('Você precisa selecionar um cliente atual antes de adicionar um produto', 'error')
+          loading.value = false
+          return
+        }
+        
+        // Cria uma cópia do produto para modificação
+        const produtoParaEnviar = {
+          ...produto.value,
+          cliente: userInfo.data.cliente_atual,
+          // Converte o objeto plataforma para apenas o ID
+          plataforma: produto.value.plataforma ? produto.value.plataforma.id : null,
+          // Certifique-se de que grupo é um ID, não um objeto
+          grupo: typeof produto.value.grupo === 'object' ? produto.value.grupo.id : produto.value.grupo
+        }
+        
+        console.log('Enviando produto:', produtoParaEnviar);
+        
         if (isEditMode.value) {
-          await api.put(`/produtos/${produto.value.id}/`, produto.value)
+          await api.put(`/produtos/${produto.value.id}/`, produtoParaEnviar)
           mostrarSnackbar('Produto atualizado com sucesso')
         } else {
-          await api.post('/produtos/', produto.value)
+          await api.post('/produtos/', produtoParaEnviar)
           mostrarSnackbar('Produto adicionado com sucesso')
         }
         router.push('/products')
       } catch (error) {
         console.error('Erro ao salvar produto:', error)
         mostrarSnackbar(
-          error.response?.data?.detail || 'Erro ao salvar produto', 
+          'Erro ao salvar produto. Verifique se você tem um cliente selecionado.', 
           'error'
         )
       } finally {

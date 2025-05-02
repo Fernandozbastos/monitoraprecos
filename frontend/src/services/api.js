@@ -4,13 +4,12 @@ import store from '../store' // Importar o store diretamente
 
 // Cria uma instância do axios com URL base
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
+  baseURL: '/api',  // Isso usará o proxy configurado no Vite
   headers: {
     'Content-Type': 'application/json',
   },
   timeout: 10000
 })
-
 // Intercepta as requisições para adicionar o token JWT
 apiClient.interceptors.request.use(
   config => {
