@@ -338,6 +338,23 @@
                       </template>
                       <span>Definir como produto cliente base</span>
                     </v-tooltip>
+
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          x-small
+                          color="error"
+                          class="ml-1"
+                          @click="excluirProduto(item)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Excluir produto</span>
+                    </v-tooltip>
                   </div>
                 </template>
               </v-data-table>
@@ -613,22 +630,25 @@ const definirProdutoClienteBase = async (produto) => {
       
     console.log('Grupo ID:', grupoId);
     
-    // Encontrar outros produtos com o mesmo nome que já estão marcados como produto_cliente
-    const produtosDoMesmoNome = produtos.value.filter(p => 
+    // 1. Primeiro, encontrar TODOS os produtos com o mesmo nome que não são o atual
+    const outrosProdutos = produtos.value.filter(p => 
       p.nome === produto.nome && 
-      p.id !== produto.id && 
-      p.produto_cliente === true
+      p.id !== produto.id
     );
     
-    // Se encontrar outros produtos marcados como base, desmarcar eles antes
-    if (produtosDoMesmoNome.length > 0) {
-      console.log(`Encontrados ${produtosDoMesmoNome.length} produtos com o mesmo nome marcados como cliente base. Desmarcando...`);
+    console.log(`Encontrados ${outrosProdutos.length} outros produtos com o mesmo nome`);
+    
+    // 2. Se houver algum produto que está marcado como produto_cliente, desmarcá-lo
+    const produtosMarcadosComoBase = outrosProdutos.filter(p => p.produto_cliente === true);
+    
+    if (produtosMarcadosComoBase.length > 0) {
+      console.log(`Encontrados ${produtosMarcadosComoBase.length} produtos marcados como cliente base. Desmarcando...`);
       
-      // Para cada produto encontrado, desmarcar como produto_cliente
-      for (const produtoAnterior of produtosDoMesmoNome) {
+      for (const produtoAnterior of produtosMarcadosComoBase) {
         try {
           await api.patch(`/produtos/${produtoAnterior.id}/`, {
             produto_cliente: false,
+            tipo_produto: 'concorrente', // Mudar para concorrente
             cliente: clienteId,
             grupo: grupoId
           });
@@ -637,29 +657,51 @@ const definirProdutoClienteBase = async (produto) => {
           const idx = produtos.value.findIndex(p => p.id === produtoAnterior.id);
           if (idx !== -1) {
             produtos.value[idx].produto_cliente = false;
+            produtos.value[idx].tipo_produto = 'concorrente';
           }
           
-          console.log(`Produto ${produtoAnterior.id} desmarcado como cliente base`);
+          console.log(`Produto ${produtoAnterior.id} desmarcado como cliente base e alterado para concorrente`);
         } catch (err) {
           console.error(`Erro ao desmarcar produto ${produtoAnterior.id}:`, err);
         }
       }
     }
     
-    // Preparar os dados de atualização
+    // 3. Agora, garantir que TODOS os outros produtos com o mesmo nome sejam marcados como concorrentes
+    for (const outroProduto of outrosProdutos) {
+      // Se ainda não for marcado como concorrente, marcá-lo
+      if (outroProduto.tipo_produto !== 'concorrente') {
+        try {
+          await api.patch(`/produtos/${outroProduto.id}/`, {
+            tipo_produto: 'concorrente',
+            produto_cliente: false, // Garantir que não seja cliente base
+            cliente: clienteId,
+            grupo: grupoId
+          });
+          
+          // Atualizar localmente
+          const idx = produtos.value.findIndex(p => p.id === outroProduto.id);
+          if (idx !== -1) {
+            produtos.value[idx].tipo_produto = 'concorrente';
+            produtos.value[idx].produto_cliente = false;
+          }
+          
+          console.log(`Produto ${outroProduto.id} alterado para concorrente`);
+        } catch (err) {
+          console.error(`Erro ao alterar tipo do produto ${outroProduto.id}:`, err);
+        }
+      }
+    }
+    
+    // 4. Finalmente, atualizar o produto selecionado como cliente base
     const dadosAtualizacao = {
       produto_cliente: true,
+      tipo_produto: 'cliente', // Garantir que seja do tipo cliente
       cliente: clienteId,
       grupo: grupoId,
     };
     
-    // Se o produto for do tipo concorrente, alterá-lo para cliente
-    if (produto.tipo_produto === 'concorrente') {
-      dadosAtualizacao.tipo_produto = 'cliente';
-      console.log('Alterando o tipo do produto de concorrente para cliente:', dadosAtualizacao);
-    }
-    
-    console.log('Dados de atualização completos:', dadosAtualizacao);
+    console.log('Dados de atualização para produto principal:', dadosAtualizacao);
     
     // Atualizar o produto com o novo status
     const response = await api.patch(`/produtos/${produto.id}/`, dadosAtualizacao);
@@ -872,6 +914,71 @@ const carregarDados = async () => {
     mostrarSnackbar('Erro ao carregar dados', 'error');
   } finally {
     loading.value = false;
+  }
+}
+
+// Função para excluir um produto
+const excluirProduto = async (produto) => {
+  try {
+    // Verificar se existe um cliente atual selecionado
+    if (!store.getters['auth/user']?.cliente_atual) {
+      mostrarSnackbar('Por favor, selecione um cliente atual no menu superior antes de continuar', 'warning');
+      return;
+    }
+    
+    // Solicitar confirmação do usuário
+    if (!confirm(`Tem certeza que deseja excluir o produto "${produto.nome}"?`)) {
+      return;
+    }
+    
+    // Verificar se é um produto cliente base
+    const ehProdutoClienteBase = produto.produto_cliente === true;
+    
+    // Excluir o produto
+    await api.delete(`/produtos/${produto.id}/`);
+    
+    // Se era um produto cliente base, verificar se há outros produtos do mesmo nome
+    // para talvez selecionar um novo produto cliente base
+    if (ehProdutoClienteBase) {
+      // Buscar outros produtos com o mesmo nome
+      const outrosProdutos = produtos.value.filter(p => 
+        p.nome === produto.nome && 
+        p.id !== produto.id
+      );
+      
+      if (outrosProdutos.length > 0) {
+        // Se houver outros produtos, podemos opcionalmente selecionar um novo produto cliente base
+        // No momento, vamos deixar sem produto cliente base, mas poderia ser implementado aqui
+        console.log(`O produto cliente base foi excluído. Existem ${outrosProdutos.length} outros produtos com o mesmo nome.`);
+      }
+    }
+    
+    // Remover o produto da lista local
+    const produtoIndex = produtos.value.findIndex(p => p.id === produto.id);
+    if (produtoIndex !== -1) {
+      produtos.value.splice(produtoIndex, 1);
+    }
+    
+    // Recarregar dados após a exclusão
+    await carregarDados();
+    
+    mostrarSnackbar('Produto excluído com sucesso', 'success');
+    
+  } catch (error) {
+    console.error('Erro ao excluir produto:', error);
+    
+    if (error.response) {
+      console.error('Detalhes do erro:', error.response.data);
+      
+      if (error.response.status === 403) {
+        mostrarSnackbar('Você não tem permissão para excluir este produto.', 'error');
+      }
+      else {
+        mostrarSnackbar(`Erro ao excluir produto: ${error.response.data.detail || 'Erro interno do servidor'}`, 'error');
+      }
+    } else {
+      mostrarSnackbar('Erro de conexão ao tentar excluir o produto', 'error');
+    }
   }
 }
 

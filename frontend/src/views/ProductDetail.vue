@@ -34,7 +34,7 @@
         <v-col cols="12">
           <v-card elevation="3" class="mb-6 gradient-header">
             <v-card-text class="pa-6">
-              <div class="d-flex flex-wrap">
+              <div class="d-flex flex-wrap align-center">
                 <div>
                   <h1 class="text-h4 white--text mb-1">{{ produto.nome || 'Detalhes do Produto' }}</h1>
                   <p class="text-subtitle-1 white--text mb-0">
@@ -72,6 +72,16 @@
                   >
                     <v-icon left>mdi-open-in-new</v-icon>
                     Abrir Site
+                  </v-btn>
+                  
+                  <!-- Botão de exclusão -->
+                  <v-btn 
+                    color="error"
+                    class="ml-2"
+                    @click="excluirProduto"
+                  >
+                    <v-icon left>mdi-delete</v-icon>
+                    Excluir
                   </v-btn>
                 </div>
               </div>
@@ -441,6 +451,48 @@ const mostrarSnackbar = (texto, cor = 'success', timeout = 3000) => {
   }
 }
 
+// Função para excluir o produto atual
+const excluirProduto = async () => {
+  if (!produto.value.id) {
+    console.error('ID do produto não disponível');
+    return;
+  }
+  
+  // Solicitar confirmação do usuário
+  if (!confirm(`Tem certeza que deseja excluir o produto "${produto.value.nome}"?`)) {
+    return;
+  }
+  
+  try {
+    // Verificar se é um produto cliente base
+    const ehProdutoClienteBase = produto.value.produto_cliente === true;
+    
+    // Excluir o produto
+    await api.delete(`/produtos/${produto.value.id}/`);
+    
+    mostrarSnackbar('Produto excluído com sucesso');
+    
+    // Redirecionar para a lista de produtos
+    router.push('/products');
+    
+  } catch (error) {
+    console.error('Erro ao excluir produto:', error);
+    
+    if (error.response) {
+      console.error('Detalhes do erro:', error.response.data);
+      
+      if (error.response.status === 403) {
+        mostrarSnackbar('Você não tem permissão para excluir este produto.', 'error');
+      }
+      else {
+        mostrarSnackbar(`Erro ao excluir produto: ${error.response.data.detail || 'Erro interno do servidor'}`, 'error');
+      }
+    } else {
+      mostrarSnackbar('Erro de conexão ao tentar excluir o produto', 'error');
+    }
+  }
+};
+
 // Função para corrigir o tipo do produto
 const corrigirTipoProduto = async () => {
   corrigindoTipo.value = true;
@@ -459,74 +511,6 @@ const corrigirTipoProduto = async () => {
     mostrarSnackbar('Erro ao corrigir tipo do produto', 'error');
   } finally {
     corrigindoTipo.value = false;
-  }
-}
-
-// Carregar informações do produto
-const carregarProduto = async () => {
-  loading.value = true;
-  try {
-    const produtoId = route.params.id;
-    console.log('Carregando produto com ID:', produtoId);
-    
-    // Buscar o produto
-    const response = await api.get(`/produtos/${produtoId}/`);
-    produto.value = response.data;
-    console.log('Produto carregado:', produto.value);
-    
-    // Inconsistência detectada: produto marcado como produto_cliente mas tipo é concorrente
-    if (produto.value.produto_cliente && produto.value.tipo_produto === 'concorrente') {
-      console.warn('Inconsistência: Produto marcado como produto_cliente, mas é do tipo concorrente:', produto.value);
-      // Podemos mostrar um aviso para o usuário
-      mostrarSnackbar('Este produto está marcado como produto cliente base, mas é do tipo concorrente. Considere ajustar o tipo.', 'warning', 6000);
-    }
-    
-    // Atualiza o campo de preço para produtos do tipo cliente
-    if (produto.value.tipo_produto === 'cliente') {
-      // Se o preço do cliente estiver definido no produto, use-o
-      if (produto.value.preco_cliente !== null && produto.value.preco_cliente !== undefined) {
-        precoCliente.value = produto.value.preco_cliente;
-      } else {
-        // Se o preço do cliente não estiver definido, inicializa com zero
-        precoCliente.value = 0;
-        // E atualiza o objeto do produto para evitar "null" na exibição
-        produto.value.preco_cliente = 0;
-      }
-    }
-    
-    // Carregar o histórico de preços
-    try {
-      const historicoResponse = await api.get(`/produtos/${produtoId}/historico/`);
-      if (historicoResponse.data && historicoResponse.data.length > 0) {
-        // Usar o preço mais recente do histórico, se disponível
-        const precoMaisRecente = parseFloat(historicoResponse.data[0].preco);
-        console.log('Preço mais recente do histórico:', precoMaisRecente);
-        
-        // Para produtos do cliente, atualizar o preço se não estiver definido
-        if (produto.value.tipo_produto === 'cliente' && 
-            (produto.value.preco_cliente === null || produto.value.preco_cliente === undefined || produto.value.preco_cliente === 0)) {
-          produto.value.preco_cliente = precoMaisRecente;
-          precoCliente.value = precoMaisRecente;
-        }
-        
-        // Para produtos do tipo concorrente marcados como produto_cliente (inconsistente),
-        // precisamos exibir o preço mais recente em algum lugar
-        if (produto.value.tipo_produto === 'concorrente' && produto.value.produto_cliente) {
-          // Como é concorrente, não podemos usar preco_cliente, então vamos armazenar em uma propriedade auxiliar
-          produto.value.preco_exibicao = precoMaisRecente;
-        }
-      }
-    } catch (error) {
-      console.error('Erro ao carregar histórico de preços:', error);
-      // Continuar mesmo se o histórico falhar, não é crítico
-    }
-    
-  } catch (error) {
-    console.error('Erro ao carregar produto:', error);
-    produto.value = {};
-    mostrarSnackbar('Erro ao carregar produto', 'error');
-  } finally {
-    loading.value = false;
   }
 }
 
@@ -566,6 +550,33 @@ const atualizarProdutoClienteStatus = async () => {
         // Atualizar também localmente
         produto.value.tipo_produto = 'cliente';
         console.log('Alterando o tipo do produto de concorrente para cliente:', dadosAtualizacao);
+      }
+      
+      // Encontrar outros produtos com o mesmo nome
+      try {
+        // Obter produtos com o mesmo nome
+        const produtosResponse = await api.get(`/produtos/?nome=${produto.value.nome}`);
+        const outrosProdutos = produtosResponse.data.results.filter(p => 
+          p.id !== produto.value.id
+        );
+        
+        // Para cada produto encontrado, atualizar para tipo concorrente
+        for (const outroProduto of outrosProdutos) {
+          try {
+            await api.patch(`/produtos/${outroProduto.id}/`, {
+              tipo_produto: 'concorrente',
+              produto_cliente: false,
+              cliente: clienteId,
+              grupo: grupoId
+            });
+            
+            console.log(`Produto ${outroProduto.id} atualizado para concorrente`);
+          } catch (err) {
+            console.error(`Erro ao atualizar tipo do produto ${outroProduto.id}:`, err);
+          }
+        }
+      } catch (err) {
+        console.error('Erro ao buscar outros produtos com o mesmo nome:', err);
       }
       
       // Desmarcar outros produtos com o mesmo nome que possam estar marcados como base
@@ -679,6 +690,74 @@ const atualizarPrecoCliente = async () => {
     mostrarSnackbar('Erro ao atualizar preço do cliente', 'error');
   } finally {
     atualizandoPreco.value = false;
+  }
+}
+
+// Carregar informações do produto
+const carregarProduto = async () => {
+  loading.value = true;
+  try {
+    const produtoId = route.params.id;
+    console.log('Carregando produto com ID:', produtoId);
+    
+    // Buscar o produto
+    const response = await api.get(`/produtos/${produtoId}/`);
+    produto.value = response.data;
+    console.log('Produto carregado:', produto.value);
+    
+    // Inconsistência detectada: produto marcado como produto_cliente mas tipo é concorrente
+    if (produto.value.produto_cliente && produto.value.tipo_produto === 'concorrente') {
+      console.warn('Inconsistência: Produto marcado como produto_cliente, mas é do tipo concorrente:', produto.value);
+      // Podemos mostrar um aviso para o usuário
+      mostrarSnackbar('Este produto está marcado como produto cliente base, mas é do tipo concorrente. Considere ajustar o tipo.', 'warning', 6000);
+    }
+    
+    // Atualiza o campo de preço para produtos do tipo cliente
+    if (produto.value.tipo_produto === 'cliente') {
+      // Se o preço do cliente estiver definido no produto, use-o
+      if (produto.value.preco_cliente !== null && produto.value.preco_cliente !== undefined) {
+        precoCliente.value = produto.value.preco_cliente;
+      } else {
+        // Se o preço do cliente não estiver definido, inicializa com zero
+        precoCliente.value = 0;
+        // E atualiza o objeto do produto para evitar "null" na exibição
+        produto.value.preco_cliente = 0;
+      }
+    }
+    
+    // Carregar o histórico de preços
+    try {
+      const historicoResponse = await api.get(`/historico/?produto=${produtoId}&limit=1`);
+      if (historicoResponse.data.results && historicoResponse.data.results.length > 0) {
+        // Usar o preço mais recente do histórico, se disponível
+        const precoMaisRecente = parseFloat(historicoResponse.data.results[0].preco);
+        console.log('Preço mais recente do histórico:', precoMaisRecente);
+        
+        // Para produtos do cliente, atualizar o preço se não estiver definido
+        if (produto.value.tipo_produto === 'cliente' && 
+            (produto.value.preco_cliente === null || produto.value.preco_cliente === undefined || produto.value.preco_cliente === 0)) {
+          produto.value.preco_cliente = precoMaisRecente;
+          precoCliente.value = precoMaisRecente;
+        }
+        
+        // Para produtos do tipo concorrente marcados como produto_cliente (inconsistente),
+        // precisamos exibir o preço mais recente em algum lugar
+        if (produto.value.tipo_produto === 'concorrente' && produto.value.produto_cliente) {
+          // Como é concorrente, não podemos usar preco_cliente, então vamos armazenar em uma propriedade auxiliar
+          produto.value.preco_exibicao = precoMaisRecente;
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar histórico de preços:', error);
+      // Continuar mesmo se o histórico falhar, não é crítico
+    }
+    
+  } catch (error) {
+    console.error('Erro ao carregar produto:', error);
+    produto.value = {};
+    mostrarSnackbar('Erro ao carregar produto', 'error');
+  } finally {
+    loading.value = false;
   }
 }
 
