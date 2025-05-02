@@ -1,136 +1,355 @@
 <template>
   <v-container fluid>
+    <!-- Cabeçalho -->
     <v-row>
       <v-col cols="12">
-        <h1 class="text-h4 mb-4">{{ isEditMode ? 'Editar Produto' : 'Adicionar Produto' }}</h1>
+        <v-card elevation="3" class="mb-6 gradient-header">
+          <v-card-text class="pa-6">
+            <div class="d-flex align-center">
+              <div>
+                <h1 class="text-h4 white--text mb-1">{{ isEditMode ? 'Editar Produto' : 'Adicionar Produto' }}</h1>
+                <p class="text-subtitle-1 white--text mb-0">
+                  {{ isEditMode ? 'Atualize as informações do produto' : 'Cadastre um novo produto para monitoramento' }}
+                </p>
+              </div>
+              <v-spacer></v-spacer>
+              <v-btn
+                icon
+                color="white"
+                @click="$router.go(-1)"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
     
+    <!-- Formulário principal -->
     <v-form ref="form" v-model="valid" @submit.prevent="onSubmit">
-      <v-card elevation="2">
-        <v-card-text>
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="produto.nome"
-                :rules="[v => !!v || 'Nome é obrigatório']"
-                label="Nome do Produto"
-                required
-              ></v-text-field>
-            </v-col>
-            
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="produto.concorrente"
-                :rules="[v => !!v || 'Concorrente é obrigatório']"
-                label="Concorrente"
-                required
-              ></v-text-field>
-            </v-col>
-            
-            <v-col cols="12">
-              <v-text-field
-                v-model="produto.url"
-                :rules="[
-                  v => !!v || 'URL é obrigatória',
-                  v => /^https?:\/\/.+/.test(v) || 'URL deve começar com http:// ou https://',
-                  v => v.length <= 1000 || 'URL não pode exceder 1000 caracteres'
-                ]"
-                label="URL do Produto"
-                hint="Insira a URL completa da página do produto"
-                persistent-hint
-                required
-              >
-                <template v-slot:append>
-                  <v-btn 
-                    icon 
-                    small 
-                    v-if="produto.url" 
-                    @click="abrirUrlPrevia"
-                  >
-                    <v-icon>mdi-open-in-new</v-icon>
-                  </v-btn>
-                </template>
-              </v-text-field>
-            </v-col>
-            
-            <v-col cols="12" md="6">
-              <v-select
-                v-model="produto.plataforma"
-                :items="plataformas"
-                item-title="nome"
-                item-value="id"
-                label="Plataforma"
-                return-object
-                :loading="loadingPlataformas"
-              ></v-select>
-            </v-col>
-            
-            <!-- Seletor de grupo oculto, será preenchido automaticamente -->
-            <!-- 
-            <v-col cols="12" md="6">
-              <v-select
-                v-model="produto.grupo"
-                :items="grupos"
-                item-title="nome"
-                item-value="id"
-                label="Grupo"
-                required
-                :rules="[v => !!v || 'Grupo é obrigatório']"
-                :loading="loadingGrupos"
-              ></v-select>
-            </v-col>
-            -->
-            
-            <v-col cols="12">
-              <v-switch
-                v-model="produto.verificacao_manual"
-                label="Verificação Manual"
-                hint="Se ativado, o produto não será verificado automaticamente"
-                persistent-hint
-              ></v-switch>
-            </v-col>
-          </v-row>
-        </v-card-text>
+      <v-card elevation="2" class="form-card">
+        <v-tabs
+          v-model="activeTab"
+          background-color="primary"
+          dark
+          grow
+        >
+          <v-tab>
+            <v-icon left>mdi-information-outline</v-icon>
+            Informações Básicas
+          </v-tab>
+          <v-tab>
+            <v-icon left>mdi-web</v-icon>
+            URL e Plataforma
+          </v-tab>
+          <v-tab>
+            <v-icon left>mdi-cog-outline</v-icon>
+            Configurações
+          </v-tab>
+        </v-tabs>
         
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="$router.go(-1)">Cancelar</v-btn>
+        <v-tabs-items v-model="activeTab">
+          <!-- Aba 1: Informações Básicas -->
+          <v-tab-item>
+            <v-card-text class="pa-6">
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="produto.nome"
+                    :rules="[v => !!v || 'Nome é obrigatório']"
+                    label="Nome do Produto"
+                    filled
+                    hide-details="auto"
+                    prepend-icon="mdi-tag"
+                    required
+                  ></v-text-field>
+                  <div class="caption text-grey ml-12 mt-1">
+                    Use o mesmo nome para produtos similares de diferentes concorrentes para facilitar comparações.
+                  </div>
+                </v-col>
+                
+                <v-col cols="12" md="6">
+                  <v-select
+                    v-model="produto.tipo_produto"
+                    :items="tiposProduto"
+                    item-text="texto"
+                    item-value="valor"
+                    label="Tipo de Produto"
+                    filled
+                    hide-details="auto"
+                    prepend-icon="mdi-store"
+                    required
+                  ></v-select>
+                  <div class="caption text-grey ml-12 mt-1">
+                    Produtos do tipo "Cliente" são seus próprios produtos. Produtos "Concorrentes" são de outras empresas.
+                  </div>
+                </v-col>
+                
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="produto.concorrente"
+                    :rules="[v => !!v || 'Concorrente/Marca é obrigatório']"
+                    label="Concorrente / Marca"
+                    filled
+                    hide-details="auto"
+                    prepend-icon="mdi-account-group"
+                    required
+                  ></v-text-field>
+                  <div class="caption text-grey ml-12 mt-1">
+                    Nome da empresa concorrente ou sua própria marca para produtos do cliente.
+                  </div>
+                </v-col>
+                
+                <v-col cols="12" md="6" v-if="produto.tipo_produto === 'cliente'">
+                  <v-text-field
+                    v-model="produto.preco_cliente"
+                    label="Preço do Produto (R$)"
+                    filled
+                    type="number"
+                    step="0.01"
+                    hide-details="auto"
+                    prefix="R$"
+                    prepend-icon="mdi-currency-usd"
+                  ></v-text-field>
+                  <div class="caption text-grey ml-12 mt-1">
+                    Preço atual do seu produto. Você pode atualizar isso mais tarde.
+                  </div>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-tab-item>
+          
+          <!-- Aba 2: URL e Plataforma -->
+          <v-tab-item>
+            <v-card-text class="pa-6">
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="produto.url"
+                    :rules="[
+                      v => !!v || 'URL é obrigatória',
+                      v => /^https?:\/\/.+/.test(v) || 'URL deve começar com http:// ou https://',
+                      v => v.length <= 1000 || 'URL não pode exceder 1000 caracteres'
+                    ]"
+                    label="URL do Produto"
+                    filled
+                    hide-details="auto"
+                    prepend-icon="mdi-link-variant"
+                    required
+                  >
+                    <template v-slot:append>
+                      <v-btn 
+                        icon 
+                        small 
+                        v-if="produto.url" 
+                        @click="abrirUrlPrevia"
+                        color="primary"
+                      >
+                        <v-icon>mdi-open-in-new</v-icon>
+                      </v-btn>
+                    </template>
+                  </v-text-field>
+                  <div class="caption text-grey ml-12 mt-1">
+                    URL completa da página do produto que deseja monitorar.
+                  </div>
+                </v-col>
+                
+                <v-col cols="12" md="6">
+                  <v-select
+                    v-model="produto.plataforma"
+                    :items="plataformas"
+                    item-text="nome"
+                    item-value="id"
+                    label="Plataforma"
+                    filled
+                    hide-details="auto"
+                    prepend-icon="mdi-web"
+                    :loading="loadingPlataformas"
+                    return-object
+                  ></v-select>
+                  <div class="caption text-grey ml-12 mt-1">
+                    Escolha a plataforma ou site onde o produto está hospedado.
+                  </div>
+                </v-col>
+                
+                <v-col cols="12" md="6">
+                  <v-autocomplete
+                    v-model="dominioSelecionado"
+                    :items="dominiosDisponiveis"
+                    item-text="nome"
+                    label="Domínio Detectado"
+                    filled
+                    hide-details="auto"
+                    prepend-icon="mdi-web"
+                    readonly
+                    disabled
+                  ></v-autocomplete>
+                  <div class="caption text-grey ml-12 mt-1">
+                    Domínio detectado automaticamente a partir da URL.
+                  </div>
+                </v-col>
+              </v-row>
+              
+              <!-- Alerta de previsualização -->
+              <v-alert
+                v-if="produto.url && produto.plataforma"
+                color="info"
+                outlined
+                class="mt-4"
+                icon="mdi-information"
+              >
+                <div class="d-flex align-center">
+                  <div class="flex-grow-1">
+                    <strong>Seletor de preço:</strong> {{ produto.plataforma ? produto.plataforma.seletor_css || 'Não definido' : 'Não definido' }}
+                  </div>
+                  <v-btn
+                    color="info"
+                    text
+                    @click="testarSeletor"
+                    :loading="testandoSeletor"
+                  >
+                    <v-icon left>mdi-test-tube</v-icon>
+                    Testar Extração
+                  </v-btn>
+                </div>
+              </v-alert>
+              
+              <!-- Resultado do teste de extração -->
+              <v-expand-transition>
+                <v-sheet
+                  v-if="resultadoTeste"
+                  class="pa-4 mt-3"
+                  :color="resultadoTeste.sucesso ? 'success lighten-4' : 'error lighten-4'"
+                  rounded
+                >
+                  <div class="d-flex align-center">
+                    <v-icon 
+                      :color="resultadoTeste.sucesso ? 'success' : 'error'"
+                      class="mr-2"
+                    >
+                      {{ resultadoTeste.sucesso ? 'mdi-check-circle' : 'mdi-alert-circle' }}
+                    </v-icon>
+                    <div>
+                      <strong>{{ resultadoTeste.sucesso ? 'Preço encontrado!' : 'Erro na extração!' }}</strong>
+                      <div>{{ resultadoTeste.mensagem }}</div>
+                    </div>
+                  </div>
+                </v-sheet>
+              </v-expand-transition>
+            </v-card-text>
+          </v-tab-item>
+          
+          <!-- Aba 3: Configurações -->
+          <v-tab-item>
+            <v-card-text class="pa-6">
+              <v-row>
+                <v-col cols="12">
+                  <v-switch
+                    v-model="produto.verificacao_manual"
+                    label="Verificação Manual"
+                    color="warning"
+                    hide-details="auto"
+                  ></v-switch>
+                  <div class="caption text-grey ml-12 mt-1">
+                    Se ativado, o produto não será verificado automaticamente pelo sistema.
+                  </div>
+                </v-col>
+                
+                <v-col cols="12">
+                  <v-switch
+                    v-model="produto.produto_cliente"
+                    label="Produto Cliente Base"
+                    color="primary"
+                    hide-details="auto"
+                    :disabled="produto.tipo_produto !== 'cliente'"
+                  ></v-switch>
+                  <div class="caption text-grey ml-12 mt-1">
+                    Marca este produto como base para comparações de preço. Apenas produtos do tipo cliente podem ser marcados como base.
+                  </div>
+                </v-col>
+                
+                <v-col cols="12" class="mt-4">
+                  <v-alert
+                    type="info"
+                    outlined
+                    icon="mdi-information-outline"
+                  >
+                    <div class="text-subtitle-2 mb-2">Programação de Verificação</div>
+                    <p class="mb-0">Este produto será verificado automaticamente de acordo com a programação do sistema. 
+                    A frequência padrão é diária, mas você pode alterar isso nas configurações de agendamento.</p>
+                  </v-alert>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-tab-item>
+        </v-tabs-items>
+        
+        <v-divider></v-divider>
+        
+        <!-- Botões de ação -->
+        <v-card-actions class="pa-4">
           <v-btn
+            text
+            color="grey darken-1"
+            @click="$router.go(-1)"
+          >
+            Cancelar
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-if="!isLastTab"
             color="primary"
+            @click="nextTab"
+          >
+            Próximo
+            <v-icon right>mdi-arrow-right</v-icon>
+          </v-btn>
+          <v-btn
+            v-if="isLastTab"
+            color="success"
             type="submit"
             :loading="loading"
             :disabled="!valid || loading"
           >
-            {{ isEditMode ? 'Atualizar' : 'Salvar' }}
+            <v-icon left>{{ isEditMode ? 'mdi-content-save' : 'mdi-plus-circle' }}</v-icon>
+            {{ isEditMode ? 'Atualizar Produto' : 'Adicionar Produto' }}
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
     
+    <!-- Snackbar para mensagens -->
     <v-snackbar
       v-model="snackbar.show"
       :color="snackbar.color"
-      timeout="3000"
+      :timeout="snackbar.timeout"
+      bottom
+      right
     >
       {{ snackbar.text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          text
+          v-bind="attrs"
+          @click="snackbar.show = false"
+        >
+          Fechar
+        </v-btn>
+      </template>
     </v-snackbar>
   </v-container>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import api from '@/services/api'
 
 const route = useRoute()
 const router = useRouter()
-
-const abrirUrlPrevia = () => {
-  if (produto.value.url) {
-    window.open(produto.value.url, '_blank');
-  }
-}
+const store = useStore()
 
 // Estado do formulário
 const form = ref(null)
@@ -138,63 +357,110 @@ const valid = ref(false)
 const loading = ref(false)
 const loadingPlataformas = ref(false)
 const loadingGrupos = ref(false)
+const testandoSeletor = ref(false)
+const activeTab = ref(0)
+const resultadoTeste = ref(null)
 
 // Lista de plataformas e grupos
 const plataformas = ref([])
 const grupos = ref([])
+const dominiosDisponiveis = ref([])
+const dominioSelecionado = ref(null)
+
+// Tipos de produto disponíveis
+const tiposProduto = [
+  { texto: 'Produto do Cliente', valor: 'cliente' },
+  { texto: 'Produto de Concorrente', valor: 'concorrente' }
+]
 
 // Dados do produto
 const produto = ref({
   nome: '',
   concorrente: '',
   url: '',
+  tipo_produto: 'concorrente',
   plataforma: null,
   grupo: null,
   verificacao_manual: false,
-  tipo_produto: 'concorrente'
+  produto_cliente: false,
+  preco_cliente: null
 })
 
 // Notificações
 const snackbar = ref({
   show: false,
   text: '',
-  color: 'success'
+  color: 'success',
+  timeout: 4000
 })
 
 // Detecta se é modo de edição ou criação
 const isEditMode = computed(() => !!route.params.id)
 
-// Função para diagnosticar os dados antes do envio
-const diagnosticarDados = (userInfo, produtoParaEnviar) => {
-  console.log('====== DIAGNÓSTICO DOS DADOS ======');
-  console.log('Usuário:', userInfo.data);
-  console.log('Cliente atual:', userInfo.data.cliente_atual);
-  console.log('Produto a enviar:', produtoParaEnviar);
-  console.log('Tipo do cliente:', typeof produtoParaEnviar.cliente);
-  console.log('Tipo do grupo:', typeof produtoParaEnviar.grupo);
-  console.log('===================================');
+// Verifica se é a última aba
+const isLastTab = computed(() => activeTab.value === 2)
+
+// Navegar para próxima aba
+const nextTab = () => {
+  if (activeTab.value < 2) {
+    activeTab.value += 1
+  }
 }
 
-// Função para obter e aplicar o grupo do usuário ao produto
-const aplicarGrupoUsuario = async () => {
+// Abrir URL em nova aba
+const abrirUrlPrevia = () => {
+  if (produto.value.url) {
+    window.open(produto.value.url, '_blank')
+  }
+}
+
+// Extrair domínio da URL
+const extrairDominio = (url) => {
+  if (!url) return null
   try {
-    // Obter informações do usuário
-    const userInfo = await api.get('/user/info/')
+    const urlObj = new URL(url)
+    return urlObj.hostname
+  } catch (e) {
+    return null
+  }
+}
+
+// Testar seletor
+const testarSeletor = async () => {
+  if (!produto.value.url || !produto.value.plataforma?.seletor_css) {
+    mostrarSnackbar('URL ou seletor CSS não definidos', 'error')
+    return
+  }
+  
+  testandoSeletor.value = true
+  resultadoTeste.value = null
+  
+  try {
+    // Endpoint fictício para testar extração - idealmente você criaria este endpoint no backend
+    const response = await api.post('/testes/extrator/', {
+      url: produto.value.url,
+      seletor: produto.value.plataforma.seletor_css
+    })
     
-    // Obter grupos vinculados ao cliente atual do usuário
-    if (userInfo.data.cliente_atual) {
-      // Carregar grupos associados ao cliente atual
-      const gruposResponse = await api.get(`/grupos/?cliente=${userInfo.data.cliente_atual}`);
-      if (gruposResponse.data.results && gruposResponse.data.results.length > 0) {
-        // Aplicar o primeiro grupo disponível
-        produto.value.grupo = gruposResponse.data.results[0].id;
-        console.log('Grupo aplicado automaticamente:', produto.value.grupo);
-      } else {
-        console.warn('Nenhum grupo disponível para o cliente atual');
+    if (response.data.preco) {
+      resultadoTeste.value = {
+        sucesso: true,
+        mensagem: `Preço extraído com sucesso: R$ ${response.data.preco.toFixed(2)}`
+      }
+    } else {
+      resultadoTeste.value = {
+        sucesso: false,
+        mensagem: 'Não foi possível extrair o preço com este seletor.'
       }
     }
   } catch (error) {
-    console.error('Erro ao obter grupo do usuário:', error);
+    console.error('Erro ao testar seletor:', error)
+    resultadoTeste.value = {
+      sucesso: false,
+      mensagem: 'Erro ao testar seletor: ' + (error.response?.data?.detail || error.message)
+    }
+  } finally {
+    testandoSeletor.value = false
   }
 }
 
@@ -245,12 +511,41 @@ const carregarGrupos = async () => {
   }
 }
 
+// Função para obter e aplicar o grupo do usuário ao produto
+const aplicarGrupoUsuario = async () => {
+  try {
+    // Obter informações do usuário
+    const userInfo = await api.get('/user/info/')
+    
+    // Obter grupos vinculados ao cliente atual do usuário
+    if (userInfo.data.cliente_atual) {
+      // Carregar grupos associados ao cliente atual
+      const gruposResponse = await api.get(`/grupos/?cliente=${userInfo.data.cliente_atual}`);
+      if (gruposResponse.data.results && gruposResponse.data.results.length > 0) {
+        // Aplicar o primeiro grupo disponível
+        produto.value.grupo = gruposResponse.data.results[0].id;
+        console.log('Grupo aplicado automaticamente:', produto.value.grupo);
+      } else {
+        console.warn('Nenhum grupo disponível para o cliente atual');
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao obter grupo do usuário:', error);
+  }
+}
+
 // Carregar dados do produto para edição
 const carregarProduto = async (id) => {
   loading.value = true
   try {
     const response = await api.get(`/produtos/${id}/`)
     produto.value = response.data
+    
+    // Se for um produto do cliente, garantir que as propriedades específicas estejam definidas
+    if (produto.value.tipo_produto === 'cliente' && produto.value.preco_cliente === null) {
+      produto.value.preco_cliente = 0
+    }
+    
   } catch (error) {
     console.error('Erro ao carregar produto:', error)
     mostrarSnackbar('Erro ao carregar produto', 'error')
@@ -281,8 +576,6 @@ const onSubmit = async () => {
       const clienteId = typeof userInfo.data.cliente_atual === 'object' 
         ? userInfo.data.cliente_atual.id 
         : userInfo.data.cliente_atual
-        
-      console.log('Cliente ID obtido:', clienteId)
       
       // Obter o ID do grupo se for um objeto
       let grupoId = null
@@ -303,6 +596,16 @@ const onSubmit = async () => {
           : produto.value.plataforma
       }
       
+      // Se for produto do cliente, garantir que o preço está definido
+      if (produto.value.tipo_produto === 'cliente' && produto.value.preco_cliente === null) {
+        produto.value.preco_cliente = 0
+      }
+      
+      // Se for produto marcado como cliente base, garantir que o tipo é cliente
+      if (produto.value.produto_cliente && produto.value.tipo_produto !== 'cliente') {
+        produto.value.tipo_produto = 'cliente'
+      }
+      
       // Cria uma cópia do produto com apenas os campos necessários e garantindo que IDs sejam usados
       const produtoParaEnviar = {
         nome: produto.value.nome,
@@ -310,23 +613,22 @@ const onSubmit = async () => {
         url: produto.value.url,
         verificacao_manual: produto.value.verificacao_manual || false,
         tipo_produto: produto.value.tipo_produto || 'concorrente',
-        cliente: clienteId,  // Usar o ID do cliente
-        grupo: grupoId       // Usar o ID do grupo
+        produto_cliente: produto.value.produto_cliente || false,
+        cliente: clienteId  // Usar o ID do cliente
       }
       
-      // Adicionar plataforma apenas se estiver definida
+      // Adicionar campos condicionais
+      if (grupoId) {
+        produtoParaEnviar.grupo = grupoId
+      }
+      
       if (plataformaId) {
         produtoParaEnviar.plataforma = plataformaId
       }
-
-      // Diagnóstico mais detalhado
-      console.log('====== DIAGNÓSTICO DETALHADO DOS DADOS ======')
-      console.log('Produto original:', produto.value)
-      console.log('Cliente atual (userInfo):', userInfo.data.cliente_atual)
-      console.log('Cliente ID processado:', clienteId)
-      console.log('Grupo ID processado:', grupoId)
-      console.log('Produto preparado para envio:', produtoParaEnviar)
-      console.log('=============================================')
+      
+      if (produto.value.tipo_produto === 'cliente' && produto.value.preco_cliente !== null) {
+        produtoParaEnviar.preco_cliente = parseFloat(produto.value.preco_cliente)
+      }
       
       // Verificações finais para campos obrigatórios
       if (!produtoParaEnviar.cliente) {
@@ -344,14 +646,17 @@ const onSubmit = async () => {
       let response;
       if (isEditMode.value) {
         response = await api.put(`/produtos/${produto.value.id}/`, produtoParaEnviar)
-        console.log('Resposta de atualização:', response.data)
         mostrarSnackbar('Produto atualizado com sucesso')
       } else {
         response = await api.post('/produtos/', produtoParaEnviar)
-        console.log('Resposta de criação:', response.data)
         mostrarSnackbar('Produto adicionado com sucesso')
       }
-      router.push('/products')
+      
+      // Redirecionar para a lista de produtos após um breve delay
+      setTimeout(() => {
+        router.push('/products')
+      }, 1000)
+      
     } catch (error) {
       console.error('Erro ao salvar produto:', error)
       console.error('Detalhes do erro:', error.response?.data)
@@ -366,11 +671,64 @@ const onSubmit = async () => {
 }
 
 // Mostrar mensagem de feedback
-const mostrarSnackbar = (text, color = 'success') => {
+const mostrarSnackbar = (text, color = 'success', timeout = 4000) => {
   snackbar.value = {
     show: true,
     text,
-    color
+    color,
+    timeout
   }
 }
+
+// Observar mudanças na URL para atualizar o domínio
+watch(() => produto.value.url, (newUrl) => {
+  const dominio = extrairDominio(newUrl)
+  if (dominio) {
+    dominioSelecionado.value = { nome: dominio }
+    dominiosDisponiveis.value = [{ nome: dominio }]
+    
+    // Tentar encontrar uma plataforma correspondente ao domínio
+    if (plataformas.value.length > 0 && !produto.value.plataforma) {
+      const plataformaEncontrada = plataformas.value.find(
+        p => p.nome.toLowerCase().includes(dominio.toLowerCase()) || 
+             dominio.toLowerCase().includes(p.nome.toLowerCase())
+      )
+      
+      if (plataformaEncontrada) {
+        produto.value.plataforma = plataformaEncontrada
+        mostrarSnackbar('Plataforma selecionada automaticamente com base no domínio', 'info')
+      }
+    }
+  } else {
+    dominioSelecionado.value = null
+    dominiosDisponiveis.value = []
+  }
+})
 </script>
+
+<style scoped>
+.gradient-header {
+  background: linear-gradient(135deg, var(--v-primary-base) 0%, var(--v-primary-darken1) 100%);
+  border-radius: 8px;
+}
+
+.form-card {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+:deep(.v-tabs-bar) {
+  border-radius: 8px 8px 0 0;
+}
+
+:deep(.v-tabs) .v-tab {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+}
+
+:deep(.v-input--is-disabled) {
+  opacity: 0.7;
+}
+</style>

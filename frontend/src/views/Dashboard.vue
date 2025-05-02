@@ -1,28 +1,34 @@
 <template>
   <v-container fluid>
-    <!-- Cabeçalho da página -->
+    <!-- Cabeçalho da página com visual aprimorado -->
     <v-row>
       <v-col cols="12">
-        <div class="d-flex align-center mb-6">
-          <h1 class="text-h4 font-weight-bold primary--text">Dashboard</h1>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="success"
-            class="text-none px-4"
-            elevation="2"
-            prepend-icon="mdi-plus"
-            @click="$router.push('/products/add')"
-          >
-            Adicionar Produto
-          </v-btn>
-        </div>
+        <v-card elevation="2" class="mb-6 gradient-header">
+          <v-card-text>
+            <div class="d-flex flex-wrap align-center">
+              <div>
+                <h1 class="text-h4 font-weight-bold white--text mb-1">Dashboard</h1>
+                <p class="text-subtitle-1 white--text mb-0">Monitore seus produtos e concorrentes</p>
+              </div>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="white"
+                class="primary--text text-none px-4 elevation-1"
+                @click="$router.push('/products/add')"
+              >
+                <v-icon left>mdi-plus</v-icon>
+                Adicionar Produto
+              </v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
     
-    <!-- Cards de informações -->
+    <!-- Cards de informações com visual aprimorado -->
     <v-row>
       <v-col cols="12" md="4">
-        <v-card class="mb-4" elevation="3" rounded="lg">
+        <v-card class="mb-4 stats-card" elevation="3" rounded="lg">
           <v-card-text class="pa-4">
             <div class="d-flex align-center">
               <div class="rounded-circle primary pa-4 mr-4">
@@ -38,7 +44,7 @@
       </v-col>
       
       <v-col cols="12" md="4">
-        <v-card class="mb-4" elevation="3" rounded="lg">
+        <v-card class="mb-4 stats-card" elevation="3" rounded="lg">
           <v-card-text class="pa-4">
             <div class="d-flex align-center">
               <div class="rounded-circle info pa-4 mr-4">
@@ -54,7 +60,7 @@
       </v-col>
       
       <v-col cols="12" md="4">
-        <v-card class="mb-4" elevation="3" rounded="lg">
+        <v-card class="mb-4 stats-card" elevation="3" rounded="lg">
           <v-card-text class="pa-4">
             <div class="d-flex align-center">
               <div class="rounded-circle success pa-4 mr-4">
@@ -70,11 +76,27 @@
       </v-col>
     </v-row>
     
-    <!-- Conteúdo principal -->
+    <!-- Conteúdo principal com visual aprimorado -->
     <v-card class="rounded-lg" elevation="3">
       <v-toolbar flat class="primary lighten-1" dark>
-        <v-toolbar-title>Comparação de Produtos</v-toolbar-title>
+        <v-toolbar-title>
+          <v-icon left>mdi-compare-horizontal</v-icon>
+          Comparação de Produtos
+        </v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Pesquisar produto"
+          hide-details
+          dense
+          class="mt-2 mr-4"
+          style="max-width: 300px;"
+          outlined
+          dark
+          color="white"
+          single-line
+        ></v-text-field>
         <v-btn
           icon
           :loading="loading"
@@ -96,33 +118,38 @@
       <!-- Conteúdo da tabela -->
       <v-card-text class="pa-4">
         <div v-if="produtosAgrupados.length === 0 && !loading" class="text-center pa-8">
-          <v-icon size="64" color="grey lighten-1">mdi-package-variant</v-icon>
+          <v-img
+            src="@/assets/empty-products.svg"
+            max-width="200"
+            class="mx-auto mb-4"
+            alt="Nenhum produto encontrado"
+          ></v-img>
           <h3 class="text-h5 grey--text text--darken-1 mt-4">Nenhum produto encontrado</h3>
           <p class="text-body-1 grey--text mb-6">Comece adicionando produtos usando o botão no topo da página</p>
           <v-btn
             color="primary"
             @click="$router.push('/products/add')"
-            prepend-icon="mdi-plus"
           >
+            <v-icon left>mdi-plus</v-icon>
             Adicionar Produto
           </v-btn>
         </div>
         
-        <!-- Lista de grupos de produtos -->
-        <div v-if="produtosAgrupados.length > 0">
+        <!-- Lista de grupos de produtos filtrados -->
+        <div v-if="produtosAgrupadosFiltrados.length > 0">
           <div
-            v-for="(grupo, index) in produtosAgrupados"
+            v-for="(grupo, index) in produtosAgrupadosFiltrados"
             :key="index"
-            class="mb-5 border rounded"
+            class="mb-5 produto-grupo"
           >
-            <!-- Cabeçalho do grupo -->
+            <!-- Cabeçalho do grupo com visual aprimorado -->
             <div 
-              class="d-flex align-center pa-4 grey lighten-4 border-bottom"
+              class="d-flex align-center pa-4 grupo-header"
               @click="toggleGrupo(index)"
-              style="cursor: pointer;"
+              :class="{'grupo-header-active': gruposAbertos.includes(index)}"
             >
-              <v-icon class="mr-2">
-                {{ gruposAbertos.includes(index) ? 'mdi-chevron-down' : 'mdi-chevron-right' }}
+              <v-icon class="mr-2 transition-swing" :class="{'transform-rotate-90': gruposAbertos.includes(index)}">
+                mdi-chevron-right
               </v-icon>
               
               <!-- Nome do produto -->
@@ -136,6 +163,7 @@
                 color="warning"
                 class="ml-3"
               >
+                <v-icon left size="16">mdi-alert-circle</v-icon>
                 Por favor, defina o produto cliente
               </v-chip>
               
@@ -145,7 +173,7 @@
               <template v-if="grupo.produtoClienteBase">
                 <div class="d-none d-md-flex align-center">
                   <!-- Preço do cliente -->
-                  <div class="text-center mx-3">
+                  <div class="text-center mx-3 resumo-grupo">
                     <div class="caption grey--text">Preço Cliente</div>
                     <div class="subtitle-1 font-weight-medium primary--text">
                       {{ formatarPreco(grupo.produtoClienteBase.preco_cliente) }}
@@ -153,7 +181,7 @@
                   </div>
                   
                   <!-- Menor preço concorrente -->
-                  <div class="text-center mx-3">
+                  <div class="text-center mx-3 resumo-grupo">
                     <div class="caption grey--text">Menor Preço</div>
                     <div class="subtitle-1 font-weight-medium">
                       {{ formatarPreco(grupo.menorPrecoConcorrente) }}
@@ -164,7 +192,7 @@
                   <div class="text-center mx-3" v-if="grupo.diferencaPercentual !== null">
                     <div class="caption grey--text">Variação</div>
                     <v-chip
-                      x-small
+                      small
                       :color="getCorDiferenca(grupo.diferencaPercentual)"
                       dark
                     >
@@ -184,12 +212,12 @@
             </div>
             
             <!-- Conteúdo do grupo (tabela de produtos) -->
-            <div v-if="gruposAbertos.includes(index)" class="pa-4">
+            <div v-if="gruposAbertos.includes(index)" class="pa-4 grupo-content">
               <v-data-table
                 :headers="headers"
                 :items="grupo.produtos"
                 :items-per-page="5"
-                class="elevation-0"
+                class="elevation-0 product-table"
                 hide-default-footer
                 dense
               >
@@ -250,44 +278,68 @@
                 <!-- Ações -->
                 <template v-slot:item.actions="{ item }">
                   <div class="d-flex">
-                    <v-btn
-                      icon
-                      x-small
-                      color="primary"
-                      class="mr-1"
-                      @click="verDetalhes(item.id)"
-                      :title="'Ver detalhes'"
-                    >
-                      <v-icon>mdi-eye</v-icon>
-                    </v-btn>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          x-small
+                          color="primary"
+                          class="mr-1"
+                          @click="verDetalhes(item.id)"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon>mdi-eye</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Ver detalhes</span>
+                    </v-tooltip>
                     
-                    <v-btn
-                      icon
-                      x-small
-                      color="success"
-                      @click="verificarPreco(item.id)"
-                      :loading="verificandoItem === item.id"
-                      :title="'Verificar preço'"
-                    >
-                      <v-icon>mdi-refresh</v-icon>
-                    </v-btn>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          x-small
+                          color="success"
+                          @click="verificarPreco(item.id)"
+                          :loading="verificandoItem === item.id"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon>mdi-refresh</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Verificar preço</span>
+                    </v-tooltip>
                     
-                    <v-btn
-                      icon
-                      x-small
-                      color="warning"
-                      class="ml-1"
-                      @click="definirProdutoClienteBase(item)"
-                      :disabled="item.produto_cliente"
-                      :title="'Definir como produto cliente base'"
-                    >
-                      <v-icon>mdi-star</v-icon>
-                    </v-btn>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          x-small
+                          color="warning"
+                          class="ml-1"
+                          @click="definirProdutoClienteBase(item)"
+                          :disabled="item.produto_cliente"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon>mdi-star</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Definir como produto cliente base</span>
+                    </v-tooltip>
                   </div>
                 </template>
               </v-data-table>
             </div>
           </div>
+        </div>
+
+        <!-- Mensagem quando o filtro não encontrar resultados -->
+        <div v-if="produtosAgrupados.length > 0 && produtosAgrupadosFiltrados.length === 0" class="text-center pa-6">
+          <v-icon size="48" color="grey lighten-1">mdi-file-search-outline</v-icon>
+          <h3 class="text-h6 grey--text text--darken-1 mt-3">Nenhum produto corresponde à sua pesquisa</h3>
         </div>
       </v-card-text>
     </v-card>
@@ -297,6 +349,8 @@
       v-model="snackbar.show"
       :color="snackbar.color"
       :timeout="snackbar.timeout"
+      bottom
+      right
     >
       {{ snackbar.text }}
       <template v-slot:action="{ attrs }">
@@ -310,27 +364,6 @@
       </template>
     </v-snackbar>
     
-    <!-- Debug Info (escondido por padrão) -->
-    <v-card v-if="debug" elevation="3" class="mt-4 rounded-lg">
-      <v-card-title class="primary lighten-1 white--text">
-        Informações de Debug
-        <v-spacer></v-spacer>
-        <v-btn icon color="white" @click="debug = false">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-card-title>
-      <v-card-text>
-        <p><strong>Total de produtos carregados:</strong> {{ produtos.length }}</p>
-        <p><strong>Produtos únicos:</strong> {{ produtosUnicos.length }}</p>
-        <p><strong>Concorrentes únicos:</strong> {{ concorrentesUnicos.length }}</p>
-        <p><strong>Grupos abertos:</strong> {{ gruposAbertos }}</p>
-        <p><strong>Primeiro produto:</strong></p>
-        <pre class="grey lighten-4 pa-2 rounded">{{ JSON.stringify(produtos[0] || {}, null, 2) }}</pre>
-        <p><strong>Produtos agrupados:</strong></p>
-        <pre class="grey lighten-4 pa-2 rounded">{{ JSON.stringify(produtosAgrupados.slice(0, 1), null, 2) }}</pre>
-      </v-card-text>
-    </v-card>
-    
     <!-- Botão de debug (discreto no canto inferior) -->
     <v-btn
       fab
@@ -338,6 +371,7 @@
       color="grey lighten-3"
       class="debug-btn"
       @click="debug = !debug"
+      v-if="false" <!-- Desativando em produção -->
     >
       <v-icon color="grey darken-2">mdi-bug</v-icon>
     </v-btn>
@@ -357,6 +391,7 @@ const produtos = ref([])
 const debug = ref(false)
 const verificandoItem = ref(null)
 const gruposAbertos = ref([])
+const search = ref('') // Campo de pesquisa
 
 // Estado para snackbar
 const snackbar = ref({
@@ -511,6 +546,24 @@ const produtosAgrupados = computed(() => {
     if (!a.produtoClienteBase && b.produtoClienteBase) return 1
     // Em seguida, ordenar alfabeticamente pelo nome
     return a.nome.localeCompare(b.nome)
+  })
+})
+
+// Produtos filtrados com base na pesquisa
+const produtosAgrupadosFiltrados = computed(() => {
+  if (!search.value) return produtosAgrupados.value
+  
+  const searchTerm = search.value.toLowerCase().trim()
+  
+  return produtosAgrupados.value.filter(grupo => {
+    // Verifica se o nome do grupo contém o termo de pesquisa
+    if (grupo.nome.toLowerCase().includes(searchTerm)) return true
+    
+    // Verifica se algum produto deste grupo contém o termo de pesquisa
+    return grupo.produtos.some(produto => 
+      produto.nome.toLowerCase().includes(searchTerm) || 
+      produto.concorrente.toLowerCase().includes(searchTerm)
+    )
   })
 })
 
@@ -719,6 +772,11 @@ const carregarDados = async () => {
         )
       }
       
+      // Abrir automaticamente o primeiro grupo se houver produtos
+      if (produtosAgrupados.value.length > 0 && gruposAbertos.value.length === 0) {
+        gruposAbertos.value.push(0)
+      }
+      
     } else {
       produtos.value = []
       console.warn('Nenhum produto retornado da API')
@@ -757,33 +815,102 @@ const verDetalhes = (produtoId) => {
 </script>
 
 <style scoped>
-.debug-btn {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  z-index: 100;
+.gradient-header {
+  background: linear-gradient(135deg, var(--v-primary-base) 0%, var(--v-primary-darken1) 100%);
+  border-radius: 8px;
 }
 
-.border {
-  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+.stats-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.border-bottom {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Estilo para a tabela */
-:deep(.v-data-table) {
-  border-radius: 0;
+.produto-grupo {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.3s ease;
+}
+
+.produto-grupo:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.grupo-header {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.grupo-header:hover {
+  background-color: #eeeeee;
+}
+
+.grupo-header-active {
+  background-color: #e3f2fd; /* Azul claro para destacar o grupo ativo */
+}
+
+.grupo-content {
+  background-color: white;
+}
+
+.transform-rotate-90 {
+  transform: rotate(90deg);
+}
+
+.resumo-grupo {
+  position: relative;
+}
+
+.resumo-grupo::after {
+  content: "";
+  position: absolute;
+  right: -18px;
+  top: 50%;
+  height: 30px;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  transform: translateY(-50%);
+}
+
+.resumo-grupo:last-child::after {
+  display: none;
+}
+
+.product-table {
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 :deep(.v-data-table th) {
   font-weight: bold !important;
   color: rgba(0, 0, 0, 0.7) !important;
-  background-color: #f5f5f5;
+  background-color: #fafafa;
+}
+
+:deep(.v-data-table tr:hover) {
+  background-color: #f5f7fa !important;
 }
 
 :deep(.v-data-table tr:nth-child(even)) {
-  background-color: #fafafa;
+  background-color: #fcfcfc;
+}
+
+.debug-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 100;
+  opacity: 0.6;
+}
+
+.debug-btn:hover {
+  opacity: 1;
 }
 </style>

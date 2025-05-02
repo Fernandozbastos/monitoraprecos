@@ -1,0 +1,68 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Elements -->
+  <rect x="48" y="220" width="304" height="10" rx="2" fill="#E0E0E0" />
+  
+  <!-- Shelves -->
+  <rect x="70" y="150" width="260" height="8" rx="2" fill="#BDBDBD" />
+  <rect x="70" y="200" width="260" height="8" rx="2" fill="#BDBDBD" />
+  
+  <!-- Empty Box 1 -->
+  <g transform="translate(100, 90)">
+    <rect x="0" y="0" width="60" height="60" rx="4" fill="#EEEEEE" stroke="#BDBDBD" stroke-width="2" />
+    <line x1="10" y1="30" x2="50" y2="30" stroke="#BDBDBD" stroke-width="2" stroke-dasharray="4" />
+    <line x1="30" y1="10" x2="30" y2="50" stroke="#BDBDBD" stroke-width="2" stroke-dasharray="4" />
+  </g>
+  
+  <!-- Empty Box 2 -->
+  <g transform="translate(230, 90)">
+    <rect x="0" y="0" width="60" height="60" rx="4" fill="#EEEEEE" stroke="#BDBDBD" stroke-width="2" />
+    <line x1="10" y1="30" x2="50" y2="30" stroke="#BDBDBD" stroke-width="2" stroke-dasharray="4" />
+    <line x1="30" y1="10" x2="30" y2="50" stroke="#BDBDBD" stroke-width="2" stroke-dasharray="4" />
+  </g>
+  
+  <!-- Empty Box 3 (bottom shelf) -->
+  <g transform="translate(170, 140)">
+    <rect x="0" y="0" width="60" height="60" rx="4" fill="#EEEEEE" stroke="#BDBDBD" stroke-width="2" />
+    <line x1="10" y1="30" x2="50" y2="30" stroke="#BDBDBD" stroke-width="2" stroke-dasharray="4" />
+    <line x1="30" y1="10" x2="30" y2="50" stroke="#BDBDBD" stroke-width="2" stroke-dasharray="4" />
+  </g>
+  
+  <!-- Character -->
+  <g transform="translate(40, 120)">
+    <!-- Body -->
+    <ellipse cx="40" cy="70" rx="25" ry="30" fill="#3F51B5" />
+    
+    <!-- Head -->
+    <circle cx="40" cy="30" r="20" fill="#FFD54F" />
+    
+    <!-- Eyes -->
+    <circle cx="33" cy="25" r="3" fill="#424242" />
+    <circle cx="47" cy="25" r="3" fill="#424242" />
+    
+    <!-- Mouth (confused) -->
+    <path d="M30 40 Q40 35 50 40" stroke="#424242" stroke-width="2" fill="none" />
+    
+    <!-- Arms -->
+    <path d="M20 60 Q0 70 10 90" stroke="#3F51B5" stroke-width="8" stroke-linecap="round" fill="none" />
+    <path d="M60 60 Q80 50 85 70" stroke="#3F51B5" stroke-width="8" stroke-linecap="round" fill="none" />
+    
+    <!-- Thinking bubble -->
+    <circle cx="95" cy="30" r="15" fill="#E0E0E0" />
+    <circle cx="80" cy="15" r="8" fill="#E0E0E0" />
+    <circle cx="70" cy="8" r="4" fill="#E0E0E0" />
+    
+    <!-- Question mark in bubble -->
+    <path d="M90 25 Q95 20 100 25 Q105 30 95 35 L95 40" stroke="#9E9E9E" stroke-width="2" fill="none" />
+    <circle cx="95" cy="45" r="1" fill="#9E9E9E" />
+  </g>
+  
+  <!-- Plus icon -->
+  <circle cx="320" cy="50" r="25" fill="#4CAF50" />
+  <line x1="320" y1="35" x2="320" y2="65" stroke="white" stroke-width="4" />
+  <line x1="305" y1="50" x2="335" y2="50" stroke="white" stroke-width="4" />
+  
+  <!-- Decorative elements -->
+  <circle cx="40" cy="40" r="8" fill="#E0E0E0" />
+  <circle cx="370" cy="200" r="10" fill="#E0E0E0" />
+  <circle cx="60" cy="180" r="6" fill="#E0E0E0" />
+</svg>

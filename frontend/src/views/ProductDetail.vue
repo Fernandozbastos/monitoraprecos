@@ -1,88 +1,167 @@
 <template>
   <v-container fluid>
+    <!-- Botão de navegação com melhor visual -->
     <v-row>
       <v-col cols="12">
-        <v-btn text @click="$router.go(-1)" class="mb-4">
+        <v-btn 
+          text 
+          class="mb-4 pl-0 transition-swing"
+          @click="$router.go(-1)"
+        >
           <v-icon left>mdi-arrow-left</v-icon>
-          Voltar
+          Voltar para a lista
         </v-btn>
-        <h1 class="text-h4 mb-4">{{ produto.nome || 'Detalhes do Produto' }}</h1>
       </v-col>
     </v-row>
-    
+
+    <!-- Estado de carregamento aprimorado -->
     <v-row v-if="loading">
-      <v-col cols="12" class="text-center">
-        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      <v-col cols="12" class="d-flex justify-center align-center py-12">
+        <div class="text-center">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+            size="64"
+          ></v-progress-circular>
+          <div class="mt-4 text-subtitle-1 grey--text">Carregando detalhes do produto...</div>
+        </div>
       </v-col>
     </v-row>
     
     <template v-else>
+      <!-- Cabeçalho do produto -->
       <v-row>
+        <v-col cols="12">
+          <v-card elevation="3" class="mb-6 gradient-header">
+            <v-card-text class="pa-6">
+              <div class="d-flex flex-wrap">
+                <div>
+                  <h1 class="text-h4 white--text mb-1">{{ produto.nome || 'Detalhes do Produto' }}</h1>
+                  <p class="text-subtitle-1 white--text mb-0">
+                    {{ produto.tipo_produto === 'cliente' ? 'Produto do Cliente' : 'Produto do Concorrente' }}
+                    <v-chip
+                      v-if="produto.produto_cliente"
+                      small
+                      color="amber"
+                      text-color="black"
+                      class="ml-2"
+                    >
+                      <v-icon left small>mdi-star</v-icon>
+                      Produto Base
+                    </v-chip>
+                  </p>
+                </div>
+                <v-spacer></v-spacer>
+                <div>
+                  <v-btn 
+                    color="white" 
+                    class="primary--text"
+                    :loading="verificando"
+                    @click="verificarPreco"
+                  >
+                    <v-icon left>mdi-refresh</v-icon>
+                    Verificar Preço
+                  </v-btn>
+                  <v-btn 
+                    v-if="produto.url"
+                    text
+                    color="white"
+                    class="ml-2"
+                    :href="produto.url" 
+                    target="_blank"
+                  >
+                    <v-icon left>mdi-open-in-new</v-icon>
+                    Abrir Site
+                  </v-btn>
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      
+      <v-row>
+        <!-- Coluna de informações do produto -->
         <v-col cols="12" md="6">
-          <v-card elevation="2" class="mb-4">
-            <v-card-title>Informações do Produto</v-card-title>
+          <v-card elevation="2" class="mb-4 detail-card">
+            <v-card-title class="primary--text">
+              <v-icon left color="primary">mdi-information-outline</v-icon>
+              Informações do Produto
+            </v-card-title>
             <v-card-text>
               <v-list>
-                <v-list-item>
-                  <div>
-                    <div class="text-caption text-gray">Nome</div>
-                    <div class="text-h6">{{ produto.nome || 'N/A' }}</div>
-                  </div>
+                <v-list-item two-line>
+                  <v-list-item-avatar color="primary" class="rounded white--text">
+                    <v-icon>mdi-tag</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title class="text-subtitle-2 text-gray">Nome</v-list-item-title>
+                    <v-list-item-subtitle class="text-h6">{{ produto.nome || 'N/A' }}</v-list-item-subtitle>
+                  </v-list-item-content>
                 </v-list-item>
                 <v-divider></v-divider>
                 
-                <v-list-item>
-                  <div>
-                    <div class="text-caption text-gray">Tipo</div>
-                    <div>
-                      {{ produto.tipo_produto === 'cliente' ? 'Produto do Cliente' : 'Produto de Concorrente' }}
-                    </div>
-                  </div>
+                <v-list-item two-line>
+                  <v-list-item-avatar color="info" class="rounded white--text">
+                    <v-icon>mdi-store</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title class="text-subtitle-2 text-gray">
+                      {{ produto.tipo_produto === 'cliente' ? 'Tipo' : 'Concorrente' }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle class="text-h6">
+                      {{ produto.tipo_produto === 'cliente' ? 'Produto do Cliente' : produto.concorrente || 'N/A' }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
                 </v-list-item>
                 <v-divider></v-divider>
                 
-                <v-list-item v-if="produto.tipo_produto === 'concorrente'">
-                  <div>
-                    <div class="text-caption text-gray">Concorrente</div>
-                    <div>{{ produto.concorrente || 'N/A' }}</div>
-                  </div>
-                </v-list-item>
-                <v-divider v-if="produto.tipo_produto === 'concorrente'"></v-divider>
-                
-                <v-list-item>
-                  <div>
-                    <div class="text-caption text-gray">URL</div>
-                    <div>
-                      <a :href="produto.url" target="_blank" rel="noopener noreferrer" v-if="produto.url">
+                <v-list-item two-line>
+                  <v-list-item-avatar color="warning" class="rounded white--text">
+                    <v-icon>mdi-link-variant</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title class="text-subtitle-2 text-gray">URL</v-list-item-title>
+                    <v-list-item-subtitle style="word-break: break-all;">
+                      <a :href="produto.url" target="_blank" rel="noopener noreferrer" v-if="produto.url" class="text-decoration-none">
                         {{ produto.url }}
                       </a>
                       <span v-else>N/A</span>
-                    </div>
-                  </div>
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
                 </v-list-item>
                 <v-divider></v-divider>
                 
-                <v-list-item>
-                  <div>
-                    <div class="text-caption text-gray">Plataforma</div>
-                    <div>{{ produto.plataforma?.nome || 'N/A' }}</div>
-                  </div>
+                <v-list-item two-line>
+                  <v-list-item-avatar color="success" class="rounded white--text">
+                    <v-icon>mdi-web</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title class="text-subtitle-2 text-gray">Plataforma</v-list-item-title>
+                    <v-list-item-subtitle>{{ produto.plataforma?.nome || 'N/A' }}</v-list-item-subtitle>
+                  </v-list-item-content>
                 </v-list-item>
                 <v-divider></v-divider>
                 
-                <v-list-item>
-                  <div>
-                    <div class="text-caption text-gray">Última Verificação</div>
-                    <div>{{ formatDate(produto.ultima_verificacao) }}</div>
-                  </div>
+                <v-list-item two-line>
+                  <v-list-item-avatar color="error" class="rounded white--text">
+                    <v-icon>mdi-clock-outline</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title class="text-subtitle-2 text-gray">Última Verificação</v-list-item-title>
+                    <v-list-item-subtitle>{{ formatDate(produto.ultima_verificacao) }}</v-list-item-subtitle>
+                  </v-list-item-content>
                 </v-list-item>
                 <v-divider></v-divider>
                 
-                <!-- Novo campo para marcar como produto cliente base -->
+                <!-- Configuração de produto cliente base -->
                 <v-list-item>
-                  <div>
-                    <div class="text-caption text-gray">Produto Cliente Base</div>
-                    <div>
+                  <v-list-item-avatar color="amber" class="rounded white--text">
+                    <v-icon>mdi-star</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title class="text-subtitle-2 text-gray">Produto Cliente Base</v-list-item-title>
+                    <div class="mt-2">
                       <v-switch
                         v-model="produto.produto_cliente"
                         @change="atualizarProdutoClienteStatus"
@@ -91,40 +170,26 @@
                         hide-details
                         dense
                       ></v-switch>
+                      <div class="caption mt-1 text-grey">
+                        Este produto será usado como base para comparações de preço
+                      </div>
                     </div>
-                  </div>
+                  </v-list-item-content>
                 </v-list-item>
               </v-list>
             </v-card-text>
-            <v-card-actions>
-              <v-btn 
-                color="primary" 
-                @click="verificarPreco" 
-                :loading="verificando"
-              >
-                <v-icon left>mdi-refresh</v-icon>
-                Verificar Preço Agora
-              </v-btn>
-              <v-btn 
-                v-if="produto.url"
-                text
-                color="secondary"
-                :href="produto.url" 
-                target="_blank"
-              >
-                <v-icon left>mdi-open-in-new</v-icon>
-                Abrir Site
-              </v-btn>
-            </v-card-actions>
           </v-card>
         </v-col>
         
         <v-col cols="12" md="6">
           <!-- Preço do Cliente (apenas para produtos do cliente) -->
-          <v-card v-if="produto.tipo_produto === 'cliente'" elevation="2" class="mb-4">
-            <v-card-title>Preço do Cliente</v-card-title>
+          <v-card v-if="produto.tipo_produto === 'cliente'" elevation="2" class="mb-4 detail-card">
+            <v-card-title class="primary--text">
+              <v-icon left color="primary">mdi-currency-usd</v-icon>
+              Preço do Cliente
+            </v-card-title>
             <v-card-text>
-              <v-form ref="form" v-model="formValid">
+              <v-form ref="form" v-model="formValid" class="py-3">
                 <v-text-field
                   v-model="precoCliente"
                   label="Preço do Cliente"
@@ -132,7 +197,13 @@
                   type="number"
                   step="0.01"
                   :rules="precoRules"
+                  filled
+                  rounded
+                  hide-details="auto"
                 ></v-text-field>
+                <div class="caption text-grey mt-2">
+                  Este é o preço do seu produto. Atualize-o sempre que houver mudanças no valor.
+                </div>
               </v-form>
             </v-card-text>
             <v-card-actions>
@@ -142,81 +213,141 @@
                 :disabled="!formValid"
                 :loading="atualizandoPreco"
                 @click="atualizarPrecoCliente"
+                elevation="2"
+                class="px-6"
               >
+                <v-icon left>mdi-content-save</v-icon>
                 Atualizar Preço
               </v-btn>
             </v-card-actions>
           </v-card>
           
           <!-- Novo campo para exibir preço mais recente (para produtos concorrentes marcados como base) -->
-          <v-card v-if="produto.tipo_produto === 'concorrente' && produto.produto_cliente" elevation="2" class="mb-4">
-            <v-card-title>Preço Mais Recente</v-card-title>
+          <v-card v-if="produto.tipo_produto === 'concorrente' && produto.produto_cliente" elevation="2" class="mb-4 warning-card">
+            <v-card-title class="warning--text">
+              <v-icon left color="warning">mdi-alert-circle</v-icon>
+              Atenção: Configuração Inconsistente
+            </v-card-title>
             <v-card-text>
-              <v-alert type="warning" class="mb-4">
+              <v-alert type="warning" class="mb-4" dense>
                 Este produto está marcado como produto cliente base, mas é do tipo concorrente. 
                 O ideal é que o produto cliente base seja do tipo "cliente" para funcionamento correto do sistema.
               </v-alert>
               
-              <div class="text-h5 font-weight-bold">
-                {{ produto.preco_exibicao ? formatarPreco(produto.preco_exibicao) : formatarPreco(produto.menor_preco_concorrente) }}
-              </div>
+              <v-sheet class="pa-4 rounded text-center" color="grey lighten-4">
+                <div class="text-subtitle-1 mb-2">Preço Mais Recente:</div>
+                <div class="text-h4 font-weight-bold primary--text">
+                  {{ produto.preco_exibicao ? formatarPreco(produto.preco_exibicao) : formatarPreco(produto.menor_preco_concorrente) }}
+                </div>
+              </v-sheet>
               
-              <div class="mt-2 text-caption">
-                Este é o preço mais recente registrado para este produto.
+              <div class="caption text-grey mt-3">
+                Este é o preço mais recente registrado para este produto. Considere alterar o tipo para "cliente" 
+                para melhor organização do sistema.
               </div>
             </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="primary"
+                @click="corrigirTipoProduto"
+                :loading="corrigindoTipo"
+              >
+                <v-icon left>mdi-check</v-icon>
+                Corrigir Tipo para Cliente
+              </v-btn>
+            </v-card-actions>
           </v-card>
           
           <!-- Comparação de Preços (apenas para produtos do cliente) -->
-          <v-card v-if="produto.tipo_produto === 'cliente'" elevation="2" class="mb-4">
-            <v-card-title>
+          <v-card v-if="produto.tipo_produto === 'cliente'" elevation="2" class="mb-4 detail-card">
+            <v-card-title class="primary--text">
+              <v-icon left color="primary">mdi-compare</v-icon>
               Comparação de Preços
             </v-card-title>
             <v-card-text>
               <v-list>
                 <v-list-item>
-                  <div>
-                    <div class="text-caption text-gray">Preço do Cliente</div>
-                    <div class="text-h6">
+                  <v-list-item-content>
+                    <v-list-item-title class="text-subtitle-2 text-gray">Preço do Cliente</v-list-item-title>
+                    <v-list-item-subtitle class="text-h5 font-weight-medium primary--text mt-1">
                       {{ formatarPreco(produto.preco_cliente) }}
-                    </div>
-                  </div>
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
                 </v-list-item>
+                
+                <v-divider></v-divider>
                 
                 <v-list-item>
-                  <div>
-                    <div class="text-caption text-gray">Menor Preço Concorrente</div>
-                    <div class="text-h6">
+                  <v-list-item-content>
+                    <v-list-item-title class="text-subtitle-2 text-gray">Menor Preço Concorrente</v-list-item-title>
+                    <v-list-item-subtitle class="text-h5 font-weight-medium mt-1">
                       {{ formatarPreco(produto.menor_preco_concorrente) }}
-                    </div>
-                  </div>
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
                 </v-list-item>
                 
+                <v-divider v-if="produto.diferenca_percentual !== null"></v-divider>
+                
                 <v-list-item v-if="produto.diferenca_percentual !== null">
-                  <div>
-                    <div class="text-caption text-gray">Diferença Percentual</div>
-                    <div>
+                  <v-list-item-content>
+                    <v-list-item-title class="text-subtitle-2 text-gray">Diferença Percentual</v-list-item-title>
+                    <v-list-item-subtitle class="mt-1">
                       <v-chip
                         :color="produto.diferenca_percentual <= 0 ? 'success' : 'error'"
-                        class="font-weight-bold"
+                        class="font-weight-bold text-h6 px-4 py-2"
                         :text-color="produto.diferenca_percentual <= 0 ? 'white' : 'white'"
+                        large
                       >
                         {{ formatarPercentual(produto.diferenca_percentual) }}
                       </v-chip>
-                    </div>
-                  </div>
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
                 </v-list-item>
               </v-list>
+              
+              <!-- Status visual de comparação -->
+              <v-sheet 
+                v-if="produto.diferenca_percentual !== null" 
+                color="grey lighten-4" 
+                class="pa-4 rounded mt-4"
+              >
+                <div class="text-center">
+                  <v-icon 
+                    :color="produto.diferenca_percentual <= 0 ? 'success' : 'error'"
+                    size="64"
+                  >
+                    {{ produto.diferenca_percentual <= 0 ? 'mdi-thumb-up' : 'mdi-thumb-down' }}
+                  </v-icon>
+                  <div class="text-subtitle-1 mt-2">
+                    {{ produto.diferenca_percentual <= 0 ? 'Seu preço está competitivo!' : 'Seu preço está acima da concorrência' }}
+                  </div>
+                </div>
+              </v-sheet>
             </v-card-text>
           </v-card>
           
           <!-- Alerta se não houver concorrentes -->
           <v-alert
             v-if="produto.tipo_produto === 'cliente' && produto.menor_preco_concorrente === null"
-            type="warning"
+            type="info"
             class="mb-4"
+            outlined
+            icon="mdi-alert-circle-outline"
           >
-            Não há preços de concorrentes registrados para esse produto. Cadastre produtos concorrentes com o mesmo nome para habilitar a comparação.
+            <div class="text-subtitle-1 font-weight-medium mb-2">Sem Concorrentes Registrados</div>
+            <p class="mb-0">Não há preços de concorrentes registrados para esse produto. Cadastre produtos concorrentes com o mesmo nome para habilitar a comparação.</p>
+            <div class="mt-4">
+              <v-btn
+                color="primary"
+                small
+                outlined
+                @click="$router.push('/products/add')"
+              >
+                <v-icon left small>mdi-plus</v-icon>
+                Adicionar Concorrente
+              </v-btn>
+            </div>
           </v-alert>
         </v-col>
       </v-row>
@@ -227,6 +358,8 @@
       v-model="snackbar.show"
       :color="snackbar.color"
       :timeout="snackbar.timeout"
+      right
+      bottom
     >
       {{ snackbar.text }}
       <template v-slot:action="{ attrs }">
@@ -253,6 +386,7 @@ const loading = ref(true)
 const verificando = ref(false)
 const atualizandoPreco = ref(false)
 const atualizandoStatus = ref(false)
+const corrigindoTipo = ref(false)
 const produto = ref({})
 const precoCliente = ref(0)
 const formValid = ref(false)
@@ -304,6 +438,27 @@ const mostrarSnackbar = (texto, cor = 'success', timeout = 3000) => {
     text: texto,
     color: cor,
     timeout: timeout
+  }
+}
+
+// Função para corrigir o tipo do produto
+const corrigirTipoProduto = async () => {
+  corrigindoTipo.value = true;
+  try {
+    await api.patch(`/produtos/${produto.value.id}/`, {
+      tipo_produto: 'cliente'
+    });
+    
+    produto.value.tipo_produto = 'cliente';
+    mostrarSnackbar('Tipo do produto corrigido para Cliente', 'success');
+    
+    // Recarregar o produto para atualizar as interfaces
+    await carregarProduto();
+  } catch (error) {
+    console.error('Erro ao corrigir tipo do produto:', error);
+    mostrarSnackbar('Erro ao corrigir tipo do produto', 'error');
+  } finally {
+    corrigindoTipo.value = false;
   }
 }
 
@@ -493,11 +648,49 @@ watch(() => route.params.id, (newId, oldId) => {
 </script>
 
 <style scoped>
-.v-chip {
-  font-weight: bold;
+.gradient-header {
+  background: linear-gradient(135deg, var(--v-primary-base) 0%, var(--v-primary-darken1) 100%);
+  border-radius: 8px;
+  color: white;
+}
+
+.detail-card {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.detail-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+.warning-card {
+  border-left: 4px solid var(--v-warning-base);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .text-gray {
   color: rgba(0, 0, 0, 0.6);
+}
+
+.rounded {
+  border-radius: 50%;
+}
+
+:deep(.v-list-item__avatar) {
+  margin-right: 16px !important;
+}
+
+:deep(.v-list-item) {
+  padding: 16px !important;
+}
+
+.transition-swing {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+
+.transition-swing:hover {
+  transform: translateX(-4px);
 }
 </style>

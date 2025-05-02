@@ -12,6 +12,11 @@ from django.db import transaction
 logger = logging.getLogger(__name__)
 
 class ProdutoViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gerenciamento de produtos.
+    Fornece operações CRUD completas para produtos e endpoints adicionais
+    para verificação de preços e histórico.
+    """
     queryset = Produto.objects.all()
     serializer_class = ProdutoSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -22,11 +27,16 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     ordering = ['-data_criacao']
     
     def get_serializer_class(self):
+        """Determina qual serializer usar com base na ação."""
         if self.action == 'retrieve':
             return ProdutoDetalheSerializer
         return self.serializer_class
     
     def get_queryset(self):
+        """
+        Filtra os produtos com base no usuário atual.
+        Se não for admin, mostra apenas produtos do cliente atual.
+        """
         user = self.request.user
         # Se não for admin, filtra por cliente atual
         if user.tipo != 'admin' and user.cliente_atual:
@@ -34,6 +44,9 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         return self.queryset
     
     def create(self, request, *args, **kwargs):
+        """
+        Cria um novo produto com logs detalhados para depuração.
+        """
         logger.info(f"Criando produto com dados: {request.data}")
         try:
             return super().create(request, *args, **kwargs)
@@ -41,53 +54,6 @@ class ProdutoViewSet(viewsets.ModelViewSet):
             logger.error(f"Erro ao criar produto: {str(e)}")
             raise
     
-    def partial_update(self, request, *args, **kwargs):
-        """
-        Sobrescreve o método partial_update para lidar com atualizações parciais,
-        especialmente para o campo produto_cliente.
-        """
-        instance = self.get_object()
-        
-        # Verificar se o usuário tem um cliente atual definido
-        user = request.user
-        if not user.cliente_atual:
-            return Response(
-                {"detail": "Você precisa selecionar um cliente atual antes de realizar esta operação."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-            
-        # Verificar se o produto pertence ao cliente atual do usuário
-        if instance.cliente.id != user.cliente_atual.id:
-            return Response(
-                {"detail": "Este produto não pertence ao cliente atual selecionado."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        # Se estiver atualizando o campo produto_cliente para True
-        if 'produto_cliente' in request.data and request.data['produto_cliente']:
-            try:
-                with transaction.atomic():
-                    # Desmarcar outros produtos com o mesmo nome
-                    Produto.objects.filter(
-                        cliente=instance.cliente,
-                        nome=instance.nome,
-                        produto_cliente=True
-                    ).exclude(id=instance.id).update(produto_cliente=False)
-                    
-                    # Atualizar apenas o campo produto_cliente
-                    instance.produto_cliente = True
-                    instance.save(update_fields=['produto_cliente'])
-                    
-                    # Retornar o produto atualizado
-                    serializer = self.get_serializer(instance)
-                    return Response(serializer.data)
-                    
-            except Exception as e:
-                logger.error(f"Erro ao atualizar status de produto cliente: {str(e)}")
-                return Response(
-                    {"detail": f"Erro ao atualizar: {str(e)}"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
     def partial_update(self, request, *args, **kwargs):
         """
         Sobrescreve o método partial_update para lidar com atualizações parciais,
@@ -111,28 +77,72 @@ class ProdutoViewSet(viewsets.ModelViewSet):
             )
         
         # Log para depuração
-        print(f"Dados recebidos no PATCH: {request.data}")
+        logger.info(f"Dados recebidos no PATCH: {request.data}")
         
-        # Se estiver atualizando para produto_cliente=True e o tipo for concorrente
-        if request.data.get('produto_cliente') is True and instance.tipo_produto == 'concorrente':
-            # Garantir que o tipo seja alterado para 'cliente'
-            if 'tipo_produto' not in request.data:
-                request.data['tipo_produto'] = 'cliente'
-                print(f"Alterando automaticamente o tipo para 'cliente'. Dados atualizados: {request.data}")
+        try:
+            with transaction.atomic():
+                # Se estiver atualizando para produto_cliente=True
+                if request.data.get('produto_cliente') is True:
+                    # Desmarcar outros produtos com o mesmo nome
+                    Produto.objects.filter(
+                        cliente=instance.cliente,
+                        nome=instance.nome,
+                        produto_cliente=True
+                    ).exclude(id=instance.id).update(produto_cliente=False)
+                    
+                    # Se o tipo for concorrente, alterar para cliente
+                    if instance.tipo_produto == 'concorrente':
+                        if 'tipo_produto' not in request.data:
+                            request.data['tipo_produto'] = 'cliente'
+                            logger.info(f"Alterando automaticamente o tipo para 'cliente'. Dados atualizados: {request.data}")
+                
+                # Para atualizações parciais, usar o comportamento padrão
+                return super().partial_update(request, *args, **kwargs)
         
-        # Para atualizações parciais, usar o comportamento padrão
-        return super().partial_update(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"Erro ao atualizar produto: {str(e)}")
+            return Response(
+                {"detail": f"Erro ao atualizar: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
     
     @action(detail=True, methods=['get'])
     def historico(self, request, pk=None):
+        """
+        Endpoint para recuperar o histórico de preços de um produto.
+        Retorna os últimos 30 registros por padrão.
+        """
         produto = self.get_object()
-        historico = HistoricoPreco.objects.filter(produto=produto).order_by('-data')[:30]
+        
+        # Verificar se o usuário tem acesso ao produto
+        user = request.user
+        if user.tipo != 'admin' and user.cliente_atual and produto.cliente.id != user.cliente_atual.id:
+            return Response(
+                {"detail": "Você não tem permissão para acessar o histórico deste produto."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Parâmetros de filtro
+        limit = request.query_params.get('limit', 30)
+        try:
+            limit = int(limit)
+        except ValueError:
+            limit = 30
+        
+        # Limite máximo para evitar sobrecarga
+        if limit > 100:
+            limit = 100
+        
+        historico = HistoricoPreco.objects.filter(produto=produto).order_by('-data')[:limit]
         serializer = HistoricoPrecoResumoSerializer(historico, many=True)
         return Response(serializer.data)
     
     @action(detail=True, methods=['post'])
     def verificar(self, request, pk=None):
-        """Endpoint para verificar o preço de um produto manualmente."""
+        """
+        Endpoint para verificar o preço de um produto manualmente.
+        Agenda uma tarefa assíncrona para fazer o scraping.
+        """
         from scraper.tasks import verificar_preco
         
         produto = self.get_object()
@@ -160,8 +170,63 @@ class ProdutoViewSet(viewsets.ModelViewSet):
             'task_id': task.id
         })
     
+    @action(detail=False, methods=['post'])
+    def verificar_todos(self, request):
+        """
+        Endpoint para verificar todos os produtos do cliente atual.
+        Agenda tarefas assíncronas para lotes de produtos.
+        """
+        from scraper.tasks import verificar_todos_produtos
+        
+        # Verificar se o usuário tem um cliente atual definido
+        user = request.user
+        if not user.cliente_atual:
+            return Response(
+                {"detail": "Você precisa selecionar um cliente atual antes de realizar esta operação."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Obter os produtos do cliente atual
+        produtos = Produto.objects.filter(cliente=user.cliente_atual)
+        
+        if not produtos.exists():
+            return Response(
+                {"detail": "Não há produtos para verificar."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Parâmetros para controlar o tamanho dos lotes
+        tamanho_lote = request.data.get('tamanho_lote', 20)
+        try:
+            tamanho_lote = int(tamanho_lote)
+            if tamanho_lote <= 0:
+                tamanho_lote = 20
+        except (ValueError, TypeError):
+            tamanho_lote = 20
+        
+        # Limitar o número máximo de produtos para evitar sobrecarga
+        max_produtos = request.data.get('max_produtos', produtos.count())
+        try:
+            max_produtos = int(max_produtos)
+            if max_produtos <= 0:
+                max_produtos = produtos.count()
+        except (ValueError, TypeError):
+            max_produtos = produtos.count()
+        
+        # Agendar a verificação de todos os produtos
+        task = verificar_todos_produtos.delay(tamanho_lote, max_produtos)
+        
+        return Response({
+            'message': f'Verificação agendada para {min(max_produtos, produtos.count())} produtos',
+            'task_id': task.id
+        })
+    
     @action(detail=True, methods=['post'])
     def atualizar_preco_cliente(self, request, pk=None):
+        """
+        Endpoint para atualizar manualmente o preço de um produto do cliente.
+        Também atualiza o histórico de preços.
+        """
         produto = self.get_object()
         
         # Verificar se o usuário tem um cliente atual definido
@@ -195,6 +260,17 @@ class ProdutoViewSet(viewsets.ModelViewSet):
             )
         
         try:
+            # Converte para float se for string
+            if isinstance(preco, str):
+                preco = float(preco.replace(',', '.'))
+            
+            # Validação básica
+            if preco <= 0:
+                return Response(
+                    {"detail": "O preço deve ser maior que zero."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
             # Atualiza o preço
             produto.preco_cliente = preco
             produto.save(update_fields=['preco_cliente'])
@@ -213,7 +289,13 @@ class ProdutoViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(produto)
             return Response(serializer.data)
             
+        except ValueError:
+            return Response(
+                {"detail": "Formato de preço inválido."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
+            logger.error(f"Erro ao atualizar preço do cliente: {str(e)}")
             return Response(
                 {"detail": f"Erro ao atualizar preço: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
