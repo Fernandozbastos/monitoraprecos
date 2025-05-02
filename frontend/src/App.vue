@@ -21,13 +21,13 @@
       v-if="isAuthenticated"
     >
       <v-list-item>
-        <v-list-item-avatar>
-          <v-icon large>mdi-account-circle</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title>{{ userName }}</v-list-item-title>
-          <v-list-item-subtitle>{{ userType }}</v-list-item-subtitle>
-        </v-list-item-content>
+        <template v-slot:prepend>
+          <v-avatar>
+            <v-icon>mdi-account-circle</v-icon>
+          </v-avatar>
+        </template>
+        <v-list-item-title>{{ userName }}</v-list-item-title>
+        <v-list-item-subtitle>{{ userType }}</v-list-item-subtitle>
       </v-list-item>
 
       <v-divider></v-divider>

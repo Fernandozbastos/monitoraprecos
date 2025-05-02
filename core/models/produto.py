@@ -2,6 +2,11 @@ from django.db import models
 from django.utils import timezone
 
 class Produto(models.Model):
+    TIPO_CHOICES = [
+        ('cliente', 'Produto do Cliente'),
+        ('concorrente', 'Produto de Concorrente'),
+    ]
+    
     cliente = models.ForeignKey(
         'core.Cliente', 
         on_delete=models.CASCADE,
@@ -10,6 +15,19 @@ class Produto(models.Model):
     nome = models.CharField(max_length=255)
     concorrente = models.CharField(max_length=255)
     url = models.URLField(max_length=1000)
+    tipo_produto = models.CharField(
+        max_length=20, 
+        choices=TIPO_CHOICES,
+        default='concorrente',
+        verbose_name='Tipo do Produto'
+    )
+    preco_cliente = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2,
+        null=True, 
+        blank=True,
+        verbose_name='Preço do Cliente'
+    )
     plataforma = models.ForeignKey(
         'core.Plataforma', 
         null=True, 
@@ -35,3 +53,48 @@ class Produto(models.Model):
     
     def __str__(self):
         return f"{self.nome} ({self.cliente})"
+    
+    def get_menor_preco_concorrente(self):
+        """Retorna o menor preço de concorrente para este produto."""
+        from core.models import HistoricoPreco
+        
+        # Encontra produtos concorrentes com o mesmo nome (mesma categoria)
+        produtos_concorrentes = Produto.objects.filter(
+            cliente=self.cliente,
+            nome=self.nome,
+            tipo_produto='concorrente'
+        ).exclude(id=self.id)
+        
+        if not produtos_concorrentes.exists():
+            return None
+            
+        # Lista para armazenar os preços mais recentes
+        precos_recentes = []
+        
+        # Para cada produto concorrente, pega o preço mais recente
+        for produto in produtos_concorrentes:
+            historico = HistoricoPreco.objects.filter(
+                produto=produto
+            ).order_by('-data').first()
+            
+            if historico:
+                precos_recentes.append(historico.preco)
+        
+        # Se tiver preços, retorna o menor
+        if precos_recentes:
+            return min(precos_recentes)
+        
+        return None
+    
+    def calcular_diferenca_percentual(self):
+        """Calcula a diferença percentual entre o preço do cliente e o menor preço concorrente."""
+        if self.tipo_produto != 'cliente' or not self.preco_cliente:
+            return None
+            
+        menor_preco = self.get_menor_preco_concorrente()
+        if not menor_preco:
+            return None
+            
+        # Diferença percentual (positiva se o cliente for mais caro)
+        diferenca = ((self.preco_cliente - menor_preco) / menor_preco) * 100
+        return round(diferenca, 1)  # Arredonda para 1 casa decimal

@@ -10,8 +10,23 @@ const Dashboard = () => import('../views/Dashboard.vue')
 const ProductList = () => import('../views/ProductList.vue')
 const ProductDetail = () => import('../views/ProductDetail.vue')
 const UserProfile = () => import('../views/UserProfile.vue')
+const ProductForm = () => import('../views/ProductForm.vue')
+
 
 const routes = [
+  {
+    path: '/products/add',
+    name: 'ProductAdd',
+    component: ProductForm,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/products/:id/edit',
+    name: 'ProductEdit',
+    component: ProductForm,
+    props: true,
+    meta: { requiresAuth: true }
+  },
   {
     path: '/login',
     name: 'Login',

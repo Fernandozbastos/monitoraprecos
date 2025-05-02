@@ -26,6 +26,14 @@
                 <v-icon left>mdi-refresh</v-icon>
                 Atualizar
               </v-btn>
+              <v-btn
+                color="success"
+                class="ml-2"
+                @click="$router.push('/products/add')"
+              >
+                <v-icon left>mdi-plus</v-icon>
+                Adicionar Produto
+              </v-btn>
             </v-card-title>
             <v-card-text>
               <v-data-table
@@ -61,6 +69,14 @@
                     :loading="verificandoItem === item.id"
                   >
                     <v-icon>mdi-refresh</v-icon>
+                  </v-btn>
+                  <v-btn
+                    small
+                    icon
+                    color="warning"
+                    @click="$router.push(`/products/${item.id}/edit`)"
+                  >
+                    <v-icon>mdi-pencil</v-icon>
                   </v-btn>
                 </template>
               </v-data-table>

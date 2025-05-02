@@ -36,6 +36,22 @@ def verificar_preco(self, produto_id):
     try:
         produto = Produto.objects.get(id=produto_id)
         
+        # Se for um produto do cliente, não precisa fazer scraping
+        if produto.tipo_produto == 'cliente' and produto.preco_cliente is not None:
+            # Apenas registra o preço atual no histórico
+            HistoricoPreco.objects.create(
+                produto=produto,
+                preco=produto.preco_cliente
+            )
+            
+            # Atualiza o timestamp da última verificação
+            produto.ultima_verificacao = timezone.now()
+            produto.save(update_fields=['ultima_verificacao'])
+            
+            logger.info(f"Preço do produto do cliente registrado para {produto.nome}: R$ {produto.preco_cliente}")
+            return f"Preço do produto do cliente registrado: R$ {produto.preco_cliente}"
+        
+        # Para produtos de concorrentes, continua com a lógica original
         # Registra início da verificação
         logger.info(f"Iniciando verificação de preço para: {produto.nome} ({produto.url})")
         
@@ -169,7 +185,7 @@ def atualizar_posicoes_fila():
     except Exception as e:
         logger.error(f"Erro ao atualizar posições na fila: {str(e)}")
         raise
-
+    
 @app.task
 def testar_conectividade(url_teste="https://www.google.com"):
     """

@@ -32,11 +32,21 @@
                 
                 <v-list-item>
                   <v-list-item-content>
+                    <v-list-item-subtitle>Tipo</v-list-item-subtitle>
+                    <v-list-item-title>
+                      {{ produto.tipo_produto === 'cliente' ? 'Produto do Cliente' : 'Produto de Concorrente' }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-divider></v-divider>
+                
+                <v-list-item v-if="produto.tipo_produto === 'concorrente'">
+                  <v-list-item-content>
                     <v-list-item-subtitle>Concorrente</v-list-item-subtitle>
                     <v-list-item-title>{{ produto.concorrente || 'N/A' }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
-                <v-divider></v-divider>
+                <v-divider v-if="produto.tipo_produto === 'concorrente'"></v-divider>
                 
                 <v-list-item>
                   <v-list-item-content>
@@ -90,7 +100,84 @@
           </v-col>
           
           <v-col cols="12" md="6">
-            <!-- Cards de preço removidos pois podem estar causando o erro -->
+            <!-- Preço do Cliente (apenas para produtos do cliente) -->
+            <v-card v-if="produto.tipo_produto === 'cliente'" elevation="2" class="mb-4">
+              <v-card-title>Preço do Cliente</v-card-title>
+              <v-card-text>
+                <v-form ref="form" v-model="formValid">
+                  <v-text-field
+                    v-model="precoCliente"
+                    label="Preço do Cliente"
+                    prefix="R$"
+                    type="number"
+                    step="0.01"
+                    :rules="precoRules"
+                  ></v-text-field>
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="primary"
+                  :disabled="!formValid"
+                  :loading="atualizandoPreco"
+                  @click="atualizarPrecoCliente"
+                >
+                  Atualizar Preço
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+            
+            <!-- Comparação de Preços (apenas para produtos do cliente) -->
+            <v-card v-if="produto.tipo_produto === 'cliente'" elevation="2" class="mb-4">
+              <v-card-title>
+                Comparação de Preços
+              </v-card-title>
+              <v-card-text>
+                <v-list>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-subtitle>Preço do Cliente</v-list-item-subtitle>
+                      <v-list-item-title class="text-h6">
+                        {{ formatarPreco(produto.preco_cliente) }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-subtitle>Menor Preço Concorrente</v-list-item-subtitle>
+                      <v-list-item-title class="text-h6">
+                        {{ formatarPreco(produto.menor_preco_concorrente) }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  
+                  <v-list-item v-if="produto.diferenca_percentual !== null">
+                    <v-list-item-content>
+                      <v-list-item-subtitle>Diferença Percentual</v-list-item-subtitle>
+                      <v-list-item-title>
+                        <v-chip
+                          :color="produto.diferenca_percentual <= 0 ? 'success' : 'error'"
+                          class="font-weight-bold"
+                        >
+                          {{ formatarPercentual(produto.diferenca_percentual) }}
+                        </v-chip>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+            
+            <!-- Alerta se não houver concorrentes -->
+            <v-alert
+              v-if="produto.tipo_produto === 'cliente' && produto.menor_preco_concorrente === null"
+              type="warning"
+              class="mb-4"
+            >
+              Não há preços de concorrentes registrados para esse produto. Cadastre produtos concorrentes com o mesmo nome para habilitar a comparação.
+            </v-alert>
           </v-col>
         </v-row>
       </template>
@@ -98,16 +185,25 @@
   </template>
   
   <script setup>
-  import { ref, onMounted, watch } from 'vue'
+  import { ref, onMounted, watch, computed } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import axios from 'axios'
+  import api from '@/services/api'
   
   const route = useRoute()
   const router = useRouter()
   const loading = ref(true)
   const verificando = ref(false)
+  const atualizandoPreco = ref(false)
   const produto = ref({})
-  const historico = ref([])
+  const precoCliente = ref(0)
+  const formValid = ref(false)
+  const form = ref(null)
+  
+  // Regras de validação
+  const precoRules = [
+    v => !!v || 'O preço é obrigatório',
+    v => v > 0 || 'O preço deve ser maior que zero'
+  ]
   
   // Formatação de data
   const formatDate = (dateString) => {
@@ -121,32 +217,35 @@
     }
   }
   
+  // Formatação de preço
+  const formatarPreco = (valor) => {
+    if (valor === null || valor === undefined) return 'N/A'
+    return `R$ ${Number(valor).toFixed(2).replace('.', ',')}`
+  }
+  
+  // Formatação de percentual
+  const formatarPercentual = (valor) => {
+    if (valor === null || valor === undefined) return 'N/A'
+    const sinal = valor > 0 ? '+' : ''
+    return `${sinal}${valor.toFixed(1).replace('.', ',')}%`
+  }
+  
   // Carregar informações do produto
   const carregarProduto = async () => {
     loading.value = true;
     try {
-      // URL base da API
-      const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-      
-      // Token de autenticação do localStorage
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        console.error('Token não encontrado, redirecionando para login');
-        router.push('/login');
-        return;
-      }
-      
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
-      
       const produtoId = route.params.id;
       console.log('Carregando produto com ID:', produtoId);
       
       // Buscar o produto
-      const response = await axios.get(`${baseURL}/produtos/${produtoId}/`, config);
+      const response = await api.get(`/produtos/${produtoId}/`);
       produto.value = response.data;
       console.log('Produto carregado:', produto.value);
+      
+      // Atualiza o campo de preço para produtos do cliente
+      if (produto.value.tipo_produto === 'cliente' && produto.value.preco_cliente !== null) {
+        precoCliente.value = produto.value.preco_cliente;
+      }
       
     } catch (error) {
       console.error('Erro ao carregar produto:', error);
@@ -165,18 +264,8 @@
     
     verificando.value = true;
     try {
-      // URL base da API
-      const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-      
-      // Token de autenticação do localStorage
-      const token = localStorage.getItem('accessToken');
-      
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
-      
-      // Chamada para verificar o preço (ajuste conforme a API)
-      await axios.post(`${baseURL}/produtos/${produto.value.id}/verificar/`, {}, config);
+      // Chamada para verificar o preço
+      await api.post(`/produtos/${produto.value.id}/verificar/`);
       
       // Recarregar o produto com os dados atualizados
       await carregarProduto();
@@ -185,6 +274,30 @@
       console.error('Erro ao verificar preço:', error);
     } finally {
       verificando.value = false;
+    }
+  }
+  
+  // Atualizar preço do cliente
+  const atualizarPrecoCliente = async () => {
+    if (!produto.value.id || produto.value.tipo_produto !== 'cliente') {
+      console.error('Operação não permitida');
+      return;
+    }
+    
+    atualizandoPreco.value = true;
+    try {
+      // Chamar o endpoint para atualizar o preço do cliente
+      await api.post(`/produtos/${produto.value.id}/atualizar_preco_cliente/`, {
+        preco_cliente: precoCliente.value
+      });
+      
+      // Recarregar o produto com os dados atualizados
+      await carregarProduto();
+      
+    } catch (error) {
+      console.error('Erro ao atualizar preço do cliente:', error);
+    } finally {
+      atualizandoPreco.value = false;
     }
   }
   
@@ -200,3 +313,9 @@
     }
   });
   </script>
+  
+  <style scoped>
+  .v-chip {
+    font-weight: bold;
+  }
+  </style>

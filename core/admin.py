@@ -29,9 +29,26 @@ class GrupoAdmin(admin.ModelAdmin):
 
 @admin.register(Produto)
 class ProdutoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'cliente', 'concorrente', 'plataforma', 'ultima_verificacao', 'acao_verificar_preco')
-    list_filter = ('verificacao_manual', 'plataforma')
+    list_display = ('nome', 'cliente', 'tipo_produto', 'preco_cliente', 'plataforma', 'ultima_verificacao', 'acao_verificar_preco')
+    list_filter = ('tipo_produto', 'verificacao_manual', 'plataforma')
     search_fields = ('nome', 'url', 'concorrente')
+    
+    fieldsets = (
+        (None, {
+            'fields': ('cliente', 'nome', 'tipo_produto')
+        }),
+        ('Informações do Produto', {
+            'fields': ('concorrente', 'url', 'plataforma', 'grupo')
+        }),
+        ('Preço Cliente', {
+            'fields': ('preco_cliente',),
+            'description': 'Defina o preço manualmente para produtos do cliente.'
+        }),
+        ('Configurações', {
+            'fields': ('verificacao_manual', 'posicao_fila'),
+            'classes': ('collapse',)
+        })
+    )
 
     def acao_verificar_preco(self, obj):
         return mark_safe(f'<a href="{obj.id}/verificar-preco/" class="button">Verificar Preço</a>')
