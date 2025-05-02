@@ -17,10 +17,18 @@ class ProdutoSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'nome', 'tipo_produto', 'preco_cliente', 'menor_preco_concorrente',
             'diferenca_percentual', 'status_preco', 'plataforma', 'plataforma_nome',
-            'ultima_verificacao', 'url', 'concorrente', 'grupo', 'verificacao_manual'
+            'ultima_verificacao', 'url', 'concorrente', 'grupo', 'verificacao_manual', 'cliente'
         ]
         read_only_fields = ['data_criacao', 'ultima_verificacao']
 
+    def validate(self, data):
+        """Validação extra para garantir que cliente e grupo estejam presentes"""
+        if not data.get('cliente'):
+            raise serializers.ValidationError({"cliente": "O cliente é obrigatório."})
+        if not data.get('grupo'):
+            raise serializers.ValidationError({"grupo": "O grupo é obrigatório."})
+        return data
+        
     def get_menor_preco_concorrente(self, obj):
         menor_preco = obj.get_menor_preco_concorrente()
         return round(menor_preco, 2) if menor_preco else None

@@ -5,6 +5,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from core.models import Produto, HistoricoPreco
 from core.serializers import ProdutoSerializer, ProdutoDetalheSerializer, HistoricoPrecoResumoSerializer
 from django.utils import timezone
+import logging
+
+# Configurar logger
+logger = logging.getLogger(__name__)
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = Produto.objects.all()
@@ -28,12 +32,34 @@ class ProdutoViewSet(viewsets.ModelViewSet):
             return self.queryset.filter(cliente=user.cliente_atual)
         return self.queryset
     
+    def create(self, request, *args, **kwargs):
+        logger.info(f"Criando produto com dados: {request.data}")
+        try:
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"Erro ao criar produto: {str(e)}")
+            raise
+    
     @action(detail=True, methods=['get'])
     def historico(self, request, pk=None):
         produto = self.get_object()
         historico = HistoricoPreco.objects.filter(produto=produto).order_by('-data')[:30]
         serializer = HistoricoPrecoResumoSerializer(historico, many=True)
         return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
+    def verificar(self, request, pk=None):
+        """Endpoint para verificar o preço de um produto manualmente."""
+        from scraper.tasks import verificar_preco
+        
+        produto = self.get_object()
+        # Agenda a tarefa de verificação de preço
+        task = verificar_preco.delay(produto.id)
+        
+        return Response({
+            'message': f'Verificação de preço agendada para {produto.nome}',
+            'task_id': task.id
+        })
     
     @action(detail=True, methods=['post'])
     def atualizar_preco_cliente(self, request, pk=None):

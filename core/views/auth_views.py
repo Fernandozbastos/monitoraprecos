@@ -8,7 +8,14 @@ from core.serializers.usuario_serializers import UsuarioSerializer
 @permission_classes([IsAuthenticated])
 def get_user_info(request):
     """Endpoint para obter informações do usuário logado"""
-    serializer = UsuarioSerializer(request.user)
+    user = request.user
+    # Garantir que cliente_atual seja um ID, não um objeto
+    if hasattr(user, 'cliente_atual') and user.cliente_atual:
+        # Log para verificar o tipo do cliente_atual
+        print(f"Tipo do cliente_atual: {type(user.cliente_atual)}")
+        print(f"Valor do cliente_atual: {user.cliente_atual}")
+    
+    serializer = UsuarioSerializer(user)
     return Response(serializer.data)
 
 @api_view(['POST'])

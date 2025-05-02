@@ -72,6 +72,25 @@ const actions = {
   logout({ commit }) {
     commit('clearAuth')
     router.push('/login')
+  },
+  
+  // Nova action para verificar a validade do token
+  checkAuth({ state, dispatch }) {
+    if (!state.accessToken) return false
+    
+    try {
+      const decoded = jwtDecode(state.accessToken)
+      const currentTime = Date.now() / 1000
+      
+      // Se o token expirou, tenta renovar
+      if (decoded.exp < currentTime) {
+        return dispatch('refreshToken')
+      }
+      
+      return true
+    } catch (error) {
+      return false
+    }
   }
 }
 

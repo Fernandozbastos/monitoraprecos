@@ -10,10 +10,11 @@ const apiClient = axios.create({
   },
   timeout: 10000
 })
+
 // Intercepta as requisições para adicionar o token JWT
 apiClient.interceptors.request.use(
   config => {
-    // Usar store diretamente em vez de useStore()
+    // Usar store diretamente
     const token = store.getters['auth/accessToken']
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
@@ -31,7 +32,7 @@ apiClient.interceptors.response.use(
     return response
   },
   async error => {
-    // Usar store diretamente em vez de useStore()
+    // Usar store diretamente
     const originalRequest = error.config
     
     // Se recebeu 401 (não autorizado) e não for uma tentativa de refresh
@@ -49,12 +50,12 @@ apiClient.interceptors.response.use(
         }
         
         const response = await axios.post(
-          `${apiClient.defaults.baseURL.replace('/api', '')}/api/token/refresh/`,
+          '/api/token/refresh/',
           { refresh: refreshToken }
         )
         
         const { access } = response.data
-        store.dispatch('auth/refreshToken', { access })
+        await store.dispatch('auth/refreshToken', { access })
         
         // Refaz a requisição original com o novo token
         originalRequest.headers['Authorization'] = `Bearer ${access}`

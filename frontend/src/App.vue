@@ -107,7 +107,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import api from '@/services/api'
-
+import authService from '@/services/auth_services'
 
 const store = useStore()
 const router = useRouter()
@@ -137,6 +137,43 @@ const showFab = computed(() => {
   return route.path === '/products' || route.path === '/dashboard'
 })
 
+// Função para verificar autenticação ao iniciar o app
+const verificarAutenticacao = async () => {
+  try {
+    // Verifica se o token é válido
+    const tokenValido = await store.dispatch('auth/checkAuth')
+    
+    if (tokenValido) {
+      // Se o token é válido, carrega os dados do usuário
+      await atualizarDadosUsuario()
+    } else {
+      // Se o token não é válido, direciona para login
+      if (router.currentRoute.value.path !== '/login') {
+        router.push('/login')
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao verificar autenticação:', error)
+    // Se houver qualquer erro, redireciona para login
+    router.push('/login')
+  }
+}
+
+// Função para atualizar dados do usuário
+const atualizarDadosUsuario = async () => {
+  try {
+    const userInfo = await authService.getUserInfo()
+    store.commit('auth/setUser', userInfo.data)
+    
+    // Após obter dados do usuário, carrega clientes
+    if (isAuthenticated.value) {
+      await carregarClientes()
+    }
+  } catch (error) {
+    console.error('Erro ao obter informações do usuário:', error)
+  }
+}
+
 // Função para carregar os clientes disponíveis
 const carregarClientes = async () => {
   if (!isAuthenticated.value) return
@@ -157,6 +194,10 @@ const carregarClientes = async () => {
     }
   } catch (error) {
     console.error('Erro ao carregar clientes:', error)
+    if (error.response && error.response.status === 401) {
+      // Se recebeu 401, provavelmente o token expirou
+      await verificarAutenticacao()
+    }
   } finally {
     carregandoClientes.value = false
   }
@@ -167,10 +208,10 @@ const atualizarClienteAtual = async () => {
   if (!clienteAtual.value) return
   
   try {
-    await api.post('/user/set-cliente/', { cliente_atual: clienteAtual.value })
+    await authService.setClienteAtual(clienteAtual.value)
     
     // Atualiza o usuário no Vuex store
-    const userInfo = await api.get('/user/info/')
+    const userInfo = await authService.getUserInfo()
     store.commit('auth/setUser', userInfo.data)
     
     // Recarrega a página atual para atualizar os dados
@@ -180,11 +221,14 @@ const atualizarClienteAtual = async () => {
   }
 }
 
+// Método para logout
+const logout = () => {
+  store.dispatch('auth/logout')
+}
+
 // Carregar clientes quando o componente for montado
 onMounted(() => {
-  if (isAuthenticated.value) {
-    carregarClientes()
-  }
+  verificarAutenticacao()
 })
 
 // Observar mudanças na autenticação
@@ -193,9 +237,4 @@ watch(() => isAuthenticated.value, (newValue) => {
     carregarClientes()
   }
 })
-
-// Métodos
-const logout = () => {
-  store.dispatch('auth/logout')
-}
 </script>
