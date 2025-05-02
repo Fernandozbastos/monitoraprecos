@@ -6,6 +6,7 @@ from core.models import Produto, HistoricoPreco
 from core.serializers import ProdutoSerializer, ProdutoDetalheSerializer, HistoricoPrecoResumoSerializer
 from django.utils import timezone
 import logging
+from django.db import transaction
 
 # Configurar logger
 logger = logging.getLogger(__name__)
@@ -15,7 +16,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     serializer_class = ProdutoSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['cliente', 'plataforma', 'verificacao_manual', 'grupo', 'tipo_produto']
+    filterset_fields = ['cliente', 'plataforma', 'verificacao_manual', 'grupo', 'tipo_produto', 'produto_cliente']
     search_fields = ['nome', 'concorrente', 'url']
     ordering_fields = ['nome', 'data_criacao', 'ultima_verificacao']
     ordering = ['-data_criacao']
@@ -40,6 +41,57 @@ class ProdutoViewSet(viewsets.ModelViewSet):
             logger.error(f"Erro ao criar produto: {str(e)}")
             raise
     
+    def partial_update(self, request, *args, **kwargs):
+        """
+        Sobrescreve o método partial_update para lidar com atualizações parciais,
+        especialmente para o campo produto_cliente.
+        """
+        instance = self.get_object()
+        
+        # Verificar se o usuário tem um cliente atual definido
+        user = request.user
+        if not user.cliente_atual:
+            return Response(
+                {"detail": "Você precisa selecionar um cliente atual antes de realizar esta operação."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        # Verificar se o produto pertence ao cliente atual do usuário
+        if instance.cliente.id != user.cliente_atual.id:
+            return Response(
+                {"detail": "Este produto não pertence ao cliente atual selecionado."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Se estiver atualizando o campo produto_cliente para True
+        if 'produto_cliente' in request.data and request.data['produto_cliente']:
+            try:
+                with transaction.atomic():
+                    # Desmarcar outros produtos com o mesmo nome
+                    Produto.objects.filter(
+                        cliente=instance.cliente,
+                        nome=instance.nome,
+                        produto_cliente=True
+                    ).exclude(id=instance.id).update(produto_cliente=False)
+                    
+                    # Atualizar apenas o campo produto_cliente
+                    instance.produto_cliente = True
+                    instance.save(update_fields=['produto_cliente'])
+                    
+                    # Retornar o produto atualizado
+                    serializer = self.get_serializer(instance)
+                    return Response(serializer.data)
+                    
+            except Exception as e:
+                logger.error(f"Erro ao atualizar status de produto cliente: {str(e)}")
+                return Response(
+                    {"detail": f"Erro ao atualizar: {str(e)}"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+        
+        # Para outras atualizações parciais, usar o comportamento padrão
+        return super().partial_update(request, *args, **kwargs)
+    
     @action(detail=True, methods=['get'])
     def historico(self, request, pk=None):
         produto = self.get_object()
@@ -53,6 +105,22 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         from scraper.tasks import verificar_preco
         
         produto = self.get_object()
+        
+        # Verificar se o usuário tem um cliente atual definido
+        user = request.user
+        if not user.cliente_atual:
+            return Response(
+                {"detail": "Você precisa selecionar um cliente atual antes de realizar esta operação."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        # Verificar se o produto pertence ao cliente atual do usuário
+        if produto.cliente.id != user.cliente_atual.id:
+            return Response(
+                {"detail": "Este produto não pertence ao cliente atual selecionado."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
         # Agenda a tarefa de verificação de preço
         task = verificar_preco.delay(produto.id)
         
@@ -64,6 +132,21 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def atualizar_preco_cliente(self, request, pk=None):
         produto = self.get_object()
+        
+        # Verificar se o usuário tem um cliente atual definido
+        user = request.user
+        if not user.cliente_atual:
+            return Response(
+                {"detail": "Você precisa selecionar um cliente atual antes de realizar esta operação."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        # Verificar se o produto pertence ao cliente atual do usuário
+        if produto.cliente.id != user.cliente_atual.id:
+            return Response(
+                {"detail": "Este produto não pertence ao cliente atual selecionado."},
+                status=status.HTTP_403_FORBIDDEN
+            )
         
         # Verifica se é um produto do cliente
         if produto.tipo_produto != 'cliente':

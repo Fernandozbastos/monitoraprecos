@@ -28,6 +28,11 @@ class Produto(models.Model):
         blank=True,
         verbose_name='Preço do Cliente'
     )
+    produto_cliente = models.BooleanField(
+        default=False,
+        verbose_name='Produto Cliente Base',
+        help_text='Marca este produto como o produto cliente base para comparações'
+    )
     plataforma = models.ForeignKey(
         'core.Plataforma', 
         null=True, 
@@ -85,6 +90,14 @@ class Produto(models.Model):
             return min(precos_recentes)
         
         return None
+        
+    def get_produto_cliente_base(self):
+        """Retorna o produto marcado como 'produto_cliente' com o mesmo nome."""
+        return Produto.objects.filter(
+            cliente=self.cliente,
+            nome=self.nome,
+            produto_cliente=True
+        ).first()
     
     def calcular_diferenca_percentual(self):
         """Calcula a diferença percentual entre o preço do cliente e o menor preço concorrente."""

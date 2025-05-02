@@ -15,9 +15,10 @@ class ProdutoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Produto
         fields = [
-            'id', 'nome', 'tipo_produto', 'preco_cliente', 'menor_preco_concorrente',
-            'diferenca_percentual', 'status_preco', 'plataforma', 'plataforma_nome',
-            'ultima_verificacao', 'url', 'concorrente', 'grupo', 'verificacao_manual', 'cliente'
+            'id', 'nome', 'tipo_produto', 'preco_cliente', 'produto_cliente',
+            'menor_preco_concorrente', 'diferenca_percentual', 'status_preco', 
+            'plataforma', 'plataforma_nome', 'ultima_verificacao', 'url', 
+            'concorrente', 'grupo', 'verificacao_manual', 'cliente'
         ]
         read_only_fields = ['data_criacao', 'ultima_verificacao']
 
