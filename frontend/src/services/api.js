@@ -1,4 +1,4 @@
-// src/services/api.js - versão corrigida
+// src/services/api.js
 import axios from 'axios'
 import store from '../store' // Importar o store diretamente
 
@@ -11,7 +11,7 @@ const apiClient = axios.create({
   timeout: 10000
 })
 
-// Intercepta as requisições para adicionar o token JWT
+// Adiciona console.log para depuração de requisições
 apiClient.interceptors.request.use(
   config => {
     // Usar store diretamente
@@ -19,6 +19,12 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
+    
+    // Log de depuração para PATCH requests
+    if (config.method === 'patch') {
+      console.log('PATCH request data:', config.data);
+    }
+    
     return config
   },
   error => {
@@ -26,9 +32,13 @@ apiClient.interceptors.request.use(
   }
 )
 
-// Intercepta as respostas para lidar com erros 401 (token expirado)
+// Intercepta as respostas para logar as respostas do patch
 apiClient.interceptors.response.use(
   response => {
+    // Log de depuração para respostas de PATCH requests
+    if (response.config.method === 'patch') {
+      console.log('PATCH response data:', response.data);
+    }
     return response
   },
   async error => {
@@ -65,6 +75,15 @@ apiClient.interceptors.response.use(
         store.dispatch('auth/logout')
         return Promise.reject(error)
       }
+    }
+    
+    // Log detalhado de erros para PATCH requests
+    if (error.config && error.config.method === 'patch') {
+      console.error('PATCH request error:', {
+        url: error.config.url,
+        data: error.config.data,
+        response: error.response?.data
+      });
     }
     
     return Promise.reject(error)

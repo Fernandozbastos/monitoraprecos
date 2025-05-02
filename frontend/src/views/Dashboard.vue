@@ -108,75 +108,83 @@
           </v-btn>
         </div>
         
-        <!-- Lista de produtos com resumo colapsável usando v-expansion-panels -->
-        <v-expansion-panels v-if="produtosAgrupados.length > 0" multiple>
-          <v-expansion-panel
+        <!-- Lista de grupos de produtos -->
+        <div v-if="produtosAgrupados.length > 0">
+          <div
             v-for="(grupo, index) in produtosAgrupados"
             :key="index"
-            class="mb-3"
+            class="mb-5 border rounded"
           >
-            <v-expansion-panel-header>
-              <div class="d-flex align-center w-100">
-                <!-- Nome do produto -->
-                <span class="text-subtitle-1 font-weight-bold">{{ grupo.nome }}</span>
-                
-                <!-- Mensagem quando não houver produto cliente definido -->
-                <v-chip
-                  v-if="!grupo.produtoClienteBase"
-                  small
-                  outlined
-                  color="warning"
-                  class="ml-3"
-                >
-                  Por favor, defina o produto cliente
-                </v-chip>
-                
-                <v-spacer></v-spacer>
-                
-                <!-- Resumo do produto (apenas se houver produto cliente base) -->
-                <template v-if="grupo.produtoClienteBase">
-                  <div class="d-none d-md-flex align-center">
-                    <!-- Preço do cliente -->
-                    <div class="text-center mx-3">
-                      <div class="caption grey--text">Preço Cliente</div>
-                      <div class="subtitle-1 font-weight-medium primary--text">
-                        {{ formatarPreco(grupo.produtoClienteBase.preco_cliente) }}
-                      </div>
-                    </div>
-                    
-                    <!-- Menor preço concorrente -->
-                    <div class="text-center mx-3">
-                      <div class="caption grey--text">Menor Preço</div>
-                      <div class="subtitle-1 font-weight-medium">
-                        {{ formatarPreco(grupo.menorPrecoConcorrente) }}
-                      </div>
-                    </div>
-                    
-                    <!-- Diferença percentual -->
-                    <div class="text-center mx-3" v-if="grupo.diferencaPercentual !== null">
-                      <div class="caption grey--text">Variação</div>
-                      <v-chip
-                        x-small
-                        :color="getCorDiferenca(grupo.diferencaPercentual)"
-                        dark
-                      >
-                        {{ formatarPercentual(grupo.diferencaPercentual) }}
-                      </v-chip>
-                    </div>
-                    
-                    <!-- Concorrente com menor preço -->
-                    <div class="text-center mx-3" v-if="grupo.concorrenteMenorPreco">
-                      <div class="caption grey--text">Concorrente</div>
-                      <div class="subtitle-2 font-weight-regular text-truncate" style="max-width: 150px">
-                        {{ grupo.concorrenteMenorPreco }}
-                      </div>
+            <!-- Cabeçalho do grupo -->
+            <div 
+              class="d-flex align-center pa-4 grey lighten-4 border-bottom"
+              @click="toggleGrupo(index)"
+              style="cursor: pointer;"
+            >
+              <v-icon class="mr-2">
+                {{ gruposAbertos.includes(index) ? 'mdi-chevron-down' : 'mdi-chevron-right' }}
+              </v-icon>
+              
+              <!-- Nome do produto -->
+              <span class="text-subtitle-1 font-weight-bold">{{ grupo.nome }}</span>
+              
+              <!-- Mensagem quando não houver produto cliente definido -->
+              <v-chip
+                v-if="!grupo.produtoClienteBase"
+                small
+                outlined
+                color="warning"
+                class="ml-3"
+              >
+                Por favor, defina o produto cliente
+              </v-chip>
+              
+              <v-spacer></v-spacer>
+              
+              <!-- Resumo do produto (apenas se houver produto cliente base) -->
+              <template v-if="grupo.produtoClienteBase">
+                <div class="d-none d-md-flex align-center">
+                  <!-- Preço do cliente -->
+                  <div class="text-center mx-3">
+                    <div class="caption grey--text">Preço Cliente</div>
+                    <div class="subtitle-1 font-weight-medium primary--text">
+                      {{ formatarPreco(grupo.produtoClienteBase.preco_cliente) }}
                     </div>
                   </div>
-                </template>
-              </div>
-            </v-expansion-panel-header>
+                  
+                  <!-- Menor preço concorrente -->
+                  <div class="text-center mx-3">
+                    <div class="caption grey--text">Menor Preço</div>
+                    <div class="subtitle-1 font-weight-medium">
+                      {{ formatarPreco(grupo.menorPrecoConcorrente) }}
+                    </div>
+                  </div>
+                  
+                  <!-- Diferença percentual -->
+                  <div class="text-center mx-3" v-if="grupo.diferencaPercentual !== null">
+                    <div class="caption grey--text">Variação</div>
+                    <v-chip
+                      x-small
+                      :color="getCorDiferenca(grupo.diferencaPercentual)"
+                      dark
+                    >
+                      {{ formatarPercentual(grupo.diferencaPercentual) }}
+                    </v-chip>
+                  </div>
+                  
+                  <!-- Concorrente com menor preço -->
+                  <div class="text-center mx-3" v-if="grupo.concorrenteMenorPreco">
+                    <div class="caption grey--text">Concorrente</div>
+                    <div class="subtitle-2 font-weight-regular text-truncate" style="max-width: 150px">
+                      {{ grupo.concorrenteMenorPreco }}
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
             
-            <v-expansion-panel-content>
+            <!-- Conteúdo do grupo (tabela de produtos) -->
+            <div v-if="gruposAbertos.includes(index)" class="pa-4">
               <v-data-table
                 :headers="headers"
                 :items="grupo.produtos"
@@ -242,63 +250,45 @@
                 <!-- Ações -->
                 <template v-slot:item.actions="{ item }">
                   <div class="d-flex">
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          icon
-                          x-small
-                          color="primary"
-                          class="mr-1"
-                          v-bind="attrs"
-                          v-on="on"
-                          @click="verDetalhes(item.id)"
-                        >
-                          <v-icon>mdi-eye</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Ver detalhes</span>
-                    </v-tooltip>
+                    <v-btn
+                      icon
+                      x-small
+                      color="primary"
+                      class="mr-1"
+                      @click="verDetalhes(item.id)"
+                      :title="'Ver detalhes'"
+                    >
+                      <v-icon>mdi-eye</v-icon>
+                    </v-btn>
                     
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          icon
-                          x-small
-                          color="success"
-                          v-bind="attrs"
-                          v-on="on"
-                          @click="verificarPreco(item.id)"
-                          :loading="verificandoItem === item.id"
-                        >
-                          <v-icon>mdi-refresh</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Verificar preço</span>
-                    </v-tooltip>
+                    <v-btn
+                      icon
+                      x-small
+                      color="success"
+                      @click="verificarPreco(item.id)"
+                      :loading="verificandoItem === item.id"
+                      :title="'Verificar preço'"
+                    >
+                      <v-icon>mdi-refresh</v-icon>
+                    </v-btn>
                     
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          icon
-                          x-small
-                          color="warning"
-                          class="ml-1"
-                          v-bind="attrs"
-                          v-on="on"
-                          @click="definirProdutoClienteBase(item)"
-                          :disabled="item.produto_cliente"
-                        >
-                          <v-icon>mdi-star</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Definir como produto cliente base</span>
-                    </v-tooltip>
+                    <v-btn
+                      icon
+                      x-small
+                      color="warning"
+                      class="ml-1"
+                      @click="definirProdutoClienteBase(item)"
+                      :disabled="item.produto_cliente"
+                      :title="'Definir como produto cliente base'"
+                    >
+                      <v-icon>mdi-star</v-icon>
+                    </v-btn>
                   </div>
                 </template>
               </v-data-table>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
+            </div>
+          </div>
+        </div>
       </v-card-text>
     </v-card>
     
@@ -333,6 +323,7 @@
         <p><strong>Total de produtos carregados:</strong> {{ produtos.length }}</p>
         <p><strong>Produtos únicos:</strong> {{ produtosUnicos.length }}</p>
         <p><strong>Concorrentes únicos:</strong> {{ concorrentesUnicos.length }}</p>
+        <p><strong>Grupos abertos:</strong> {{ gruposAbertos }}</p>
         <p><strong>Primeiro produto:</strong></p>
         <pre class="grey lighten-4 pa-2 rounded">{{ JSON.stringify(produtos[0] || {}, null, 2) }}</pre>
         <p><strong>Produtos agrupados:</strong></p>
@@ -356,7 +347,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex' // Adicione esta importação
+import { useStore } from 'vuex'
 import api from '@/services/api'
 
 const router = useRouter()
@@ -365,6 +356,7 @@ const loading = ref(false)
 const produtos = ref([])
 const debug = ref(false)
 const verificandoItem = ref(null)
+const gruposAbertos = ref([])
 
 // Estado para snackbar
 const snackbar = ref({
@@ -373,6 +365,16 @@ const snackbar = ref({
   color: 'success',
   timeout: 3000
 })
+
+// Função para alternar a exibição de um grupo
+const toggleGrupo = (index) => {
+  const currentIndex = gruposAbertos.value.indexOf(index)
+  if (currentIndex === -1) {
+    gruposAbertos.value.push(index)
+  } else {
+    gruposAbertos.value.splice(currentIndex, 1)
+  }
+}
 
 // Cabeçalhos da tabela
 const headers = [
@@ -452,10 +454,17 @@ const produtosAgrupados = computed(() => {
       }
     }
     
-    // Calcular a diferença percentual entre o preço do cliente base e o menor preço concorrente
-    let diferencaPercentual = null
-    if (produtoClienteBase && produtoClienteBase.preco_cliente && menorPrecoConcorrente) {
-      diferencaPercentual = ((produtoClienteBase.preco_cliente - menorPrecoConcorrente) / menorPrecoConcorrente) * 100
+    // Se não temos um produto cliente base, vamos procurar qualquer produto do cliente
+    // para exibir no resumo do grupo
+    let produtoClienteExibicao = produtoClienteBase;
+    if (!produtoClienteExibicao) {
+      produtoClienteExibicao = produtosDesseTipo.find(p => p.tipo_produto === 'cliente');
+    }
+    
+    // Calcular a diferença percentual entre o preço do cliente e o menor preço concorrente
+    let diferencaPercentual = null;
+    if (produtoClienteExibicao && produtoClienteExibicao.preco_cliente && menorPrecoConcorrente) {
+      diferencaPercentual = ((produtoClienteExibicao.preco_cliente - menorPrecoConcorrente) / menorPrecoConcorrente) * 100;
     }
     
     // Processar cada produto para exibição na tabela
@@ -468,10 +477,11 @@ const produtosAgrupados = computed(() => {
       }
       
       // Para produtos concorrentes, calcular a diferença em relação ao produto cliente base
-      if (p.tipo_produto === 'concorrente' && produtoClienteBase && produtoClienteBase.preco_cliente) {
+      // ou qualquer produto cliente se não houver um produto cliente base
+      if (p.tipo_produto === 'concorrente' && produtoClienteExibicao && produtoClienteExibicao.preco_cliente) {
         const precoConcorrente = p.preco_ultimo || p.menor_preco_concorrente
         if (precoConcorrente) {
-          diferencaIndividual = ((precoConcorrente - produtoClienteBase.preco_cliente) / produtoClienteBase.preco_cliente) * 100
+          diferencaIndividual = ((precoConcorrente - produtoClienteExibicao.preco_cliente) / produtoClienteExibicao.preco_cliente) * 100
         }
       }
       
@@ -487,7 +497,7 @@ const produtosAgrupados = computed(() => {
     grupos.push({
       nome,
       produtos: produtosProcessados,
-      produtoClienteBase,
+      produtoClienteBase: produtoClienteExibicao,  // Usar o produto cliente para exibição
       menorPrecoConcorrente,
       concorrenteMenorPreco,
       diferencaPercentual
@@ -525,12 +535,47 @@ const definirProdutoClienteBase = async (produto) => {
       return;
     }
     
+    // Obter o ID do cliente atual
+    const clienteId = typeof store.getters['auth/user'].cliente_atual === 'object' 
+      ? store.getters['auth/user'].cliente_atual.id 
+      : store.getters['auth/user'].cliente_atual;
+      
+    console.log('Cliente atual ID:', clienteId);
+    
+    // Obter o grupo do produto
+    const grupoId = typeof produto.grupo === 'object' 
+      ? produto.grupo.id 
+      : produto.grupo;
+      
+    console.log('Grupo ID:', grupoId);
+    
+    // Preparar os dados de atualização com todos os campos obrigatórios
+    const dadosAtualizacao = {
+      produto_cliente: true,
+      cliente: clienteId,  // Campo obrigatório
+      grupo: grupoId,      // Campo obrigatório
+    };
+    
+    // Se o produto for do tipo concorrente, alterá-lo para cliente
+    if (produto.tipo_produto === 'concorrente') {
+      dadosAtualizacao.tipo_produto = 'cliente';
+      console.log('Alterando o tipo do produto de concorrente para cliente:', dadosAtualizacao);
+    }
+    
+    console.log('Dados de atualização completos:', dadosAtualizacao);
+    
     // Atualizar o produto com o novo status
-    const response = await api.patch(`/produtos/${produto.id}/`, {
-      produto_cliente: true
-    });
+    const response = await api.patch(`/produtos/${produto.id}/`, dadosAtualizacao);
     
     console.log('Atualização concluída com sucesso', response.data);
+    
+    // Atualizar localmente o produto antes de recarregar tudo
+    const produtoIndex = produtos.value.findIndex(p => p.id === produto.id);
+    if (produtoIndex !== -1) {
+      produtos.value[produtoIndex].produto_cliente = true;
+      produtos.value[produtoIndex].tipo_produto = 'cliente';
+      console.log('Produto atualizado localmente antes de recarregar dados');
+    }
     
     // Recarregar dados após a atualização
     await carregarDados();
@@ -546,8 +591,16 @@ const definirProdutoClienteBase = async (produto) => {
       
       // Mensagens de erro específicas baseadas na resposta do servidor
       if (error.response.status === 400) {
-        const mensagem = error.response.data.detail || 'Verifique se você selecionou um cliente atual.';
-        mostrarSnackbar(`Erro: ${mensagem}`, 'error');
+        // Extrair mensagens de erro para exibição mais clara
+        let mensagemErro = '';
+        if (typeof error.response.data === 'object') {
+          for (const campo in error.response.data) {
+            mensagemErro += `${campo}: ${error.response.data[campo].join(', ')}. `;
+          }
+        } else {
+          mensagemErro = error.response.data.detail || 'Erro na validação dos dados.';
+        }
+        mostrarSnackbar(`Erro: ${mensagemErro}`, 'error');
       } 
       else if (error.response.status === 403) {
         mostrarSnackbar('Este produto não pertence ao cliente atual selecionado.', 'error');
@@ -574,8 +627,11 @@ onMounted(() => {
 
 // Função para obter o preço do produto (cliente ou concorrente)
 const getPreco = (produto) => {
-  // Usar a propriedade preco_exibicao que foi calculada no computed
-  return formatarPreco(produto.preco_exibicao)
+  if (produto.tipo_produto === 'cliente') {
+    return formatarPreco(produto.preco_cliente)
+  } else {
+    return formatarPreco(produto.preco_ultimo || produto.menor_preco_concorrente)
+  }
 }
 
 // Formatar preço
@@ -613,8 +669,14 @@ const formatDate = (dateString) => {
 const carregarDados = async () => {
   loading.value = true
   try {
+    // Limpar os dados atuais para garantir que não haja mistura de dados antigos
+    produtos.value = []
+    
+    // Adicionar um timestamp aleatório para prevenir cache
+    const timestamp = new Date().getTime()
+    
     // Buscar produtos
-    const produtosResponse = await api.get('/produtos/')
+    const produtosResponse = await api.get(`/produtos/?t=${timestamp}`)
     console.log('Resposta da API de produtos:', produtosResponse.data)
     
     // Armazenar produtos
@@ -626,17 +688,37 @@ const carregarDados = async () => {
       await Promise.all(produtos.value.map(async (produto) => {
         try {
           // Recuperar histórico de preços para este produto
-          const historicoResponse = await api.get(`/produtos/${produto.id}/historico/`)
+          const historicoResponse = await api.get(`/produtos/${produto.id}/historico/?t=${timestamp}`)
           produto.historico_precos = historicoResponse.data
           
           // Definir o preço mais recente como preco_ultimo
           if (historicoResponse.data.length > 0) {
-            produto.preco_ultimo = historicoResponse.data[0].preco
+            produto.preco_ultimo = parseFloat(historicoResponse.data[0].preco)
+            console.log(`Preço mais recente para ${produto.nome}: ${produto.preco_ultimo}`)
           }
         } catch (error) {
           console.error(`Erro ao carregar histórico do produto ${produto.id}:`, error)
         }
       }))
+      
+      // Verificar se há produtos marcados como produto_cliente
+      const produtosClienteBase = produtos.value.filter(p => p.produto_cliente === true)
+      console.log('Produtos marcados como produto_cliente:', produtosClienteBase.length)
+      
+      // Verificar se há produtos do tipo cliente
+      const produtosTipoCliente = produtos.value.filter(p => p.tipo_produto === 'cliente')
+      console.log('Produtos do tipo cliente:', produtosTipoCliente.length)
+      
+      // Verificar inconsistências (produto_cliente = true, mas tipo_produto = 'concorrente')
+      const produtosInconsistentes = produtos.value.filter(
+        p => p.produto_cliente === true && p.tipo_produto === 'concorrente'
+      )
+      if (produtosInconsistentes.length > 0) {
+        console.warn('Produtos inconsistentes (marcados como base mas tipo concorrente):', 
+          produtosInconsistentes.map(p => ({ id: p.id, nome: p.nome }))
+        )
+      }
+      
     } else {
       produtos.value = []
       console.warn('Nenhum produto retornado da API')
@@ -682,17 +764,12 @@ const verDetalhes = (produtoId) => {
   z-index: 100;
 }
 
-/* Estilos para os expansion panels */
-:deep(.v-expansion-panel::before) {
-  box-shadow: none !important;
+.border {
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
 }
 
-:deep(.v-expansion-panel-header) {
-  padding: 12px 16px;
-}
-
-:deep(.v-expansion-panel-content__wrap) {
-  padding: 0 16px 16px;
+.border-bottom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
 }
 
 /* Estilo para a tabela */

@@ -22,77 +22,79 @@
           <v-card elevation="2" class="mb-4">
             <v-card-title>Informações do Produto</v-card-title>
             <v-card-text>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Nome</v-list-item-subtitle>
-                  <v-list-item-title class="text-h6">{{ produto.nome || 'N/A' }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-              
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Tipo</v-list-item-subtitle>
-                  <v-list-item-title>
-                    {{ produto.tipo_produto === 'cliente' ? 'Produto do Cliente' : 'Produto de Concorrente' }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-              
-              <v-list-item v-if="produto.tipo_produto === 'concorrente'">
-                <v-list-item-content>
-                  <v-list-item-subtitle>Concorrente</v-list-item-subtitle>
-                  <v-list-item-title>{{ produto.concorrente || 'N/A' }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider v-if="produto.tipo_produto === 'concorrente'"></v-divider>
-              
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>URL</v-list-item-subtitle>
-                  <v-list-item-title>
-                    <a :href="produto.url" target="_blank" rel="noopener noreferrer" v-if="produto.url">
-                      {{ produto.url }}
-                    </a>
-                    <span v-else>N/A</span>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-              
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Plataforma</v-list-item-subtitle>
-                  <v-list-item-title>{{ produto.plataforma?.nome || 'N/A' }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-              
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Última Verificação</v-list-item-subtitle>
-                  <v-list-item-title>{{ formatDate(produto.ultima_verificacao) }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-              
-              <!-- Novo campo para marcar como produto cliente base -->
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Produto Cliente Base</v-list-item-subtitle>
-                  <v-list-item-title>
-                    <v-switch
-                      v-model="produto.produto_cliente"
-                      @change="atualizarProdutoClienteStatus"
-                      :disabled="atualizandoStatus"
-                      color="primary"
-                      hide-details
-                      dense
-                    ></v-switch>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+              <v-list>
+                <v-list-item>
+                  <div>
+                    <div class="text-caption text-gray">Nome</div>
+                    <div class="text-h6">{{ produto.nome || 'N/A' }}</div>
+                  </div>
+                </v-list-item>
+                <v-divider></v-divider>
+                
+                <v-list-item>
+                  <div>
+                    <div class="text-caption text-gray">Tipo</div>
+                    <div>
+                      {{ produto.tipo_produto === 'cliente' ? 'Produto do Cliente' : 'Produto de Concorrente' }}
+                    </div>
+                  </div>
+                </v-list-item>
+                <v-divider></v-divider>
+                
+                <v-list-item v-if="produto.tipo_produto === 'concorrente'">
+                  <div>
+                    <div class="text-caption text-gray">Concorrente</div>
+                    <div>{{ produto.concorrente || 'N/A' }}</div>
+                  </div>
+                </v-list-item>
+                <v-divider v-if="produto.tipo_produto === 'concorrente'"></v-divider>
+                
+                <v-list-item>
+                  <div>
+                    <div class="text-caption text-gray">URL</div>
+                    <div>
+                      <a :href="produto.url" target="_blank" rel="noopener noreferrer" v-if="produto.url">
+                        {{ produto.url }}
+                      </a>
+                      <span v-else>N/A</span>
+                    </div>
+                  </div>
+                </v-list-item>
+                <v-divider></v-divider>
+                
+                <v-list-item>
+                  <div>
+                    <div class="text-caption text-gray">Plataforma</div>
+                    <div>{{ produto.plataforma?.nome || 'N/A' }}</div>
+                  </div>
+                </v-list-item>
+                <v-divider></v-divider>
+                
+                <v-list-item>
+                  <div>
+                    <div class="text-caption text-gray">Última Verificação</div>
+                    <div>{{ formatDate(produto.ultima_verificacao) }}</div>
+                  </div>
+                </v-list-item>
+                <v-divider></v-divider>
+                
+                <!-- Novo campo para marcar como produto cliente base -->
+                <v-list-item>
+                  <div>
+                    <div class="text-caption text-gray">Produto Cliente Base</div>
+                    <div>
+                      <v-switch
+                        v-model="produto.produto_cliente"
+                        @change="atualizarProdutoClienteStatus"
+                        :disabled="atualizandoStatus"
+                        color="primary"
+                        hide-details
+                        dense
+                      ></v-switch>
+                    </div>
+                  </div>
+                </v-list-item>
+              </v-list>
             </v-card-text>
             <v-card-actions>
               <v-btn 
@@ -146,6 +148,25 @@
             </v-card-actions>
           </v-card>
           
+          <!-- Novo campo para exibir preço mais recente (para produtos concorrentes marcados como base) -->
+          <v-card v-if="produto.tipo_produto === 'concorrente' && produto.produto_cliente" elevation="2" class="mb-4">
+            <v-card-title>Preço Mais Recente</v-card-title>
+            <v-card-text>
+              <v-alert type="warning" class="mb-4">
+                Este produto está marcado como produto cliente base, mas é do tipo concorrente. 
+                O ideal é que o produto cliente base seja do tipo "cliente" para funcionamento correto do sistema.
+              </v-alert>
+              
+              <div class="text-h5 font-weight-bold">
+                {{ produto.preco_exibicao ? formatarPreco(produto.preco_exibicao) : formatarPreco(produto.menor_preco_concorrente) }}
+              </div>
+              
+              <div class="mt-2 text-caption">
+                Este é o preço mais recente registrado para este produto.
+              </div>
+            </v-card-text>
+          </v-card>
+          
           <!-- Comparação de Preços (apenas para produtos do cliente) -->
           <v-card v-if="produto.tipo_produto === 'cliente'" elevation="2" class="mb-4">
             <v-card-title>
@@ -154,35 +175,36 @@
             <v-card-text>
               <v-list>
                 <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-subtitle>Preço do Cliente</v-list-item-subtitle>
-                    <v-list-item-title class="text-h6">
+                  <div>
+                    <div class="text-caption text-gray">Preço do Cliente</div>
+                    <div class="text-h6">
                       {{ formatarPreco(produto.preco_cliente) }}
-                    </v-list-item-title>
-                  </v-list-item-content>
+                    </div>
+                  </div>
                 </v-list-item>
                 
                 <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-subtitle>Menor Preço Concorrente</v-list-item-subtitle>
-                    <v-list-item-title class="text-h6">
+                  <div>
+                    <div class="text-caption text-gray">Menor Preço Concorrente</div>
+                    <div class="text-h6">
                       {{ formatarPreco(produto.menor_preco_concorrente) }}
-                    </v-list-item-title>
-                  </v-list-item-content>
+                    </div>
+                  </div>
                 </v-list-item>
                 
                 <v-list-item v-if="produto.diferenca_percentual !== null">
-                  <v-list-item-content>
-                    <v-list-item-subtitle>Diferença Percentual</v-list-item-subtitle>
-                    <v-list-item-title>
+                  <div>
+                    <div class="text-caption text-gray">Diferença Percentual</div>
+                    <div>
                       <v-chip
                         :color="produto.diferenca_percentual <= 0 ? 'success' : 'error'"
                         class="font-weight-bold"
+                        :text-color="produto.diferenca_percentual <= 0 ? 'white' : 'white'"
                       >
                         {{ formatarPercentual(produto.diferenca_percentual) }}
                       </v-chip>
-                    </v-list-item-title>
-                  </v-list-item-content>
+                    </div>
+                  </div>
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -297,9 +319,51 @@ const carregarProduto = async () => {
     produto.value = response.data;
     console.log('Produto carregado:', produto.value);
     
-    // Atualiza o campo de preço para produtos do cliente
-    if (produto.value.tipo_produto === 'cliente' && produto.value.preco_cliente !== null) {
-      precoCliente.value = produto.value.preco_cliente;
+    // Inconsistência detectada: produto marcado como produto_cliente mas tipo é concorrente
+    if (produto.value.produto_cliente && produto.value.tipo_produto === 'concorrente') {
+      console.warn('Inconsistência: Produto marcado como produto_cliente, mas é do tipo concorrente:', produto.value);
+      // Podemos mostrar um aviso para o usuário
+      mostrarSnackbar('Este produto está marcado como produto cliente base, mas é do tipo concorrente. Considere ajustar o tipo.', 'warning', 6000);
+    }
+    
+    // Atualiza o campo de preço para produtos do tipo cliente
+    if (produto.value.tipo_produto === 'cliente') {
+      // Se o preço do cliente estiver definido no produto, use-o
+      if (produto.value.preco_cliente !== null && produto.value.preco_cliente !== undefined) {
+        precoCliente.value = produto.value.preco_cliente;
+      } else {
+        // Se o preço do cliente não estiver definido, inicializa com zero
+        precoCliente.value = 0;
+        // E atualiza o objeto do produto para evitar "null" na exibição
+        produto.value.preco_cliente = 0;
+      }
+    }
+    
+    // Carregar o histórico de preços
+    try {
+      const historicoResponse = await api.get(`/produtos/${produtoId}/historico/`);
+      if (historicoResponse.data && historicoResponse.data.length > 0) {
+        // Usar o preço mais recente do histórico, se disponível
+        const precoMaisRecente = parseFloat(historicoResponse.data[0].preco);
+        console.log('Preço mais recente do histórico:', precoMaisRecente);
+        
+        // Para produtos do cliente, atualizar o preço se não estiver definido
+        if (produto.value.tipo_produto === 'cliente' && 
+            (produto.value.preco_cliente === null || produto.value.preco_cliente === undefined || produto.value.preco_cliente === 0)) {
+          produto.value.preco_cliente = precoMaisRecente;
+          precoCliente.value = precoMaisRecente;
+        }
+        
+        // Para produtos do tipo concorrente marcados como produto_cliente (inconsistente),
+        // precisamos exibir o preço mais recente em algum lugar
+        if (produto.value.tipo_produto === 'concorrente' && produto.value.produto_cliente) {
+          // Como é concorrente, não podemos usar preco_cliente, então vamos armazenar em uma propriedade auxiliar
+          produto.value.preco_exibicao = precoMaisRecente;
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar histórico de preços:', error);
+      // Continuar mesmo se o histórico falhar, não é crítico
     }
     
   } catch (error) {
@@ -315,22 +379,48 @@ const carregarProduto = async () => {
 const atualizarProdutoClienteStatus = async () => {
   atualizandoStatus.value = true;
   try {
-    // Atualizar o produto com o novo status
-    await api.patch(`/produtos/${produto.value.id}/`, {
+    // Se estiver marcando como produto_cliente=true e o tipo for concorrente,
+    // também alterar o tipo para cliente
+    const dadosAtualizacao = {
       produto_cliente: produto.value.produto_cliente
-    });
+    };
     
-    mostrarSnackbar(
-      produto.value.produto_cliente 
-        ? 'Produto definido como produto cliente base' 
-        : 'Produto removido como produto cliente base',
-      'success'
-    );
+    // Se estiver ativando a opção produto_cliente e o tipo atual for concorrente
+    if (produto.value.produto_cliente && produto.value.tipo_produto === 'concorrente') {
+      // Incluir a mudança de tipo no payload da atualização
+      dadosAtualizacao.tipo_produto = 'cliente';
+      
+      // Atualizar também localmente
+      produto.value.tipo_produto = 'cliente';
+      
+      console.log('Alterando o tipo do produto de concorrente para cliente:', dadosAtualizacao);
+    }
+    
+    // Atualizar o produto com o novo status e tipo (se aplicável)
+    await api.patch(`/produtos/${produto.value.id}/`, dadosAtualizacao);
+    
+    // Mensagem personalizada com base na ação realizada
+    if (produto.value.produto_cliente) {
+      mostrarSnackbar('Produto definido como produto cliente base', 'success');
+      
+      // Se mudamos o tipo, recarregar o produto para atualizar a interface
+      if (dadosAtualizacao.tipo_produto) {
+        await carregarProduto();
+      }
+    } else {
+      mostrarSnackbar('Produto removido como produto cliente base', 'success');
+    }
     
   } catch (error) {
     console.error('Erro ao atualizar status de produto cliente:', error);
     // Reverter a mudança no modelo local em caso de erro
     produto.value.produto_cliente = !produto.value.produto_cliente;
+    
+    // Se houve mudança de tipo, também reverter isso
+    if (produto.value.tipo_produto === 'cliente' && !produto.value.produto_cliente) {
+      produto.value.tipo_produto = 'concorrente';
+    }
+    
     mostrarSnackbar('Erro ao atualizar status de produto cliente', 'error');
   } finally {
     atualizandoStatus.value = false;
@@ -405,5 +495,9 @@ watch(() => route.params.id, (newId, oldId) => {
 <style scoped>
 .v-chip {
   font-weight: bold;
+}
+
+.text-gray {
+  color: rgba(0, 0, 0, 0.6);
 }
 </style>

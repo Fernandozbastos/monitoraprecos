@@ -88,8 +88,39 @@ class ProdutoViewSet(viewsets.ModelViewSet):
                     {"detail": f"Erro ao atualizar: {str(e)}"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
+    def partial_update(self, request, *args, **kwargs):
+        """
+        Sobrescreve o método partial_update para lidar com atualizações parciais,
+        incluindo a mudança de produto para tipo cliente quando marcado como produto_cliente.
+        """
+        instance = self.get_object()
         
-        # Para outras atualizações parciais, usar o comportamento padrão
+        # Verificar se o usuário tem um cliente atual definido
+        user = request.user
+        if not user.cliente_atual:
+            return Response(
+                {"detail": "Você precisa selecionar um cliente atual antes de realizar esta operação."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        # Verificar se o produto pertence ao cliente atual do usuário
+        if instance.cliente.id != user.cliente_atual.id:
+            return Response(
+                {"detail": "Este produto não pertence ao cliente atual selecionado."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Log para depuração
+        print(f"Dados recebidos no PATCH: {request.data}")
+        
+        # Se estiver atualizando para produto_cliente=True e o tipo for concorrente
+        if request.data.get('produto_cliente') is True and instance.tipo_produto == 'concorrente':
+            # Garantir que o tipo seja alterado para 'cliente'
+            if 'tipo_produto' not in request.data:
+                request.data['tipo_produto'] = 'cliente'
+                print(f"Alterando automaticamente o tipo para 'cliente'. Dados atualizados: {request.data}")
+        
+        # Para atualizações parciais, usar o comportamento padrão
         return super().partial_update(request, *args, **kwargs)
     
     @action(detail=True, methods=['get'])
