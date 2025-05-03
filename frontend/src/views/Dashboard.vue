@@ -89,7 +89,7 @@
             <v-spacer></v-spacer>
             <v-btn
               color="primary"
-              @click="mostrarGraficoComparativo = true"
+              @click="abrirGraficoComparativo"
               :loading="carregandoHistoricoComparativo"
             >
               <v-icon left>mdi-chart-line</v-icon>
@@ -564,7 +564,7 @@ const datasetsGrafico = ref([])
 // Filtros para o gráfico
 const filtroGrafico = ref({
   tipoProduto: 'todos',
-  produtoId: null,  // Mudamos de produtos (array) para produtoId (único)
+  produtoId: null,  // Objeto único, não array
   periodo: '30'
 })
 
@@ -692,8 +692,6 @@ const produtosAgrupados = computed(() => {
         
         menorPrecoConcorrente = menorPreco
         concorrenteMenorPreco = produtoMenorPreco?.concorrente
-        
-        console.log(`Menor preço para ${nome}: ${menorPrecoConcorrente} (${concorrenteMenorPreco})`)
       }
     }
     
@@ -794,8 +792,6 @@ const mostrarSnackbar = (texto, cor = 'success', timeout = 3000) => {
 // Função para definir um produto como cliente base
 const definirProdutoClienteBase = async (produto) => {
   try {
-    console.log(`Iniciando atualização do produto ${produto.id} para cliente base`);
-    
     // Verificar se existe um cliente atual selecionado
     if (!store.getters['auth/user']?.cliente_atual) {
       mostrarSnackbar('Por favor, selecione um cliente atual no menu superior antes de continuar', 'warning');
@@ -806,15 +802,11 @@ const definirProdutoClienteBase = async (produto) => {
     const clienteId = typeof store.getters['auth/user'].cliente_atual === 'object' 
       ? store.getters['auth/user'].cliente_atual.id 
       : store.getters['auth/user'].cliente_atual;
-      
-    console.log('Cliente atual ID:', clienteId);
     
     // Obter o grupo do produto
     const grupoId = typeof produto.grupo === 'object' 
       ? produto.grupo.id 
       : produto.grupo;
-      
-    console.log('Grupo ID:', grupoId);
     
     // 1. Primeiro, encontrar TODOS os produtos com o mesmo nome que não são o atual
     const outrosProdutos = produtos.value.filter(p => 
@@ -822,14 +814,10 @@ const definirProdutoClienteBase = async (produto) => {
       p.id !== produto.id
     );
     
-    console.log(`Encontrados ${outrosProdutos.length} outros produtos com o mesmo nome`);
-    
     // 2. Se houver algum produto que está marcado como produto_cliente, desmarcá-lo
     const produtosMarcadosComoBase = outrosProdutos.filter(p => p.produto_cliente === true);
     
     if (produtosMarcadosComoBase.length > 0) {
-      console.log(`Encontrados ${produtosMarcadosComoBase.length} produtos marcados como cliente base. Desmarcando...`);
-      
       for (const produtoAnterior of produtosMarcadosComoBase) {
         try {
           await api.patch(`/produtos/${produtoAnterior.id}/`, {
@@ -845,8 +833,6 @@ const definirProdutoClienteBase = async (produto) => {
             produtos.value[idx].produto_cliente = false;
             produtos.value[idx].tipo_produto = 'concorrente';
           }
-          
-          console.log(`Produto ${produtoAnterior.id} desmarcado como cliente base e alterado para concorrente`);
         } catch (err) {
           console.error(`Erro ao desmarcar produto ${produtoAnterior.id}:`, err);
         }
@@ -871,8 +857,6 @@ const definirProdutoClienteBase = async (produto) => {
             produtos.value[idx].tipo_produto = 'concorrente';
             produtos.value[idx].produto_cliente = false;
           }
-          
-          console.log(`Produto ${outroProduto.id} alterado para concorrente`);
         } catch (err) {
           console.error(`Erro ao alterar tipo do produto ${outroProduto.id}:`, err);
         }
@@ -887,19 +871,14 @@ const definirProdutoClienteBase = async (produto) => {
       grupo: grupoId,
     };
     
-    console.log('Dados de atualização para produto principal:', dadosAtualizacao);
-    
     // Atualizar o produto com o novo status
-    const response = await api.patch(`/produtos/${produto.id}/`, dadosAtualizacao);
-    
-    console.log('Atualização concluída com sucesso', response.data);
+    await api.patch(`/produtos/${produto.id}/`, dadosAtualizacao);
     
     // Atualizar localmente o produto antes de recarregar tudo
     const produtoIndex = produtos.value.findIndex(p => p.id === produto.id);
     if (produtoIndex !== -1) {
       produtos.value[produtoIndex].produto_cliente = true;
       produtos.value[produtoIndex].tipo_produto = 'cliente';
-      console.log('Produto atualizado localmente antes de recarregar dados');
     }
     
     // Recarregar dados após a atualização
@@ -911,8 +890,6 @@ const definirProdutoClienteBase = async (produto) => {
     console.error('Erro ao definir produto cliente base:', error);
     
     if (error.response) {
-      console.error('Detalhes do erro:', error.response.data);
-      
       if (error.response.status === 400) {
         let mensagemErro = '';
         if (typeof error.response.data === 'object') {
@@ -1052,7 +1029,6 @@ const abrirGraficoGrupo = (grupo) => {
   carregarHistoricoComparativo();
 }
 
-
 // Função para abrir o modal do gráfico geral
 const abrirGraficoComparativo = () => {
   grupoSelecionado.value = null;
@@ -1115,8 +1091,8 @@ const carregarHistoricoComparativo = async () => {
       return;
     }
     
-// Carregar o histórico de preços
-const historicoResponse = await api.get(`/produtos/${produtoId}/historico/?limit=100`);
+    // Carregar o histórico de preços
+    const historicoResponse = await api.get(`/produtos/${produtoId}/historico/?limit=100`);
     
     if (Array.isArray(historicoResponse.data) && historicoResponse.data.length > 0) {
       // Calcular a data limite com base no período selecionado
@@ -1272,86 +1248,6 @@ const renderizarGraficoComparativo = () => {
   });
 }
 
-// Função para carregar dados
-const carregarDados = async () => {
-  loading.value = true;
-  try {
-    // Limpar os dados atuais
-    produtos.value = [];
-    
-    // Usar timestamp para evitar cache
-    const timestamp = new Date().getTime();
-    
-    // Buscar produtos
-    const produtosResponse = await api.get(`/produtos/?t=${timestamp}`);
-    console.log('Resposta da API de produtos:', produtosResponse.data);
-    
-    if (produtosResponse.data.results && Array.isArray(produtosResponse.data.results)) {
-      produtos.value = produtosResponse.data.results;
-      console.log('Produtos carregados:', produtos.value.length);
-      
-      // Para cada produto, recuperar o histórico de preços
-      const produtosPromises = produtos.value.map(async (produto) => {
-        try {
-          // Recuperar histórico usando o endpoint correto
-          const historicoResponse = await api.get(`/historico/?produto=${produto.id}&limit=1`);
-          
-          // Verificar se há resultados e se eles estão no formato esperado
-          if (historicoResponse.data && 
-              historicoResponse.data.results && 
-              historicoResponse.data.results.length > 0) {
-            
-            // Obter o preço do histórico mais recente
-            const precoHistorico = parseFloat(historicoResponse.data.results[0].preco);
-            console.log(`Preço do histórico para ${produto.nome}: ${precoHistorico}`);
-            
-            // Atribuir ao produto
-            produto.preco_ultimo = precoHistorico;
-            
-            // Para produtos do cliente sem preço, usar o do histórico
-            if (produto.tipo_produto === 'cliente' && 
-                (!produto.preco_cliente || produto.preco_cliente === 0)) {
-              produto.preco_cliente = precoHistorico;
-              
-              // Atualizar no backend
-              try {
-                await api.patch(`/produtos/${produto.id}/`, {
-                  preco_cliente: precoHistorico,
-                  cliente: produto.cliente,
-                  grupo: produto.grupo
-                });
-                console.log(`Preço do produto ${produto.id} atualizado no backend`);
-              } catch (err) {
-                console.error(`Erro ao atualizar preço no backend:`, err);
-              }
-            }
-          } else {
-            console.log(`Sem histórico de preço para produto ${produto.id}`);
-          }
-        } catch (error) {
-          console.error(`Erro ao carregar histórico do produto ${produto.id}:`, error);
-        }
-      });
-      
-      // Aguardar todas as promessas
-      await Promise.all(produtosPromises);
-      
-      // Abrir o primeiro grupo
-      if (produtosAgrupados.value.length > 0 && gruposAbertos.value.length === 0) {
-        gruposAbertos.value.push(0);
-      }
-    } else {
-      produtos.value = [];
-      console.warn('Nenhum produto retornado da API');
-    }
-  } catch (error) {
-    console.error('Erro ao carregar dados:', error);
-    mostrarSnackbar('Erro ao carregar dados', 'error');
-  } finally {
-    loading.value = false;
-  }
-}
-
 // Função para excluir um produto
 const excluirProduto = async (produto) => {
   try {
@@ -1373,7 +1269,6 @@ const excluirProduto = async (produto) => {
     await api.delete(`/produtos/${produto.id}/`);
     
     // Se era um produto cliente base, verificar se há outros produtos do mesmo nome
-    // para talvez selecionar um novo produto cliente base
     if (ehProdutoClienteBase) {
       // Buscar outros produtos com o mesmo nome
       const outrosProdutos = produtos.value.filter(p => 
@@ -1437,6 +1332,79 @@ const verificarPreco = async (produtoId) => {
 const verDetalhes = (produtoId) => {
   if (produtoId) {
     router.push(`/products/${produtoId}`)
+  }
+}
+
+// Função para carregar dados
+const carregarDados = async () => {
+  loading.value = true;
+  try {
+    // Limpar os dados atuais
+    produtos.value = [];
+    
+    // Usar timestamp para evitar cache
+    const timestamp = new Date().getTime();
+    
+    // Buscar produtos
+    const produtosResponse = await api.get(`/produtos/?t=${timestamp}`);
+    
+    if (produtosResponse.data.results && Array.isArray(produtosResponse.data.results)) {
+      produtos.value = produtosResponse.data.results;
+      
+      // Para cada produto, recuperar o histórico de preços
+      const produtosPromises = produtos.value.map(async (produto) => {
+        try {
+          // Recuperar histórico usando o endpoint correto
+          const historicoResponse = await api.get(`/historico/?produto=${produto.id}&limit=1`);
+          
+          // Verificar se há resultados e se eles estão no formato esperado
+          if (historicoResponse.data && 
+              historicoResponse.data.results && 
+              historicoResponse.data.results.length > 0) {
+            
+            // Obter o preço do histórico mais recente
+            const precoHistorico = parseFloat(historicoResponse.data.results[0].preco);
+            
+            // Atribuir ao produto
+            produto.preco_ultimo = precoHistorico;
+            
+            // Para produtos do cliente sem preço, usar o do histórico
+            if (produto.tipo_produto === 'cliente' && 
+                (!produto.preco_cliente || produto.preco_cliente === 0)) {
+              produto.preco_cliente = precoHistorico;
+              
+              // Atualizar no backend
+              try {
+                await api.patch(`/produtos/${produto.id}/`, {
+                  preco_cliente: precoHistorico,
+                  cliente: produto.cliente,
+                  grupo: produto.grupo
+                });
+              } catch (err) {
+                console.error(`Erro ao atualizar preço no backend:`, err);
+              }
+            }
+          }
+        } catch (error) {
+          console.error(`Erro ao carregar histórico do produto ${produto.id}:`, error);
+        }
+      });
+      
+      // Aguardar todas as promessas
+      await Promise.all(produtosPromises);
+      
+      // Abrir o primeiro grupo
+      if (produtosAgrupados.value.length > 0 && gruposAbertos.value.length === 0) {
+        gruposAbertos.value.push(0);
+      }
+    } else {
+      produtos.value = [];
+    }
+  } catch (error) {
+    console.error('Erro ao carregar dados:', error);
+    mostrarSnackbar('Erro ao carregar dados', 'error');
+  } finally {
+    loading.value = false;
   }
 }
 
