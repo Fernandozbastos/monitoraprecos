@@ -361,6 +361,53 @@
           </v-alert>
         </v-col>
       </v-row>
+
+      <!-- NOVO: Gráfico de histórico de preços -->
+      <v-row>
+        <v-col cols="12">
+          <v-card elevation="2" class="mb-4">
+            <v-card-title class="primary--text">
+              <v-icon left color="primary">mdi-chart-line</v-icon>
+              Histórico de Preços
+              <v-spacer></v-spacer>
+              <v-btn
+                small
+                outlined
+                color="primary"
+                :loading="carregandoHistorico"
+                @click="carregarHistoricoCompleto"
+              >
+                <v-icon left small>mdi-refresh</v-icon>
+                Atualizar Histórico
+              </v-btn>
+            </v-card-title>
+            <v-card-text>
+              <div v-if="carregandoHistorico" class="d-flex justify-center align-center py-8">
+                <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                <span class="ml-4 text-subtitle-1">Carregando histórico...</span>
+              </div>
+              
+              <div v-else-if="historicoPrecos.length === 0" class="text-center py-8">
+                <v-icon size="64" color="grey lighten-1">mdi-chart-timeline-variant</v-icon>
+                <h3 class="text-h6 grey--text text--darken-1 mt-4">Nenhum histórico de preço encontrado</h3>
+                <p class="text-body-2 grey--text">Verificar o preço deste produto para começar a monitorá-lo</p>
+                <v-btn
+                  color="primary"
+                  class="mt-4"
+                  @click="verificarPreco"
+                >
+                  <v-icon left>mdi-refresh</v-icon>
+                  Verificar Preço
+                </v-btn>
+              </div>
+              
+              <div v-else ref="chartContainer" style="height: 400px; width: 100%;" class="chart-container">
+                <canvas ref="priceChart"></canvas>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
     </template>
     
     <!-- Snackbar para mensagens de sucesso/erro -->
@@ -386,9 +433,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
+import Chart from 'chart.js/auto'
 
 const route = useRoute()
 const router = useRouter()
@@ -401,6 +449,15 @@ const produto = ref({})
 const precoCliente = ref(0)
 const formValid = ref(false)
 const form = ref(null)
+
+// Referências para o gráfico
+const priceChart = ref(null)
+const chartInstance = ref(null)
+const chartContainer = ref(null)
+
+// Variáveis para o histórico de preços
+const historicoPrecos = ref([])
+const carregandoHistorico = ref(false)
 
 // Snackbar state
 const snackbar = ref({
@@ -424,6 +481,18 @@ const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString('pt-BR', options);
   } catch (e) {
     console.error('Erro ao formatar data:', e);
+    return dateString;
+  }
+}
+
+// Formatação de data mais simples para o gráfico
+const formatDateShort = (dateString) => {
+  if (!dateString) return '';
+  const options = { day: '2-digit', month: '2-digit', year: '2-digit' };
+  try {
+    return new Date(dateString).toLocaleString('pt-BR', options);
+  } catch (e) {
+    console.error('Erro ao formatar data curta:', e);
     return dateString;
   }
 }
@@ -656,6 +725,9 @@ const verificarPreco = async () => {
     // Recarregar o produto com os dados atualizados
     await carregarProduto();
     
+    // Recarregar o histórico de preços
+    await carregarHistoricoCompleto();
+    
     mostrarSnackbar('Preço verificado com sucesso');
     
   } catch (error) {
@@ -683,6 +755,9 @@ const atualizarPrecoCliente = async () => {
     // Recarregar o produto com os dados atualizados
     await carregarProduto();
     
+    // Recarregar o histórico de preços
+    await carregarHistoricoCompleto();
+    
     mostrarSnackbar('Preço atualizado com sucesso');
     
   } catch (error) {
@@ -691,6 +766,125 @@ const atualizarPrecoCliente = async () => {
   } finally {
     atualizandoPreco.value = false;
   }
+}
+
+// NOVO: Carregar histórico completo de preços
+const carregarHistoricoCompleto = async () => {
+  if (!produto.value.id) return;
+  
+  carregandoHistorico.value = true;
+  try {
+    // Carregar histórico usando o endpoint existente, solicitando até 100 registros
+    const historicoResponse = await api.get(`/produtos/${produto.value.id}/historico/?limit=100`);
+    
+    if (Array.isArray(historicoResponse.data)) {
+      // Ordenar por data (do mais antigo para o mais recente)
+      historicoPrecos.value = [...historicoResponse.data].sort(
+        (a, b) => new Date(a.data) - new Date(b.data)
+      );
+      
+      // Após carregar os dados, renderizar o gráfico
+      nextTick(() => {
+        renderizarGrafico();
+      });
+    } else {
+      console.error('Formato de resposta inesperado:', historicoResponse.data);
+      historicoPrecos.value = [];
+    }
+  } catch (error) {
+    console.error('Erro ao carregar histórico completo:', error);
+    mostrarSnackbar('Erro ao carregar histórico de preços', 'error');
+    historicoPrecos.value = [];
+  } finally {
+    carregandoHistorico.value = false;
+  }
+}
+
+// NOVO: Renderizar o gráfico de histórico de preços
+const renderizarGrafico = () => {
+  if (chartInstance.value) {
+    chartInstance.value.destroy();
+  }
+  
+  if (!priceChart.value || historicoPrecos.value.length === 0) return;
+  
+  const ctx = priceChart.value.getContext('2d');
+  
+  // Preparar dados para o gráfico
+  const labels = historicoPrecos.value.map(item => formatDateShort(item.data));
+  const precos = historicoPrecos.value.map(item => parseFloat(item.preco));
+  
+  // Calcular preço mínimo e máximo para melhor exibição
+  const maxPreco = Math.max(...precos) * 1.1; // 10% acima do máximo
+  const minPreco = Math.min(...precos) * 0.9; // 10% abaixo do mínimo
+  
+  // Criar o gráfico
+  chartInstance.value = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Preço (R$)',
+        data: precos,
+        backgroundColor: 'rgba(63, 81, 181, 0.2)',
+        borderColor: 'rgba(63, 81, 181, 1)',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointBackgroundColor: 'rgba(63, 81, 181, 1)',
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: false,
+          title: {
+            display: true,
+            text: 'Preço (R$)'
+          },
+          ticks: {
+            callback: function(value) {
+              return 'R$ ' + value.toFixed(2);
+            }
+          },
+          suggestedMin: minPreco,
+          suggestedMax: maxPreco
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Data'
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return 'Preço: R$ ' + context.parsed.y.toFixed(2);
+            }
+          }
+        },
+        legend: {
+          display: true,
+          position: 'top'
+        },
+        title: {
+          display: true,
+          text: `Histórico de Preços - ${produto.value.nome} (${produto.value.concorrente})`,
+          font: {
+            size: 16
+          }
+        }
+      },
+      animation: {
+        duration: 1000
+      }
+    }
+  });
 }
 
 // Carregar informações do produto
@@ -752,6 +946,9 @@ const carregarProduto = async () => {
       // Continuar mesmo se o histórico falhar, não é crítico
     }
     
+    // Carregar o histórico completo para o gráfico
+    await carregarHistoricoCompleto();
+    
   } catch (error) {
     console.error('Erro ao carregar produto:', error);
     produto.value = {};
@@ -770,6 +967,13 @@ onMounted(() => {
 watch(() => route.params.id, (newId, oldId) => {
   if (newId !== oldId) {
     carregarProduto();
+  }
+});
+
+// Ajustar o gráfico quando a janela mudar de tamanho
+window.addEventListener('resize', () => {
+  if (chartInstance.value) {
+    chartInstance.value.resize();
   }
 });
 </script>
@@ -819,5 +1023,10 @@ watch(() => route.params.id, (newId, oldId) => {
 
 .transition-swing:hover {
   transform: translateX(-4px);
+}
+
+.chart-container {
+  position: relative;
+  margin: auto;
 }
 </style>

@@ -76,6 +76,30 @@
       </v-col>
     </v-row>
     
+    <!-- Botão para abrir o modal do gráfico comparativo -->
+    <v-row>
+      <v-col cols="12">
+        <v-card class="mb-4" elevation="2">
+          <v-card-text class="d-flex align-center pa-4">
+            <v-icon color="primary" size="32" class="mr-4">mdi-chart-line</v-icon>
+            <div>
+              <div class="text-h6 mb-1">Análise Comparativa de Preços</div>
+              <div class="text-body-2 text-grey">Visualize a evolução de preços de todos os produtos ao longo do tempo</div>
+            </div>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              @click="mostrarGraficoComparativo = true"
+              :loading="carregandoHistoricoComparativo"
+            >
+              <v-icon left>mdi-chart-line</v-icon>
+              Ver Gráfico Comparativo
+            </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    
     <!-- Conteúdo principal com visual aprimorado -->
     <v-card class="rounded-lg" elevation="3">
       <v-toolbar flat class="primary lighten-1" dark>
@@ -168,6 +192,18 @@
               </v-chip>
               
               <v-spacer></v-spacer>
+              
+              <!-- Botão para ver histórico de preços deste grupo -->
+              <v-btn
+                small
+                outlined
+                color="primary"
+                class="mr-2"
+                @click.stop="abrirGraficoGrupo(grupo)"
+              >
+                <v-icon left small>mdi-chart-line</v-icon>
+                Ver Histórico
+              </v-btn>
               
               <!-- Resumo do produto (apenas se houver produto cliente base) -->
               <template v-if="grupo.produtoClienteBase">
@@ -370,6 +406,113 @@
       </v-card-text>
     </v-card>
     
+    <!-- Modal para o gráfico comparativo -->
+    <v-dialog
+      v-model="mostrarGraficoComparativo"
+      max-width="1200px"
+      persistent
+    >
+      <v-card>
+        <v-card-title class="primary white--text">
+          <span v-if="grupoSelecionado">
+            Histórico de Preços - {{ grupoSelecionado.nome }}
+          </span>
+          <span v-else>
+            Gráfico Comparativo de Preços
+          </span>
+          <v-spacer></v-spacer>
+          <v-btn
+            icon
+            color="white"
+            @click="fecharGraficoComparativo"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        
+        <v-card-text class="pa-6">
+          <!-- Opções de filtro para o gráfico -->
+          <v-row>
+            <v-col cols="12" sm="4">
+              <v-select
+                v-model="filtroGrafico.tipoProduto"
+                :items="tiposProdutoFiltro"
+                item-text="text"
+                item-value="value"
+                label="Tipo de Produtos"
+                outlined
+                dense
+                hide-details
+                class="mb-4"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-select
+                v-model="filtroGrafico.produtoId"
+                :items="produtosParaFiltro"
+                item-text="nome_completo"
+                item-value="id"
+                label="Produto"
+                outlined
+                dense
+                hide-details
+                class="mb-4"
+                return-object
+              ></v-select>
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-select
+                v-model="filtroGrafico.periodo"
+                :items="periodosFiltro"
+                item-text="text"
+                item-value="value"
+                label="Período"
+                outlined
+                dense
+                hide-details
+                class="mb-4"
+              ></v-select>
+            </v-col>
+          </v-row>
+          
+          <!-- Conteúdo do gráfico -->
+          <div v-if="carregandoHistoricoComparativo" class="d-flex justify-center align-center py-12">
+            <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
+            <span class="ml-4 text-subtitle-1">Carregando dados de histórico...</span>
+          </div>
+          
+          <div v-else-if="!dadosHistoricoComparativo.length" class="text-center py-12">
+            <v-icon size="64" color="grey lighten-1">mdi-chart-timeline-variant</v-icon>
+            <h3 class="text-h6 grey--text text--darken-1 mt-4">Nenhum dado histórico encontrado</h3>
+            <p class="text-body-2 grey--text mb-4">Selecione um produto ou verifique os preços para gerar dados históricos</p>
+          </div>
+          
+          <div v-else ref="chartContainerComparativo" style="height: 500px; width: 100%;">
+            <canvas ref="chartComparativo"></canvas>
+          </div>
+        </v-card-text>
+        
+        <v-card-actions class="pa-4">
+          <v-btn
+            text
+            color="grey darken-1"
+            @click="fecharGraficoComparativo"
+          >
+            Fechar
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            @click="atualizarGraficoComparativo"
+            :loading="carregandoHistoricoComparativo"
+          >
+            <v-icon left>mdi-refresh</v-icon>
+            Atualizar Gráfico
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    
     <!-- Snackbar para mensagens -->
     <v-snackbar
       v-model="snackbar.show"
@@ -393,10 +536,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import api from '@/services/api'
+import Chart from 'chart.js/auto'
 
 const router = useRouter()
 const store = useStore()
@@ -406,6 +550,48 @@ const debug = ref(false)
 const verificandoItem = ref(null)
 const gruposAbertos = ref([])
 const search = ref('') // Campo de pesquisa
+
+// Variáveis para o gráfico comparativo
+const mostrarGraficoComparativo = ref(false)
+const carregandoHistoricoComparativo = ref(false)
+const chartComparativo = ref(null)
+const chartInstanceComparativo = ref(null)
+const chartContainerComparativo = ref(null)
+const dadosHistoricoComparativo = ref([])
+const grupoSelecionado = ref(null)
+const datasetsGrafico = ref([])
+
+// Filtros para o gráfico
+const filtroGrafico = ref({
+  tipoProduto: 'todos',
+  produtoId: null,  // Mudamos de produtos (array) para produtoId (único)
+  periodo: '30'
+})
+
+// Opções para os filtros
+const tiposProdutoFiltro = [
+  { text: 'Todos os produtos', value: 'todos' },
+  { text: 'Produtos do Cliente', value: 'cliente' },
+  { text: 'Produtos de Concorrentes', value: 'concorrente' }
+]
+
+const periodosFiltro = [
+  { text: 'Últimos 30 dias', value: '30' },
+  { text: 'Últimos 60 dias', value: '60' },
+  { text: 'Últimos 90 dias', value: '90' },
+  { text: 'Tudo', value: 'all' }
+]
+
+// Produtos formatados para o filtro
+const produtosParaFiltro = computed(() => {
+  return produtos.value.map(p => ({
+    id: p.id,
+    nome_completo: `${p.nome} (${p.concorrente})`,
+    nome: p.nome,
+    concorrente: p.concorrente,
+    tipo_produto: p.tipo_produto
+  }))
+})
 
 // Estado para snackbar
 const snackbar = ref({
@@ -837,6 +1023,255 @@ const formatDate = (dateString) => {
   }
 }
 
+// Formatação de data mais simples para o gráfico
+const formatDateShort = (dateString) => {
+  if (!dateString) return '';
+  const options = { day: '2-digit', month: '2-digit', year: '2-digit' };
+  try {
+    return new Date(dateString).toLocaleString('pt-BR', options);
+  } catch (e) {
+    console.error('Erro ao formatar data curta:', e);
+    return dateString;
+  }
+}
+
+// Função para abrir o modal do gráfico para um grupo específico
+const abrirGraficoGrupo = (grupo) => {
+  grupoSelecionado.value = grupo;
+  
+  // Selecionar o primeiro produto deste grupo para o filtro
+  if (grupo.produtos.length > 0) {
+    const primeiroProduto = produtosParaFiltro.value.find(p => p.id === grupo.produtos[0].id);
+    filtroGrafico.value.produtoId = primeiroProduto || null;
+  }
+  
+  // Abrir o modal
+  mostrarGraficoComparativo.value = true;
+  
+  // Carregar dados do histórico para este produto
+  carregarHistoricoComparativo();
+}
+
+
+// Função para abrir o modal do gráfico geral
+const abrirGraficoComparativo = () => {
+  grupoSelecionado.value = null;
+  mostrarGraficoComparativo.value = true;
+  
+  // Se não tiver produto selecionado, selecionar o primeiro por padrão
+  if (!filtroGrafico.value.produtoId && produtosParaFiltro.value.length > 0) {
+    filtroGrafico.value.produtoId = produtosParaFiltro.value[0];
+  }
+  
+  // Carregar dados do histórico
+  carregarHistoricoComparativo();
+}
+
+// Fechar o modal do gráfico
+const fecharGraficoComparativo = () => {
+  grupoSelecionado.value = null;
+  mostrarGraficoComparativo.value = false;
+  
+  // Destruir o gráfico para liberar recursos
+  if (chartInstanceComparativo.value) {
+    chartInstanceComparativo.value.destroy();
+    chartInstanceComparativo.value = null;
+  }
+}
+
+// Atualizar o gráfico com base nos filtros
+const atualizarGraficoComparativo = () => {
+  carregarHistoricoComparativo();
+}
+
+// Carregar histórico de preços para o gráfico comparativo
+const carregarHistoricoComparativo = async () => {
+  if (!filtroGrafico.value.produtoId) {
+    dadosHistoricoComparativo.value = [];
+    mostrarSnackbar('Selecione um produto para visualizar o histórico', 'warning');
+    return;
+  }
+  
+  carregandoHistoricoComparativo.value = true;
+  
+  try {
+    // Dados para armazenar o histórico
+    const todosHistoricos = [];
+    
+    // Obter o ID do produto selecionado
+    const produtoId = filtroGrafico.value.produtoId.id;
+    
+    // Informações do produto
+    const produtoInfo = produtos.value.find(p => p.id === produtoId);
+    
+    if (!produtoInfo) {
+      dadosHistoricoComparativo.value = [];
+      return;
+    }
+    
+    // Filtrar por tipo de produto, se necessário
+    if (filtroGrafico.value.tipoProduto !== 'todos' && produtoInfo.tipo_produto !== filtroGrafico.value.tipoProduto) {
+      dadosHistoricoComparativo.value = [];
+      return;
+    }
+    
+// Carregar o histórico de preços
+const historicoResponse = await api.get(`/produtos/${produtoId}/historico/?limit=100`);
+    
+    if (Array.isArray(historicoResponse.data) && historicoResponse.data.length > 0) {
+      // Calcular a data limite com base no período selecionado
+      const hoje = new Date();
+      let dataLimite = null;
+      
+      if (filtroGrafico.value.periodo !== 'all') {
+        const dias = parseInt(filtroGrafico.value.periodo);
+        dataLimite = new Date();
+        dataLimite.setDate(dataLimite.getDate() - dias);
+      }
+      
+      // Filtrar os dados por período, se necessário
+      let dadosFiltrados = [...historicoResponse.data];
+      
+      if (dataLimite) {
+        dadosFiltrados = dadosFiltrados.filter(item => {
+          const dataItem = new Date(item.data);
+          return dataItem >= dataLimite;
+        });
+      }
+      
+      // Adicionar os dados ao histórico combinado
+      if (dadosFiltrados.length > 0) {
+        // Ordenar por data (do mais antigo para o mais recente)
+        const dadosOrdenados = dadosFiltrados.sort(
+          (a, b) => new Date(a.data) - new Date(b.data)
+        );
+        
+        // Adicionar informações do produto para identificação no gráfico
+        const historicoProcessado = {
+          produtoId: produtoId,
+          nome: produtoInfo.nome,
+          concorrente: produtoInfo.concorrente,
+          tipo_produto: produtoInfo.tipo_produto,
+          dados: dadosOrdenados
+        };
+        
+        todosHistoricos.push(historicoProcessado);
+      }
+    }
+    
+    // Atualizar os dados e renderizar o gráfico
+    dadosHistoricoComparativo.value = todosHistoricos;
+    
+    // Se tiver dados, renderizar o gráfico
+    if (todosHistoricos.length > 0) {
+      nextTick(() => {
+        renderizarGraficoComparativo();
+      });
+    }
+    
+  } catch (error) {
+    console.error('Erro ao carregar histórico para o gráfico comparativo:', error);
+    mostrarSnackbar('Erro ao carregar dados históricos', 'error');
+  } finally {
+    carregandoHistoricoComparativo.value = false;
+  }
+}
+
+// Renderizar o gráfico comparativo
+const renderizarGraficoComparativo = () => {
+  if (chartInstanceComparativo.value) {
+    chartInstanceComparativo.value.destroy();
+  }
+  
+  if (!chartComparativo.value || dadosHistoricoComparativo.value.length === 0) return;
+  
+  const ctx = chartComparativo.value.getContext('2d');
+  
+  // Com apenas um produto, o gráfico é mais simples
+  const historicoItem = dadosHistoricoComparativo.value[0];
+  
+  // Extrair datas e preços
+  const datasOrdenadas = historicoItem.dados.map(item => item.data);
+  const precos = historicoItem.dados.map(item => parseFloat(item.preco));
+  
+  // Criar o dataset
+  const dataset = {
+    label: `${historicoItem.nome} (${historicoItem.concorrente})`,
+    data: precos,
+    borderColor: historicoItem.tipo_produto === 'cliente' ? 'rgba(63, 81, 181, 1)' : 'rgba(255, 87, 34, 1)',
+    backgroundColor: historicoItem.tipo_produto === 'cliente' ? 'rgba(63, 81, 181, 0.1)' : 'rgba(255, 87, 34, 0.1)',
+    borderWidth: 3,
+    pointRadius: 5,
+    pointBackgroundColor: historicoItem.tipo_produto === 'cliente' ? 'rgba(63, 81, 181, 1)' : 'rgba(255, 87, 34, 1)',
+    tension: 0.2,
+    fill: true
+  };
+  
+  // Configurar e criar o gráfico
+  chartInstanceComparativo.value = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: datasOrdenadas.map(data => formatDateShort(data)),
+      datasets: [dataset]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: false,
+          title: {
+            display: true,
+            text: 'Preço (R$)'
+          },
+          ticks: {
+            callback: function(value) {
+              return 'R$ ' + value.toFixed(2);
+            }
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Data'
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const value = context.parsed.y;
+              return `Preço: R$ ${value.toFixed(2)}`;
+            }
+          }
+        },
+        legend: {
+          display: true,
+          position: 'top'
+        },
+        title: {
+          display: true,
+          text: grupoSelecionado.value ? 
+            `Histórico de Preços - ${grupoSelecionado.value.nome}` : 
+            'Histórico de Preços',
+          font: {
+            size: 16
+          }
+        }
+      },
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false
+      },
+      animation: {
+        duration: 1000
+      }
+    }
+  });
+}
+
 // Função para carregar dados
 const carregarDados = async () => {
   loading.value = true;
@@ -1008,6 +1443,13 @@ const verDetalhes = (produtoId) => {
 // Montar o componente
 onMounted(() => {
   carregarDados()
+})
+
+// Ajustar o gráfico quando a janela mudar de tamanho
+window.addEventListener('resize', () => {
+  if (chartInstanceComparativo.value) {
+    chartInstanceComparativo.value.resize()
+  }
 })
 </script>
 
