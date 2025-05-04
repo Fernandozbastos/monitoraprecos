@@ -323,16 +323,15 @@
                 <!-- Ações -->
                 <template v-slot:item.actions="{ item }">
                   <div class="d-flex">
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
+                    <v-tooltip location="bottom">
+                      <template v-slot:activator="{ props }">
                         <v-btn
                           icon
                           x-small
                           color="primary"
                           class="mr-1"
                           @click="verDetalhes(item.id)"
-                          v-bind="attrs"
-                          v-on="on"
+                          v-bind="props"
                         >
                           <v-icon>mdi-eye</v-icon>
                         </v-btn>
@@ -340,16 +339,15 @@
                       <span>Ver detalhes</span>
                     </v-tooltip>
                     
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
+                    <v-tooltip location="bottom">
+                      <template v-slot:activator="{ props }">
                         <v-btn
                           icon
                           x-small
                           color="success"
                           @click="verificarPreco(item.id)"
                           :loading="verificandoItem === item.id"
-                          v-bind="attrs"
-                          v-on="on"
+                          v-bind="props"
                         >
                           <v-icon>mdi-refresh</v-icon>
                         </v-btn>
@@ -357,8 +355,8 @@
                       <span>Verificar preço</span>
                     </v-tooltip>
                     
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
+                    <v-tooltip location="bottom">
+                      <template v-slot:activator="{ props }">
                         <v-btn
                           icon
                           x-small
@@ -366,8 +364,7 @@
                           class="ml-1"
                           @click="definirProdutoClienteBase(item)"
                           :disabled="item.produto_cliente"
-                          v-bind="attrs"
-                          v-on="on"
+                          v-bind="props"
                         >
                           <v-icon>mdi-star</v-icon>
                         </v-btn>
@@ -375,16 +372,15 @@
                       <span>Definir como produto cliente base</span>
                     </v-tooltip>
 
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
+                    <v-tooltip location="bottom">
+                      <template v-slot:activator="{ props }">
                         <v-btn
                           icon
                           x-small
                           color="error"
                           class="ml-1"
                           @click="excluirProduto(item)"
-                          v-bind="attrs"
-                          v-on="on"
+                          v-bind="props"
                         >
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
@@ -437,7 +433,7 @@
               <v-select
                 v-model="filtroGrafico.tipoProduto"
                 :items="tiposProdutoFiltro"
-                item-text="text"
+                item-title="title"
                 item-value="value"
                 label="Tipo de Produtos"
                 outlined
@@ -450,21 +446,20 @@
               <v-select
                 v-model="filtroGrafico.produtoId"
                 :items="produtosParaFiltro"
-                item-text="nome_completo"
+                item-title="nome_completo"
                 item-value="id"
                 label="Produto"
                 outlined
                 dense
                 hide-details
                 class="mb-4"
-                return-object
               ></v-select>
             </v-col>
             <v-col cols="12" sm="4">
               <v-select
                 v-model="filtroGrafico.periodo"
                 :items="periodosFiltro"
-                item-text="text"
+                item-title="title"
                 item-value="value"
                 label="Período"
                 outlined
@@ -561,26 +556,26 @@ const dadosHistoricoComparativo = ref([])
 const grupoSelecionado = ref(null)
 const datasetsGrafico = ref([])
 
+// Filtros para o gráfico - CORREÇÃO AQUI
+const tiposProdutoFiltro = ref([
+  { title: 'Todos os produtos', value: 'todos' },
+  { title: 'Produtos do Cliente', value: 'cliente' },
+  { title: 'Produtos de Concorrentes', value: 'concorrente' }
+])
+
+const periodosFiltro = ref([
+  { title: 'Últimos 30 dias', value: '30' },
+  { title: 'Últimos 60 dias', value: '60' },
+  { title: 'Últimos 90 dias', value: '90' },
+  { title: 'Tudo', value: 'all' }
+])
+
 // Filtros para o gráfico
 const filtroGrafico = ref({
   tipoProduto: 'todos',
-  produtoId: null,  // Objeto único, não array
+  produtoId: null,
   periodo: '30'
 })
-
-// Opções para os filtros
-const tiposProdutoFiltro = [
-  { text: 'Todos os produtos', value: 'todos' },
-  { text: 'Produtos do Cliente', value: 'cliente' },
-  { text: 'Produtos de Concorrentes', value: 'concorrente' }
-]
-
-const periodosFiltro = [
-  { text: 'Últimos 30 dias', value: '30' },
-  { text: 'Últimos 60 dias', value: '60' },
-  { text: 'Últimos 90 dias', value: '90' },
-  { text: 'Tudo', value: 'all' }
-]
 
 // Produtos formatados para o filtro
 const produtosParaFiltro = computed(() => {
@@ -1074,8 +1069,10 @@ const carregarHistoricoComparativo = async () => {
     // Dados para armazenar o histórico
     const todosHistoricos = [];
     
-    // Obter o ID do produto selecionado
-    const produtoId = filtroGrafico.value.produtoId.id;
+    // Obter o ID do produto selecionado (ajuste conforme seu modelo de dados)
+    const produtoId = typeof filtroGrafico.value.produtoId === 'object' ? 
+      filtroGrafico.value.produtoId.id : 
+      filtroGrafico.value.produtoId;
     
     // Informações do produto
     const produtoInfo = produtos.value.find(p => p.id === produtoId);
