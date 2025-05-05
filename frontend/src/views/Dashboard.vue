@@ -1,4 +1,4 @@
-# frontend/src/views/Dashboard.vue (Refatorado)
+# frontend/src/views/Dashboard.vue (Final)
 
 ```vue
 <template>
@@ -12,30 +12,6 @@
     
     <!-- Cards de informações -->
     <dashboard-stats :stats="stats" />
-    
-    <!-- Botão para abrir o modal do gráfico comparativo -->
-    <v-row>
-      <v-col cols="12">
-        <v-card class="mb-4" elevation="2">
-          <v-card-text class="d-flex align-center pa-4">
-            <v-icon color="primary" size="32" class="mr-4">mdi-chart-line</v-icon>
-            <div>
-              <div class="text-h6 mb-1">Análise Comparativa de Preços</div>
-              <div class="text-body-2 text-grey">Visualize a evolução de preços de todos os produtos ao longo do tempo</div>
-            </div>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              @click="abrirGraficoComparativo(produtos)"
-              :loading="carregandoHistoricoComparativo"
-            >
-              <v-icon left>mdi-chart-line</v-icon>
-              Ver Gráfico Comparativo
-            </v-btn>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
     
     <!-- Conteúdo principal -->
     <v-card class="rounded-lg" elevation="3">
@@ -96,9 +72,9 @@
             @toggle="toggleGrupo(index)"
             @open-chart="abrirGraficoGrupo"
             @view-details="verDetalhes"
-            @verify-price="verificarPreco"
-            @set-base="definirProdutoClienteBase"
-            @delete="excluirProduto"
+            @verify-price="handleVerificarPreco"
+            @set-base="handleDefinirProdutoClienteBase"
+            @delete="handleExcluirProduto"
           />
         </div>
 
@@ -118,9 +94,7 @@
       :dados-historico-comparativo="dadosHistoricoComparativo"
       :grupo-selecionado="grupoSelecionado"
       :filtro-grafico="filtroGrafico"
-      :tipos-produto-filtro="tiposProdutoFiltro"
       :periodos-filtro="periodosFiltro"
-      :produtos-para-filtro="produtosParaFiltro"
       @fechar="fecharGraficoComparativo"
       @filtro-changed="onFiltroChanged"
       @atualizar="atualizarGraficoComparativo"
@@ -178,16 +152,13 @@ const {
   chartContainerComparativo,
   grupoSelecionado,
   dadosHistoricoComparativo,
-  tiposProdutoFiltro,
   periodosFiltro,
   filtroGrafico,
   abrirGraficoGrupo,
-  abrirGraficoComparativo,
   fecharGraficoComparativo,
   atualizarGraficoComparativo,
   onFiltroChanged,
-  carregarHistoricoComparativo,
-  getProdutosParaFiltro
+  carregarHistoricoComparativo
 } = usePriceChart()
 
 const { mostrarSnackbar } = useSnackbar()
@@ -201,11 +172,6 @@ const stats = computed(() => ({
   totalConcorrentes: concorrentesUnicos.value.length,
   totalComparacoes: produtos.value.length
 }))
-
-// Produtos para o filtro do gráfico
-const produtosParaFiltro = computed(() => {
-  return getProdutosParaFiltro(produtos.value)
-})
 
 // Navegar para detalhes do produto
 const verDetalhes = (produtoId) => {
@@ -252,7 +218,6 @@ const handleExcluirProduto = async (produto) => {
 const setupChartRefs = () => {
   if (chartModal.value) {
     nextTick(() => {
-      // Atualizar as referências para o componente de gráfico
       const { chart, chartContainer } = chartModal.value
       chartComparativo.value = chart
       chartContainerComparativo.value = chartContainer

@@ -1,4 +1,4 @@
-import { ref, nextTick, onUnmounted, computed } from 'vue'
+import { ref, nextTick, onUnmounted } from 'vue'
 import Chart from 'chart.js/auto'
 import 'chartjs-adapter-date-fns'
 import api from '@/services/api'
@@ -13,13 +13,7 @@ export const usePriceChart = () => {
   const dadosHistoricoComparativo = ref([])
   const grupoSelecionado = ref(null)
   
-  // Filtros para o gráfico
-  const tiposProdutoFiltro = ref([
-    { title: 'Todos os produtos', value: 'todos' },
-    { title: 'Produtos do Cliente', value: 'cliente' },
-    { title: 'Produtos de Concorrentes', value: 'concorrente' }
-  ])
-  
+  // Apenas filtro de período
   const periodosFiltro = ref([
     { title: 'Últimos 30 dias', value: '30' },
     { title: 'Últimos 60 dias', value: '60' },
@@ -28,8 +22,6 @@ export const usePriceChart = () => {
   ])
   
   const filtroGrafico = ref({
-    tipoProduto: 'todos',
-    produtosIds: [],
     periodo: '30'
   })
   
@@ -45,46 +37,11 @@ export const usePriceChart = () => {
     'rgba(96, 125, 139, 1)',   // Cinza azulado
   ]
   
-  // Função para obter produtos filtrados para o dropdown
-  const getProdutosParaFiltro = (produtos) => {
-    let produtosFiltradosPorTipo = produtos
-    
-    if (filtroGrafico.value.tipoProduto !== 'todos') {
-      produtosFiltradosPorTipo = produtos.filter(p => {
-        return p.tipo_produto === filtroGrafico.value.tipoProduto
-      })
-    }
-    
-    return produtosFiltradosPorTipo.map(p => ({
-      id: p.id,
-      nome_completo: `${p.nome} (${p.concorrente})`,
-      nome: p.nome,
-      concorrente: p.concorrente,
-      tipo_produto: p.tipo_produto
-    }))
-  }
-  
   // Abrir modal do gráfico para um grupo
   const abrirGraficoGrupo = (grupo) => {
     grupoSelecionado.value = grupo
-    const produtosDoGrupo = grupo.produtos.map(p => p.id)
-    filtroGrafico.value.produtosIds = produtosDoGrupo
     mostrarGraficoComparativo.value = true
     carregarHistoricoComparativo()
-  }
-  
-  // Abrir modal do gráfico geral
-  const abrirGraficoComparativo = (produtos) => {
-    grupoSelecionado.value = null
-    mostrarGraficoComparativo.value = true
-    
-    nextTick(() => {
-      if (!filtroGrafico.value.produtosIds.length && produtos?.length > 0) {
-        const primeirosProdutos = produtos.slice(0, 3).map(p => p.id)
-        filtroGrafico.value.produtosIds = primeirosProdutos
-      }
-      carregarHistoricoComparativo()
-    })
   }
   
   // Fechar modal
@@ -104,15 +61,12 @@ export const usePriceChart = () => {
   
   // Callback quando filtros mudam
   const onFiltroChanged = () => {
-    if (filtroGrafico.value.tipoProduto !== 'todos') {
-      filtroGrafico.value.produtosIds = []
-    }
     carregarHistoricoComparativo()
   }
   
   // Carregar histórico de preços
   const carregarHistoricoComparativo = async () => {
-    if (!filtroGrafico.value.produtosIds.length) {
+    if (!grupoSelecionado.value?.produtos?.length) {
       dadosHistoricoComparativo.value = []
       return
     }
@@ -122,12 +76,14 @@ export const usePriceChart = () => {
     try {
       const todosHistoricos = []
       
-      for (const produtoId of filtroGrafico.value.produtosIds) {
-        const historicoResponse = await api.get(`/produtos/${produtoId}/historico/?limit=100`)
+      // Carregar dados de todos os produtos do grupo
+      for (const produto of grupoSelecionado.value.produtos) {
+        const historicoResponse = await api.get(`/produtos/${produto.id}/historico/?limit=100`)
         
         if (Array.isArray(historicoResponse.data) && historicoResponse.data.length > 0) {
           let dadosFiltrados = [...historicoResponse.data]
           
+          // Filtrar por período se não for 'all'
           if (filtroGrafico.value.periodo !== 'all') {
             const dias = parseInt(filtroGrafico.value.periodo)
             const dataLimite = new Date()
@@ -144,15 +100,11 @@ export const usePriceChart = () => {
               (a, b) => new Date(a.data) - new Date(b.data)
             )
             
-            // Buscar informações do produto
-            const produtoResponse = await api.get(`/produtos/${produtoId}/`)
-            const produtoInfo = produtoResponse.data
-            
             const historicoProcessado = {
-              produtoId: produtoId,
-              nome: produtoInfo.nome,
-              concorrente: produtoInfo.concorrente,
-              tipo_produto: produtoInfo.tipo_produto,
+              produtoId: produto.id,
+              nome: produto.nome,
+              concorrente: produto.concorrente,
+              tipo_produto: produto.tipo_produto,
               dados: dadosOrdenados
             }
             
@@ -194,16 +146,26 @@ export const usePriceChart = () => {
         y: parseFloat(item.preco)
       }))
       
+      // Determinar o tipo de linha com base no tipo de produto
+      const lineType = histórico.tipo_produto === 'cliente' ? {
+        borderWidth: 3,
+        pointRadius: 5,
+        borderDash: []  // Linha sólida
+      } : {
+        borderWidth: 2,
+        pointRadius: 3,
+        borderDash: [5, 5]  // Linha tracejada
+      }
+      
       return {
-        label: `${histórico.nome} (${histórico.concorrente})`,
+        label: `${histórico.concorrente} (${histórico.tipo_produto === 'cliente' ? 'Cliente' : 'Concorrente'})`,
         data: dados,
         borderColor: cor,
         backgroundColor: cor.replace('1)', '0.1)'),
-        borderWidth: 2,
-        pointRadius: 3,
+        ...lineType,
         pointBackgroundColor: cor,
         pointBorderColor: '#fff',
-        pointHoverRadius: 5,
+        pointHoverRadius: 6,
         tension: 0.3,
         fill: false
       }
@@ -267,9 +229,7 @@ export const usePriceChart = () => {
           },
           title: {
             display: true,
-            text: grupoSelecionado.value ? 
-              `Histórico de Preços - ${grupoSelecionado.value.nome}` : 
-              'Gráfico Comparativo de Preços',
+            text: `Histórico de Preços - ${grupoSelecionado.value?.nome}`,
             font: {
               size: 16
             },
@@ -304,17 +264,14 @@ export const usePriceChart = () => {
     dadosHistoricoComparativo,
     
     // Filtros
-    tiposProdutoFiltro,
     periodosFiltro,
     filtroGrafico,
     
     // Funções
     abrirGraficoGrupo,
-    abrirGraficoComparativo,
     fecharGraficoComparativo,
     atualizarGraficoComparativo,
     onFiltroChanged,
-    carregarHistoricoComparativo,
-    getProdutosParaFiltro
+    carregarHistoricoComparativo
   }
 }

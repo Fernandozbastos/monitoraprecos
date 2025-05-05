@@ -1,4 +1,4 @@
-# frontend/src/components/dashboard/ComparativeChartModal.vue (Corrigido)
+# frontend/src/components/dashboard/ComparativeChartModal.vue (Simplificado)
 
 ```vue
 <template>
@@ -9,12 +9,7 @@
   >
     <v-card>
       <v-card-title class="primary white--text">
-        <span v-if="grupoSelecionado">
-          Histórico de Preços - {{ grupoSelecionado.nome }}
-        </span>
-        <span v-else>
-          Gráfico Comparativo de Preços
-        </span>
+        <span>Histórico de Preços - {{ grupoSelecionado?.nome }}</span>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -26,39 +21,8 @@
       </v-card-title>
       
       <v-card-text class="pa-6">
-        <!-- Opções de filtro para o gráfico -->
+        <!-- Apenas filtro de período -->
         <v-row>
-          <v-col cols="12" sm="4">
-            <v-select
-              v-model="filtroGrafico.tipoProduto"
-              :items="tiposProdutoFiltro"
-              item-title="title"
-              item-value="value"
-              label="Tipo de Produtos"
-              outlined
-              dense
-              hide-details
-              class="mb-4"
-              @update:modelValue="$emit('filtro-changed')"
-            ></v-select>
-          </v-col>
-          <v-col cols="12" sm="4">
-            <v-select
-              v-model="filtroGrafico.produtosIds"
-              :items="produtosParaFiltro"
-              item-title="nome_completo"
-              item-value="id"
-              label="Produtos"
-              outlined
-              dense
-              hide-details
-              class="mb-4"
-              multiple
-              chips
-              closable-chips
-              @update:modelValue="$emit('filtro-changed')"
-            ></v-select>
-          </v-col>
           <v-col cols="12" sm="4">
             <v-select
               v-model="filtroGrafico.periodo"
@@ -73,6 +37,11 @@
               @update:modelValue="$emit('filtro-changed')"
             ></v-select>
           </v-col>
+          <v-col cols="12" sm="8">
+            <div class="text-subtitle-2 text-grey">
+              Este gráfico mostra o histórico de preços de todos os produtos do grupo {{ grupoSelecionado?.nome }}
+            </div>
+          </v-col>
         </v-row>
         
         <!-- Conteúdo do gráfico -->
@@ -84,7 +53,7 @@
         <div v-else-if="!dadosHistoricoComparativo || !dadosHistoricoComparativo.length" class="text-center py-12">
           <v-icon size="64" color="grey lighten-1">mdi-chart-timeline-variant</v-icon>
           <h3 class="text-h6 grey--text text--darken-1 mt-4">Nenhum dado histórico encontrado</h3>
-          <p class="text-body-2 grey--text mb-4">Selecione um ou mais produtos para visualizar o histórico</p>
+          <p class="text-body-2 grey--text mb-4">Não há dados históricos disponíveis para este período</p>
         </div>
         
         <div v-else ref="chartContainer" style="height: 500px; width: 100%;">
@@ -138,15 +107,7 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  tiposProdutoFiltro: {
-    type: Array,
-    required: true
-  },
   periodosFiltro: {
-    type: Array,
-    required: true
-  },
-  produtosParaFiltro: {
     type: Array,
     required: true
   }
