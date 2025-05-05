@@ -18,22 +18,38 @@
         </v-card-title>
         
         <v-card-text class="pa-6">
+          <!-- Filtros superiores -->
+          <v-row class="mb-4">
+            <v-col cols="12" sm="6" md="4">
+              <v-select
+                v-model="filtros.periodo"
+                :items="opcoesperiodo"
+                item-text="text"
+                item-value="value"
+                outlined
+                dense
+                label="Período"
+                prepend-icon="mdi-calendar"
+              ></v-select>
+            </v-col>
+          </v-row>
+  
           <!-- Conteúdo do gráfico -->
-          <div v-if="carregando" class="d-flex justify-center align-center py-12">
-            <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
-            <span class="ml-4 text-subtitle-1">Carregando dados históricos...</span>
-          </div>
+          <v-progress-linear
+            v-if="carregando"
+            indeterminate
+            color="primary"
+            class="mb-4"
+          ></v-progress-linear>
           
-          <div v-else-if="!dadosHistorico.length" class="text-center py-12">
+          <div v-if="!carregando && !dadosHistorico.length" class="text-center py-12">
             <v-icon size="64" color="grey lighten-1">mdi-chart-timeline-variant</v-icon>
             <h3 class="text-h6 grey--text text--darken-1 mt-4">Nenhum dado histórico encontrado</h3>
             <p class="text-body-2 grey--text mb-4">Não há dados históricos disponíveis para este grupo</p>
           </div>
           
-          <div v-else>
-            <div ref="chartContainer" style="height: 500px; width: 100%;">
-              <canvas ref="chart"></canvas>
-            </div>
+          <div v-if="dadosHistorico.length" class="chart-container">
+            <canvas ref="chart"></canvas>
           </div>
         </v-card-text>
         
@@ -61,8 +77,12 @@
   
   <script setup>
   import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
-  import Chart from 'chart.js/auto'
+  import { Chart, registerables } from 'chart.js'
+  import 'chartjs-adapter-date-fns'
   import api from '@/services/api'
+  
+  // Registrar os módulos do Chart.js
+  Chart.register(...registerables)
   
   const props = defineProps({
     show: {
@@ -82,13 +102,30 @@
   const carregando = ref(false)
   const dadosHistorico = ref([])
   const chart = ref(null)
-  const chartContainer = ref(null)
   const chartInstance = ref(null)
   
-  // Cores predefinidas para os diferentes produtos
+  // Filtros
+  const filtros = ref({
+    periodo: '30'
+  })
+  
+  const opcoesperiodo = ref([
+    { text: 'Últimos 7 dias', value: '7' },
+    { text: 'Últimos 30 dias', value: '30' },
+    { text: 'Últimos 90 dias', value: '90' },
+    { text: 'Todo período', value: 'all' }
+  ])
+  
+  // Cores para os diferentes produtos
   const cores = [
-    '#1976D2', '#F57C00', '#388E3C', '#7B1FA2', '#D32F2F', 
-    '#0097A7', '#FBC02D', '#455A64', '#E91E63', '#795548'
+    'rgba(63, 81, 181, 1)',    // Azul
+    'rgba(255, 87, 34, 1)',    // Laranja
+    'rgba(76, 175, 80, 1)',    // Verde
+    'rgba(156, 39, 176, 1)',   // Roxo
+    'rgba(233, 30, 99, 1)',    // Rosa
+    'rgba(0, 150, 136, 1)',    // Teal
+    'rgba(255, 193, 7, 1)',    // Amarelo
+    'rgba(96, 125, 139, 1)',   // Cinza azulado
   ]
   
   // Sincronizar props com estado interno
@@ -105,6 +142,11 @@
       chartInstance.value.destroy()
       chartInstance.value = null
     }
+  })
+  
+  // Watch para mudanças no filtro de período
+  watch(() => filtros.value.periodo, () => {
+    carregarDados()
   })
   
   // Carregar dados históricos do grupo
@@ -125,16 +167,33 @@
           const response = await api.get(`/produtos/${produto.id}/historico/?limit=100`)
           
           if (Array.isArray(response.data) && response.data.length > 0) {
-            const dadosConsolidados = consolidarPorDia(response.data)
+            let dados = [...response.data]
             
-            historicos.push({
-              produtoId: produto.id,
-              nome: produto.nome,
-              concorrente: produto.concorrente,
-              tipoProduto: produto.tipo_produto,
-              produtoCliente: produto.produto_cliente,
-              dados: dadosConsolidados
-            })
+            // Filtrar por período
+            if (filtros.value.periodo !== 'all') {
+              const dias = parseInt(filtros.value.periodo)
+              const dataLimite = new Date()
+              dataLimite.setDate(dataLimite.getDate() - dias)
+              
+              dados = dados.filter(item => {
+                const dataItem = new Date(item.data)
+                return dataItem >= dataLimite
+              })
+            }
+            
+            if (dados.length > 0) {
+              // Ordenar dados por data
+              const dadosOrdenados = dados.sort((a, b) => new Date(a.data) - new Date(b.data))
+              
+              historicos.push({
+                produtoId: produto.id,
+                nome: produto.nome,
+                concorrente: produto.concorrente,
+                tipoProduto: produto.tipo_produto,
+                produtoCliente: produto.produto_cliente,
+                dados: dadosOrdenados
+              })
+            }
           }
         } catch (error) {
           console.error(`Erro ao carregar histórico do produto ${produto.id}:`, error)
@@ -156,39 +215,6 @@
     }
   }
   
-  // Consolidar preços por dia (menor valor)
-  const consolidarPorDia = (dados) => {
-    if (!Array.isArray(dados) || dados.length === 0) return []
-    
-    const agrupados = {}
-    
-    dados.forEach(item => {
-      const data = new Date(item.data)
-      const dataKey = `${data.getFullYear()}-${data.getMonth()}-${data.getDate()}`
-      
-      const preco = parseFloat(item.preco)
-      
-      if (!agrupados[dataKey] || preco < agrupados[dataKey].preco) {
-        agrupados[dataKey] = {
-          data: item.data,
-          preco: preco
-        }
-      }
-    })
-    
-    return Object.values(agrupados).sort(
-      (a, b) => new Date(a.data) - new Date(b.data)
-    )
-  }
-  
-  // Formatar data para o gráfico
-  const formatarData = (dataString) => {
-    const data = new Date(dataString)
-    const dia = data.getDate().toString().padStart(2, '0')
-    const mes = (data.getMonth() + 1).toString().padStart(2, '0')
-    return `${dia}/${mes}`
-  }
-  
   // Renderizar o gráfico comparativo
   const renderizarGrafico = () => {
     if (chartInstance.value) {
@@ -199,66 +225,42 @@
     
     const ctx = chart.value.getContext('2d')
     
-    // Coletar todas as datas únicas
-    const todasDatas = new Set()
-    dadosHistorico.value.forEach(historico => {
-      historico.dados.forEach(item => {
-        todasDatas.add(item.data)
-      })
-    })
-    
-    // Ordenar datas
-    const datasOrdenadas = Array.from(todasDatas).sort((a, b) => new Date(a) - new Date(b))
-    const labels = datasOrdenadas.map(data => formatarData(data))
-    
     const datasets = dadosHistorico.value.map((historico, index) => {
       const cor = cores[index % cores.length]
       
-      // Criar array de dados onde cada posição corresponde a uma data
-      const data = datasOrdenadas.map(dataAtual => {
-        const item = historico.dados.find(d => d.data === dataAtual)
-        return item ? item.preco : null
-      })
+      const dados = historico.dados.map(item => ({
+        x: new Date(item.data),
+        y: parseFloat(item.preco)
+      }))
       
-      // Determinar o estilo da linha com base no tipo de produto
-      const estilo = historico.tipoProduto === 'cliente' 
-        ? {
-            borderWidth: 4,
-            pointRadius: 8,
-            borderDash: [],  // Linha sólida
-            pointBorderWidth: 3
-          }
-        : {
-            borderWidth: 2,
-            pointRadius: 5,
-            borderDash: [5, 5], // Linha tracejada
-            pointBorderWidth: 1
-          }
-      
-      // Determinar o label
-      const label = historico.tipoProduto === 'cliente' 
-        ? `${historico.concorrente} (Cliente)` 
-        : `${historico.concorrente}`
+      // Determinar o tipo de linha com base no tipo de produto
+      const lineType = historico.tipoProduto === 'cliente' ? {
+        borderWidth: 3,
+        pointRadius: 5,
+        borderDash: []  // Linha sólida
+      } : {
+        borderWidth: 2,
+        pointRadius: 3,
+        borderDash: [5, 5]  // Linha tracejada
+      }
       
       return {
-        label: label,
-        data: data,
+        label: `${historico.concorrente} (${historico.tipoProduto === 'cliente' ? 'Cliente' : 'Concorrente'})`,
+        data: dados,
         borderColor: cor,
-        backgroundColor: cor + '20',
-        ...estilo,
+        backgroundColor: cor.replace('1)', '0.1)'),
+        ...lineType,
         pointBackgroundColor: cor,
-        pointBorderColor: '#ffffff',
-        pointHoverRadius: 10,
+        pointBorderColor: '#fff',
+        pointHoverRadius: 8,
         tension: 0.3,
-        fill: false,
-        spanGaps: true // Permite que o gráfico conecte pontos mesmo com valores null
+        fill: false
       }
     })
     
     chartInstance.value = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: labels,
         datasets: datasets
       },
       options: {
@@ -270,24 +272,23 @@
         },
         scales: {
           x: {
+            type: 'time',
+            time: {
+              unit: 'day',
+              displayFormats: {
+                day: 'dd/MM'
+              }
+            },
             title: {
               display: true,
-              text: 'Data',
-              font: {
-                size: 14,
-                weight: 'bold'
-              }
+              text: 'Data'
             }
           },
           y: {
             beginAtZero: false,
             title: {
               display: true,
-              text: 'Preço (R$)',
-              font: {
-                size: 14,
-                weight: 'bold'
-              }
+              text: 'Preço (R$)'
             },
             ticks: {
               callback: function(value) {
@@ -315,10 +316,9 @@
           },
           title: {
             display: true,
-            text: `Comparativo de Preços - ${props.grupo?.nome}`,
+            text: `Histórico de Preços - ${props.grupo?.nome}`,
             font: {
-              size: 16,
-              weight: 'bold'
+              size: 16
             },
             padding: {
               top: 10,
@@ -327,8 +327,7 @@
           }
         },
         animation: {
-          duration: 800,
-          easing: 'easeInOutQuart'
+          duration: 1000
         }
       }
     })
@@ -339,7 +338,7 @@
     internalShow.value = false
   }
   
-  // Cleanup
+  // Cleanup quando destruído
   onUnmounted(() => {
     if (chartInstance.value) {
       chartInstance.value.destroy()
@@ -349,12 +348,17 @@
   
   // Expor refs para uso externo
   defineExpose({
-    chart,
-    chartContainer
+    chart
   })
   </script>
   
   <style scoped>
+  .chart-container {
+    position: relative;
+    height: 500px;
+    width: 100%;
+  }
+  
   canvas {
     display: block;
   }
