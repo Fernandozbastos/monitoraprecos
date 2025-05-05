@@ -9,6 +9,11 @@
       />
       
       <template v-else>
+        <!-- Debug info -->
+        <v-alert v-if="debugInfo" type="info" class="mb-4">
+          {{ debugInfo }}
+        </v-alert>
+        
         <!-- Cabeçalho -->
         <product-detail-header
           :produto="produto"
@@ -130,7 +135,7 @@
     chartContainer,
     carregarHistoricoCompleto,
     atualizarTituloGrafico,
-    resizeChart
+    debugInfo
   } = usePriceHistory()
   
   // Referência para o componente de gráfico
@@ -140,9 +145,22 @@
   const conectarRefsGrafico = () => {
     nextTick(() => {
       if (priceChartComponent.value) {
-        const { priceChart: chartRef, chartContainer: containerRef } = priceChartComponent.value
-        priceChart.value = chartRef
-        chartContainer.value = containerRef
+        // Obter as refs expostas pelo componente
+        const exposedRefs = priceChartComponent.value
+        
+        if (exposedRefs) {
+          priceChart.value = exposedRefs.priceChart
+          chartContainer.value = exposedRefs.chartContainer
+          
+          debugInfo.value = 'Refs conectadas: ' + 
+            (priceChart.value ? 'Canvas OK' : 'Canvas NULL') + ', ' +
+            (chartContainer.value ? 'Container OK' : 'Container NULL')
+          
+          // Verificar dimensões do container
+          if (exposedRefs.checkDimensions) {
+            exposedRefs.checkDimensions()
+          }
+        }
       }
     })
   }
@@ -150,50 +168,38 @@
   // Carregar histórico
   const carregarHistorico = async () => {
     if (produto.value.id) {
+      debugInfo.value = `Carregando histórico para produto ID: ${produto.value.id}`
       await carregarHistoricoCompleto(produto.value.id)
+      
       if (produto.value.nome && produto.value.concorrente) {
         atualizarTituloGrafico(produto.value.nome, produto.value.concorrente)
       }
+    } else {
+      debugInfo.value = 'Produto sem ID para carregar histórico'
     }
   }
   
   // Lifecycle hooks
   onMounted(() => {
     carregarProduto()
-    window.addEventListener('resize', resizeChart)
   })
   
-  onUnmounted(() => {
-    window.removeEventListener('resize', resizeChart)
-  })
-  
-  // Watch para recarregar produto
-  watch(() => produto.value.id, async (newId) => {
+  // Watch para produto carregado
+  watch(() => produto.value.id, (newId) => {
     if (newId) {
       conectarRefsGrafico()
-      await carregarHistorico()
-    }
-  })
-  
-  // Watch para quando o produto for carregado 
-  watch(() => produto.value.id, () => {
-    if (produto.value.id) {
+      
+      // Carregar histórico após garantir que as refs estão conectadas
       nextTick(() => {
-        conectarRefsGrafico()
         carregarHistorico()
       })
     }
   }, { immediate: true })
+  
+  // Watch adicional para garantir que as refs sejam conectadas quando o componente estiver disponível
+  watch(() => priceChartComponent.value, (newRef) => {
+    if (newRef) {
+      conectarRefsGrafico()
+    }
+  })
   </script>
-  
-  <style scoped>
-  .detail-card {
-    border-radius: 8px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-  
-  .detail-card:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
-  }
-  </style>

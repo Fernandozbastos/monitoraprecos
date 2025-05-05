@@ -1,4 +1,4 @@
-import { ref, onUnmounted, nextTick } from 'vue'
+import { ref, nextTick, onUnmounted } from 'vue'
 import Chart from 'chart.js/auto'
 import api from '@/services/api'
 
@@ -10,21 +10,42 @@ export const usePriceHistory = () => {
   const chartInstance = ref(null)
   const chartContainer = ref(null)
   
+  // Debug state
+  const debugInfo = ref('')
+  
   // Carregar histórico completo de preços
   const carregarHistoricoCompleto = async (produtoId) => {
-    if (!produtoId) return
+    if (!produtoId) {
+      debugInfo.value = 'Produto ID não fornecido'
+      return
+    }
     
     carregandoHistorico.value = true
     try {
       const historicoResponse = await api.get(`/produtos/${produtoId}/historico/?limit=100`)
+      debugInfo.value = `API Response: ${JSON.stringify(historicoResponse.data?.length || '0')} registros`
       
       if (Array.isArray(historicoResponse.data)) {
         historicoPrecos.value = [...historicoResponse.data].sort(
           (a, b) => new Date(a.data) - new Date(b.data)
         )
         
+        debugInfo.value += ` | Dados ordenados: ${historicoPrecos.value.length}`
+        
+        // Verificar se o canvas está disponível antes de renderizar
         nextTick(() => {
-          renderizarGrafico()
+          if (priceChart.value) {
+            debugInfo.value += ' | Canvas está disponível'
+            renderizarGrafico()
+          } else {
+            debugInfo.value += ' | Canvas NÃO está disponível'
+            // Tentar novamente após um delay
+            setTimeout(() => {
+              if (priceChart.value) {
+                renderizarGrafico()
+              }
+            }, 500)
+          }
         })
       } else {
         console.error('Formato de resposta inesperado:', historicoResponse.data)
@@ -41,90 +62,105 @@ export const usePriceHistory = () => {
   
   // Renderizar o gráfico de histórico de preços
   const renderizarGrafico = () => {
+    debugInfo.value = 'Iniciando renderização do gráfico'
+    
     if (chartInstance.value) {
       chartInstance.value.destroy()
+      debugInfo.value += ' | Chart anterior destruído'
     }
     
-    if (!priceChart.value || historicoPrecos.value.length === 0) return
+    if (!priceChart.value) {
+      debugInfo.value = 'ERRO: Canvas não disponível'
+      return
+    }
     
-    const ctx = priceChart.value.getContext('2d')
+    if (historicoPrecos.value.length === 0) {
+      debugInfo.value = 'ERRO: Nenhum dado para renderizar'
+      return
+    }
     
-    // Preparar dados para o gráfico
-    const labels = historicoPrecos.value.map(item => formatDateShort(item.data))
-    const precos = historicoPrecos.value.map(item => parseFloat(item.preco))
-    
-    // Calcular preço mínimo e máximo para melhor exibição
-    const maxPreco = Math.max(...precos) * 1.1 // 10% acima do máximo
-    const minPreco = Math.min(...precos) * 0.9 // 10% abaixo do mínimo
-    
-    // Criar o gráfico
-    chartInstance.value = new Chart(ctx, {
-      type: 'line',
-      data: {
+    try {
+      const ctx = priceChart.value.getContext('2d')
+      
+      if (!ctx) {
+        debugInfo.value = 'ERRO: Contexto 2D não disponível'
+        return
+      }
+      
+      // Preparar dados para o gráfico
+      const labels = historicoPrecos.value.map(item => formatDateShort(item.data))
+      const precos = historicoPrecos.value.map(item => parseFloat(item.preco))
+      
+      debugInfo.value = `Labels: ${labels.length}, Preços: ${precos.length}`
+      
+      // Dados simples para teste
+      const chartData = {
         labels: labels,
         datasets: [{
           label: 'Preço (R$)',
           data: precos,
-          backgroundColor: 'rgba(63, 81, 181, 0.2)',
-          borderColor: 'rgba(63, 81, 181, 1)',
-          borderWidth: 2,
-          pointRadius: 4,
-          pointBackgroundColor: 'rgba(63, 81, 181, 1)',
-          tension: 0.3,
-          fill: true
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
+          pointRadius: 5
         }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: false,
-            title: {
-              display: true,
-              text: 'Preço (R$)'
-            },
-            ticks: {
-              callback: function(value) {
-                return 'R$ ' + value.toFixed(2)
-              }
-            },
-            suggestedMin: minPreco,
-            suggestedMax: maxPreco
-          },
-          x: {
-            title: {
-              display: true,
-              text: 'Data'
-            }
-          }
-        },
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                return 'Preço: R$ ' + context.parsed.y.toFixed(2)
-              }
-            }
-          },
-          legend: {
-            display: true,
-            position: 'top'
-          },
-          title: {
-            display: true,
-            // Título será definido dinamicamente no componente
-            text: '',
-            font: {
-              size: 16
-            }
-          }
-        },
-        animation: {
-          duration: 1000
-        }
       }
-    })
+      
+      // Criar o gráfico
+      chartInstance.value = new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false, // Desabilitar animação para debug
+          elements: {
+            line: {
+              borderWidth: 2
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              title: {
+                display: true,
+                text: 'Preço (R$)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Data'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            }
+          }
+        }
+      })
+      
+      debugInfo.value = 'Gráfico criado com sucesso'
+      
+      // Verificar se o gráfico foi renderizado
+      setTimeout(() => {
+        if (chartInstance.value) {
+          debugInfo.value += ' | Chart instance existe'
+          const canvas = chartInstance.value.canvas
+          if (canvas && canvas.width && canvas.height) {
+            debugInfo.value += ` | Canvas: ${canvas.width}x${canvas.height}`
+          } else {
+            debugInfo.value += ' | Canvas sem dimensões'
+          }
+        }
+      }, 100)
+      
+    } catch (error) {
+      debugInfo.value = `ERRO ao criar gráfico: ${error.message}`
+      console.error('Erro ao criar gráfico:', error)
+    }
   }
   
   // Formatação de data mais simples para o gráfico
@@ -142,7 +178,10 @@ export const usePriceHistory = () => {
   // Atualizar título do gráfico
   const atualizarTituloGrafico = (nome, concorrente) => {
     if (chartInstance.value) {
-      chartInstance.value.options.plugins.title.text = `Histórico de Preços - ${nome} (${concorrente})`
+      chartInstance.value.options.plugins.title = {
+        display: true,
+        text: `Histórico de Preços - ${nome} (${concorrente})`
+      }
       chartInstance.value.update()
     }
   }
@@ -155,24 +194,17 @@ export const usePriceHistory = () => {
     }
   })
   
-  // Resize handler
-  const resizeChart = () => {
-    if (chartInstance.value) {
-      chartInstance.value.resize()
-    }
-  }
-  
   return {
     // Estado
     historicoPrecos,
     carregandoHistorico,
     priceChart,
     chartContainer,
+    debugInfo,
     
     // Métodos
     carregarHistoricoCompleto,
     renderizarGrafico,
-    atualizarTituloGrafico,
-    resizeChart
+    atualizarTituloGrafico
   }
 }

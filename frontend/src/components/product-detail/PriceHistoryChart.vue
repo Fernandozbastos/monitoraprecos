@@ -18,6 +18,16 @@
       </v-card-title>
       
       <v-card-text>
+        <!-- Debug info -->
+        <v-alert 
+          v-if="debugInfo" 
+          type="info" 
+          dense 
+          class="mb-2"
+        >
+          {{ debugInfo }}
+        </v-alert>
+        
         <loading-spinner
           v-if="carregandoHistorico"
           :loading="true"
@@ -38,15 +48,30 @@
           </v-btn>
         </div>
         
-        <div v-else ref="chartContainer" style="height: 400px; width: 100%;" class="chart-container">
-          <canvas ref="priceChart"></canvas>
+        <div v-else style="position: relative;">
+          <!-- Canvas container com tamanho fixo -->
+          <div 
+            ref="chartContainer" 
+            style="width: 100%; height: 400px; position: relative;"
+          >
+            <canvas 
+              ref="priceChart"
+              :id="chartId"
+              style="width: 100% !important; height: 400px !important;"
+            ></canvas>
+          </div>
+          
+          <!-- Debug info para dimensões -->
+          <div class="caption text-grey mt-2">
+            Container: {{ containerDimensions.width }}x{{ containerDimensions.height }}
+          </div>
         </div>
       </v-card-text>
     </v-card>
   </template>
   
   <script setup>
-  import { ref } from 'vue'
+  import { ref, onMounted, onUnmounted, watch } from 'vue'
   import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
   
   const props = defineProps({
@@ -65,24 +90,75 @@
   // Refs para o gráfico
   const priceChart = ref(null)
   const chartContainer = ref(null)
+  const chartId = ref(`chart-${Math.random().toString(36).substr(2, 9)}`)
+  
+  // Debug
+  const debugInfo = ref('')
+  const containerDimensions = ref({ width: 0, height: 0 })
+  
+  // Verificar dimensões do container
+  const checkDimensions = () => {
+    if (chartContainer.value) {
+      const rect = chartContainer.value.getBoundingClientRect()
+      containerDimensions.value = {
+        width: rect.width,
+        height: rect.height
+      }
+      debugInfo.value = `Canvas ref: ${priceChart.value ? 'OK' : 'NULL'}, Container: ${rect.width}x${rect.height}`
+    }
+  }
+  
+  // Watch para mudanças no histórico
+  watch(() => props.historicoPrecos, (newValue) => {
+    debugInfo.value = `Histórico atualizado: ${newValue.length} registros`
+    checkDimensions()
+  })
+  
+  // Verificar se canvas está disponível
+  const verificarCanvas = () => {
+    if (priceChart.value) {
+      debugInfo.value += ' | Canvas encontrado'
+      if (priceChart.value.getContext) {
+        debugInfo.value += ' | Context disponível'
+      } else {
+        debugInfo.value += ' | Context INDISPONÍVEL'
+      }
+    } else {
+      debugInfo.value += ' | Canvas NÃO encontrado'
+    }
+  }
+  
+  // Lifecycle hooks
+  onMounted(() => {
+    checkDimensions()
+    verificarCanvas()
+    
+    // Verificar disponibilidade após um tick
+    setTimeout(() => {
+      verificarCanvas()
+      checkDimensions()
+    }, 100)
+  })
+  
+  onUnmounted(() => {
+    debugInfo.value = 'Componente desmontado'
+  })
   
   // Expor refs para uso externo
   defineExpose({
     priceChart,
-    chartContainer
+    chartContainer,
+    checkDimensions
   })
   </script>
   
   <style scoped>
-  .chart-container {
-    position: relative;
-    margin: auto;
-    height: 400px;
-    width: 100%;
+  /* Garantir que o container tenha tamanho */
+  :deep(.v-card-text) {
+    min-height: 450px;
   }
   
   canvas {
-    max-width: 100%;
-    max-height: 400px;
+    display: block;
   }
   </style>
