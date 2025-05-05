@@ -33,49 +33,47 @@ apiClient.interceptors.response.use(
   async error => {
     const originalRequest = error.config
     
-    // Se recebeu 401 (não autorizado) e não for uma tentativa de refresh
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
-      
-      // Evitar loop infinito em certas requisições
-      if (originalRequest.url.includes('/token/refresh/') || 
-          originalRequest.url.includes('/api/token/')) {
-        store.dispatch('auth/logout')
-        router.push('/login')
-        return Promise.reject(error)
-      }
-      
-      try {
-        const refreshToken = store.getters['auth/refreshToken']
+    // Se recebeu 401 (não autorizado)
+    if (error.response.status === 401) {
+      // Se não for uma tentativa de refresh token e não for o login
+      if (!originalRequest._retry && !originalRequest.url.includes('/token/')) {
+        originalRequest._retry = true
         
-        if (!refreshToken) {
-          throw new Error('No refresh token available')
+        try {
+          const refreshToken = store.getters['auth/refreshToken']
+          
+          if (!refreshToken) {
+            throw new Error('No refresh token available')
+          }
+          
+          // Usar uma instância separada para evitar interceptors
+          const response = await axios.post('/api/token/refresh/', {
+            refresh: refreshToken
+          })
+          
+          const { access } = response.data
+          
+          // Atualizar o token
+          store.commit('auth/setAuth', { 
+            access, 
+            refresh: refreshToken
+          })
+          
+          // Atualizar o header da requisição original
+          originalRequest.headers['Authorization'] = `Bearer ${access}`
+          
+          // Refazer a requisição original
+          return apiClient(originalRequest)
+        } catch (err) {
+          // Se falhar, desloga
+          store.dispatch('auth/logout')
+          router.push('/login')
+          return Promise.reject(error)
         }
-        
-        // Usar uma instância separada para evitar interceptors
-        const response = await axios.post('/api/token/refresh/', {
-          refresh: refreshToken
-        })
-        
-        const { access } = response.data
-        
-        // Atualizar o token
-        store.commit('auth/setAuth', { 
-          access, 
-          refresh: refreshToken,
-          decoded: {} // O decode será feito no store
-        })
-        
-        // Atualizar o header da requisição original
-        originalRequest.headers['Authorization'] = `Bearer ${access}`
-        
-        // Refazer a requisição original
-        return apiClient(originalRequest)
-      } catch (err) {
-        // Se falhar, desloga
+      } else {
+        // Se for uma tentativa de refresh token que falhou, desloga
         store.dispatch('auth/logout')
         router.push('/login')
-        return Promise.reject(error)
       }
     }
     

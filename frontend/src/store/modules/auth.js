@@ -6,7 +6,7 @@ import router from '@/router'
 const state = {
   accessToken: localStorage.getItem('accessToken') || null,
   refreshToken: localStorage.getItem('refreshToken') || null,
-  user: JSON.parse(localStorage.getItem('user')) || null,
+  user: null,
   loading: false,
   error: null
 }
@@ -29,10 +29,7 @@ const actions = {
       const response = await authService.login(credentials)
       const { access, refresh } = response.data
       
-      // Decodifica o token para obter informações básicas
-      const decoded = jwtDecode(access)
-      
-      commit('setAuth', { access, refresh, decoded })
+      commit('setAuth', { access, refresh })
       
       // Busca informações detalhadas do usuário
       const userInfo = await authService.getUserInfo()
@@ -52,9 +49,8 @@ const actions = {
     try {
       const response = await authService.refreshToken(state.refreshToken)
       const { access } = response.data
-      const decoded = jwtDecode(access)
       
-      commit('updateAccessToken', { access, decoded })
+      commit('updateAccessToken', { access })
       return access
     } catch (error) {
       commit('clearAuth')
@@ -68,34 +64,43 @@ const actions = {
     router.push('/login')
   },
   
-  // Nova action para verificar a validade do token
-  checkAuth({ state, dispatch }) {
-    if (!state.accessToken) return false
-    
+  // Action para verificar autenticação ao carregar o app
+  async checkAuth({ state, dispatch, commit }) {
     try {
+      if (!state.accessToken) return false
+      
+      // Verificar se o token ainda é válido
       const decoded = jwtDecode(state.accessToken)
       const currentTime = Date.now() / 1000
       
       // Se o token expirou, tenta renovar
       if (decoded.exp < currentTime) {
-        return dispatch('refreshToken')
+        if (state.refreshToken) {
+          const newToken = await dispatch('refreshToken')
+          if (newToken) {
+            // Carregar dados do usuário
+            const userInfo = await authService.getUserInfo()
+            commit('setUser', userInfo.data)
+            return true
+          }
+        }
+        return false
+      }
+      
+      // Se o token é válido mas não temos dados do usuário, carrega
+      if (!state.user) {
+        try {
+          const userInfo = await authService.getUserInfo()
+          commit('setUser', userInfo.data)
+        } catch (error) {
+          console.error('Erro ao carregar dados do usuário:', error)
+        }
       }
       
       return true
     } catch (error) {
+      console.error('Erro ao verificar autenticação:', error)
       return false
-    }
-  },
-  
-  // Ação para atualizar dados do usuário
-  async updateUserInfo({ commit }) {
-    try {
-      const userInfo = await authService.getUserInfo()
-      commit('setUser', userInfo.data)
-      return userInfo.data
-    } catch (error) {
-      console.error('Erro ao atualizar dados do usuário:', error)
-      throw error
     }
   }
 }
@@ -113,7 +118,7 @@ const mutations = {
     state.error = null
   },
   
-  setAuth(state, { access, refresh, decoded }) {
+  setAuth(state, { access, refresh }) {
     state.accessToken = access
     state.refreshToken = refresh
     
@@ -121,19 +126,13 @@ const mutations = {
     localStorage.setItem('refreshToken', refresh)
   },
   
-  updateAccessToken(state, { access, decoded }) {
+  updateAccessToken(state, { access }) {
     state.accessToken = access
     localStorage.setItem('accessToken', access)
   },
   
   setUser(state, user) {
-    // Garantir que cliente_atual seja sempre o ID
-    if (user.cliente_atual && typeof user.cliente_atual === 'object') {
-      user.cliente_atual = user.cliente_atual.id
-    }
-    
     state.user = user
-    localStorage.setItem('user', JSON.stringify(user))
   },
   
   clearAuth(state) {
@@ -143,7 +142,6 @@ const mutations = {
     
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
-    localStorage.removeItem('user')
   }
 }
 

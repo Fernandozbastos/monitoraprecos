@@ -1,6 +1,6 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
-import store from '../store' // Importar store diretamente
+import store from '../store'
 
 // Importações de componentes
 import Login from '../views/Login.vue'
@@ -70,9 +70,11 @@ const router = createRouter({
 })
 
 // Guarda de navegação para proteger rotas
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const isAuthenticated = store.getters['auth/isAuthenticated']
+  
+  // Verificar autenticação
+  const isAuthenticated = await store.dispatch('auth/checkAuth')
   
   if (requiresAuth && !isAuthenticated) {
     next('/login')
