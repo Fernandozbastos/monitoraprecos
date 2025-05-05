@@ -8,7 +8,7 @@
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>MonitoraPreços</v-toolbar-title>
-        <!-- Adicionar o seletor de cliente aqui -->
+        <!-- Seletor de cliente aqui -->
       <v-select
         v-model="clienteAtual"
         :items="clientesDisponiveis"
@@ -20,7 +20,7 @@
         class="ml-4 mt-3"
         style="max-width: 200px; color: white;"
         :loading="carregandoClientes"
-        @change="atualizarClienteAtual"
+        @update:modelValue="atualizarClienteAtual"
       >
         <template v-slot:selection="{ item }">
           <span class="white--text">{{ item.raw.nome }}</span>
@@ -79,7 +79,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <router-view />
+      <router-view :key="$route.fullPath" />
         <!-- Botão flutuante para adicionar produtos -->
         <v-btn
         v-if="isAuthenticated && showFab"

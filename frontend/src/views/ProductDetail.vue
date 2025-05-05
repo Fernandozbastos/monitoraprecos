@@ -362,7 +362,7 @@
         </v-col>
       </v-row>
 
-      <!-- NOVO: Gráfico de histórico de preços -->
+      <!-- Gráfico de histórico de preços -->
       <v-row>
         <v-col cols="12">
           <v-card elevation="2" class="mb-4">
@@ -433,7 +433,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed, nextTick } from 'vue'
+import { ref, onMounted, watch, computed, nextTick, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
 import Chart from 'chart.js/auto'
@@ -768,7 +768,7 @@ const atualizarPrecoCliente = async () => {
   }
 }
 
-// NOVO: Carregar histórico completo de preços
+// Carregar histórico completo de preços
 const carregarHistoricoCompleto = async () => {
   if (!produto.value.id) return;
   
@@ -800,7 +800,7 @@ const carregarHistoricoCompleto = async () => {
   }
 }
 
-// NOVO: Renderizar o gráfico de histórico de preços
+// Renderizar o gráfico de histórico de preços
 const renderizarGrafico = () => {
   if (chartInstance.value) {
     chartInstance.value.destroy();
@@ -970,11 +970,27 @@ watch(() => route.params.id, (newId, oldId) => {
   }
 });
 
-// Ajustar o gráfico quando a janela mudar de tamanho
-window.addEventListener('resize', () => {
+// Limpar recursos quando o componente for destruído
+onUnmounted(() => {
+  if (chartInstance.value) {
+    chartInstance.value.destroy();
+    chartInstance.value = null;
+  }
+});
+
+// Função para ajustar o gráfico quando a janela mudar de tamanho
+const resizeHandler = () => {
   if (chartInstance.value) {
     chartInstance.value.resize();
   }
+};
+
+onMounted(() => {
+  window.addEventListener('resize', resizeHandler);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeHandler);
 });
 </script>
 
@@ -1028,5 +1044,12 @@ window.addEventListener('resize', () => {
 .chart-container {
   position: relative;
   margin: auto;
+  height: 400px; /* Altura fixa */
+  width: 100%;
+}
+
+canvas {
+  max-width: 100%;
+  max-height: 400px;
 }
 </style>

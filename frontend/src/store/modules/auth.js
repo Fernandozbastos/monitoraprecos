@@ -48,13 +48,7 @@ const actions = {
     }
   },
   
-  async refreshToken({ commit, state }, payload) {
-    if (payload && payload.access) {
-      const decoded = jwtDecode(payload.access)
-      commit('updateAccessToken', { access: payload.access, decoded })
-      return payload.access
-    }
-    
+  async refreshToken({ commit, state }) {
     try {
       const response = await authService.refreshToken(state.refreshToken)
       const { access } = response.data
@@ -91,6 +85,18 @@ const actions = {
     } catch (error) {
       return false
     }
+  },
+  
+  // Ação para atualizar dados do usuário
+  async updateUserInfo({ commit }) {
+    try {
+      const userInfo = await authService.getUserInfo()
+      commit('setUser', userInfo.data)
+      return userInfo.data
+    } catch (error) {
+      console.error('Erro ao atualizar dados do usuário:', error)
+      throw error
+    }
   }
 }
 
@@ -121,6 +127,11 @@ const mutations = {
   },
   
   setUser(state, user) {
+    // Garantir que cliente_atual seja sempre o ID
+    if (user.cliente_atual && typeof user.cliente_atual === 'object') {
+      user.cliente_atual = user.cliente_atual.id
+    }
+    
     state.user = user
     localStorage.setItem('user', JSON.stringify(user))
   },

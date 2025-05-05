@@ -3,7 +3,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import 'chart.js'
+
+// Importar Chart.js corretamente
+import { Chart, registerables } from 'chart.js'
+Chart.register(...registerables)
 
 // Importar Vuetify
 import { createVuetify } from 'vuetify'

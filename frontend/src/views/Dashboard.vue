@@ -338,7 +338,7 @@
                       </template>
                       <span>Ver detalhes</span>
                     </v-tooltip>
-                    
+
                     <v-tooltip location="bottom">
                       <template v-slot:activator="{ props }">
                         <v-btn
@@ -443,16 +443,20 @@
               ></v-select>
             </v-col>
             <v-col cols="12" sm="4">
+              <!-- Mudado para suportar múltipla seleção -->
               <v-select
-                v-model="filtroGrafico.produtoId"
+                v-model="filtroGrafico.produtosIds"
                 :items="produtosParaFiltro"
                 item-title="nome_completo"
                 item-value="id"
-                label="Produto"
+                label="Produtos"
                 outlined
                 dense
                 hide-details
                 class="mb-4"
+                multiple
+                chips
+                closable-chips
               ></v-select>
             </v-col>
             <v-col cols="12" sm="4">
@@ -479,7 +483,7 @@
           <div v-else-if="!dadosHistoricoComparativo.length" class="text-center py-12">
             <v-icon size="64" color="grey lighten-1">mdi-chart-timeline-variant</v-icon>
             <h3 class="text-h6 grey--text text--darken-1 mt-4">Nenhum dado histórico encontrado</h3>
-            <p class="text-body-2 grey--text mb-4">Selecione um produto ou verifique os preços para gerar dados históricos</p>
+            <p class="text-body-2 grey--text mb-4">Selecione um ou mais produtos para visualizar o histórico</p>
           </div>
           
           <div v-else ref="chartContainerComparativo" style="height: 500px; width: 100%;">
@@ -531,7 +535,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from 'vue'
+import { ref, onMounted, computed, nextTick, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import api from '@/services/api'
@@ -573,7 +577,7 @@ const periodosFiltro = ref([
 // Filtros para o gráfico
 const filtroGrafico = ref({
   tipoProduto: 'todos',
-  produtoId: null,
+  produtosIds: [], // Agora é um array para múltiplos produtos
   periodo: '30'
 })
 
@@ -1011,16 +1015,14 @@ const formatDateShort = (dateString) => {
 const abrirGraficoGrupo = (grupo) => {
   grupoSelecionado.value = grupo;
   
-  // Selecionar o primeiro produto deste grupo para o filtro
-  if (grupo.produtos.length > 0) {
-    const primeiroProduto = produtosParaFiltro.value.find(p => p.id === grupo.produtos[0].id);
-    filtroGrafico.value.produtoId = primeiroProduto || null;
-  }
+  // Selecionar TODOS os produtos deste grupo para o filtro
+  const produtosDoGrupo = grupo.produtos.map(p => p.id);
+  filtroGrafico.value.produtosIds = produtosDoGrupo;
   
   // Abrir o modal
   mostrarGraficoComparativo.value = true;
   
-  // Carregar dados do histórico para este produto
+  // Carregar dados do histórico para estes produtos
   carregarHistoricoComparativo();
 }
 
@@ -1029,9 +1031,10 @@ const abrirGraficoComparativo = () => {
   grupoSelecionado.value = null;
   mostrarGraficoComparativo.value = true;
   
-  // Se não tiver produto selecionado, selecionar o primeiro por padrão
-  if (!filtroGrafico.value.produtoId && produtosParaFiltro.value.length > 0) {
-    filtroGrafico.value.produtoId = produtosParaFiltro.value[0];
+  // Se não tiver produtos selecionados, selecionar os primeiros
+  if (!filtroGrafico.value.produtosIds.length && produtosParaFiltro.value.length > 0) {
+    // Selecionar os 3 primeiros produtos por padrão
+    filtroGrafico.value.produtosIds = produtosParaFiltro.value.slice(0, 3).map(p => p.id);
   }
   
   // Carregar dados do histórico
@@ -1057,9 +1060,9 @@ const atualizarGraficoComparativo = () => {
 
 // Carregar histórico de preços para o gráfico comparativo
 const carregarHistoricoComparativo = async () => {
-  if (!filtroGrafico.value.produtoId) {
+  if (!filtroGrafico.value.produtosIds.length) {
     dadosHistoricoComparativo.value = [];
-    mostrarSnackbar('Selecione um produto para visualizar o histórico', 'warning');
+    mostrarSnackbar('Selecione um ou mais produtos para visualizar o histórico', 'warning');
     return;
   }
   
@@ -1069,66 +1072,60 @@ const carregarHistoricoComparativo = async () => {
     // Dados para armazenar o histórico
     const todosHistoricos = [];
     
-    // Obter o ID do produto selecionado (ajuste conforme seu modelo de dados)
-    const produtoId = typeof filtroGrafico.value.produtoId === 'object' ? 
-      filtroGrafico.value.produtoId.id : 
-      filtroGrafico.value.produtoId;
-    
-    // Informações do produto
-    const produtoInfo = produtos.value.find(p => p.id === produtoId);
-    
-    if (!produtoInfo) {
-      dadosHistoricoComparativo.value = [];
-      return;
-    }
-    
-    // Filtrar por tipo de produto, se necessário
-    if (filtroGrafico.value.tipoProduto !== 'todos' && produtoInfo.tipo_produto !== filtroGrafico.value.tipoProduto) {
-      dadosHistoricoComparativo.value = [];
-      return;
-    }
-    
-    // Carregar o histórico de preços
-    const historicoResponse = await api.get(`/produtos/${produtoId}/historico/?limit=100`);
-    
-    if (Array.isArray(historicoResponse.data) && historicoResponse.data.length > 0) {
-      // Calcular a data limite com base no período selecionado
-      const hoje = new Date();
-      let dataLimite = null;
+    // Para cada produto selecionado
+    for (const produtoId of filtroGrafico.value.produtosIds) {
+      // Obter informações do produto
+      const produtoInfo = produtos.value.find(p => p.id === produtoId);
       
-      if (filtroGrafico.value.periodo !== 'all') {
-        const dias = parseInt(filtroGrafico.value.periodo);
-        dataLimite = new Date();
-        dataLimite.setDate(dataLimite.getDate() - dias);
+      if (!produtoInfo) continue;
+      
+      // Filtrar por tipo de produto, se necessário
+      if (filtroGrafico.value.tipoProduto !== 'todos' && produtoInfo.tipo_produto !== filtroGrafico.value.tipoProduto) {
+        continue;
       }
       
-      // Filtrar os dados por período, se necessário
-      let dadosFiltrados = [...historicoResponse.data];
+      // Carregar o histórico de preços
+      const historicoResponse = await api.get(`/produtos/${produtoId}/historico/?limit=100`);
       
-      if (dataLimite) {
-        dadosFiltrados = dadosFiltrados.filter(item => {
-          const dataItem = new Date(item.data);
-          return dataItem >= dataLimite;
-        });
-      }
-      
-      // Adicionar os dados ao histórico combinado
-      if (dadosFiltrados.length > 0) {
-        // Ordenar por data (do mais antigo para o mais recente)
-        const dadosOrdenados = dadosFiltrados.sort(
-          (a, b) => new Date(a.data) - new Date(b.data)
-        );
+      if (Array.isArray(historicoResponse.data) && historicoResponse.data.length > 0) {
+        // Calcular a data limite com base no período selecionado
+        const hoje = new Date();
+        let dataLimite = null;
         
-        // Adicionar informações do produto para identificação no gráfico
-        const historicoProcessado = {
-          produtoId: produtoId,
-          nome: produtoInfo.nome,
-          concorrente: produtoInfo.concorrente,
-          tipo_produto: produtoInfo.tipo_produto,
-          dados: dadosOrdenados
-        };
+        if (filtroGrafico.value.periodo !== 'all') {
+          const dias = parseInt(filtroGrafico.value.periodo);
+          dataLimite = new Date();
+          dataLimite.setDate(dataLimite.getDate() - dias);
+        }
         
-        todosHistoricos.push(historicoProcessado);
+        // Filtrar os dados por período, se necessário
+        let dadosFiltrados = [...historicoResponse.data];
+        
+        if (dataLimite) {
+          dadosFiltrados = dadosFiltrados.filter(item => {
+            const dataItem = new Date(item.data);
+            return dataItem >= dataLimite;
+          });
+        }
+        
+        // Adicionar os dados ao histórico combinado
+        if (dadosFiltrados.length > 0) {
+          // Ordenar por data (do mais antigo para o mais recente)
+          const dadosOrdenados = dadosFiltrados.sort(
+            (a, b) => new Date(a.data) - new Date(b.data)
+          );
+          
+          // Adicionar informações do produto para identificação no gráfico
+          const historicoProcessado = {
+            produtoId: produtoId,
+            nome: produtoInfo.nome,
+            concorrente: produtoInfo.concorrente,
+            tipo_produto: produtoInfo.tipo_produto,
+            dados: dadosOrdenados
+          };
+          
+          todosHistoricos.push(historicoProcessado);
+        }
       }
     }
     
@@ -1160,37 +1157,70 @@ const renderizarGraficoComparativo = () => {
   
   const ctx = chartComparativo.value.getContext('2d');
   
-  // Com apenas um produto, o gráfico é mais simples
-  const historicoItem = dadosHistoricoComparativo.value[0];
+  // Cores para os diferentes produtos
+  const cores = [
+    'rgba(63, 81, 181, 1)',    // Azul
+    'rgba(255, 87, 34, 1)',    // Laranja
+    'rgba(76, 175, 80, 1)',    // Verde
+    'rgba(156, 39, 176, 1)',   // Roxo
+    'rgba(233, 30, 99, 1)',    // Rosa
+    'rgba(0, 150, 136, 1)',    // Teal
+    'rgba(255, 193, 7, 1)',    // Amarelo
+    'rgba(96, 125, 139, 1)',   // Cinza azulado
+  ];
   
-  // Extrair datas e preços
-  const datasOrdenadas = historicoItem.dados.map(item => item.data);
-  const precos = historicoItem.dados.map(item => parseFloat(item.preco));
+  // Criar um dataset para cada produto
+  const datasets = dadosHistoricoComparativo.value.map((histórico, index) => {
+    const cor = cores[index % cores.length];
+    
+    // Criar o array de dados alinhado com todas as datas
+    const dados =历史rico.dados.map(item => ({
+      x: new Date(item.data),
+      y: parseFloat(item.preco)
+    }));
+    
+    return {
+      label: `${histórico.nome} (${histórico.concorrente})`,
+      data: dados,
+      borderColor: cor,
+      backgroundColor: cor.replace('1)', '0.1)'),
+      borderWidth: 2,
+      pointRadius: 3,
+      pointBackgroundColor: cor,
+      pointBorderColor: '#fff',
+      pointHoverRadius: 5,
+      tension: 0.3,
+      fill: false
+    };
+  });
   
-  // Criar o dataset
-  const dataset = {
-    label: `${historicoItem.nome} (${historicoItem.concorrente})`,
-    data: precos,
-    borderColor: historicoItem.tipo_produto === 'cliente' ? 'rgba(63, 81, 181, 1)' : 'rgba(255, 87, 34, 1)',
-    backgroundColor: historicoItem.tipo_produto === 'cliente' ? 'rgba(63, 81, 181, 0.1)' : 'rgba(255, 87, 34, 0.1)',
-    borderWidth: 3,
-    pointRadius: 5,
-    pointBackgroundColor: historicoItem.tipo_produto === 'cliente' ? 'rgba(63, 81, 181, 1)' : 'rgba(255, 87, 34, 1)',
-    tension: 0.2,
-    fill: true
-  };
-  
-  // Configurar e criar o gráfico
+  // Criar o gráfico
   chartInstanceComparativo.value = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: datasOrdenadas.map(data => formatDateShort(data)),
-      datasets: [dataset]
+      datasets: datasets
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
       scales: {
+        x: {
+          type: 'time',
+          time: {
+            unit: 'day',
+            displayFormats: {
+              day: 'dd/MM'
+            }
+          },
+          title: {
+            display: true,
+            text: 'Data'
+          }
+        },
         y: {
           beginAtZero: false,
           title: {
@@ -1202,12 +1232,6 @@ const renderizarGraficoComparativo = () => {
               return 'R$ ' + value.toFixed(2);
             }
           }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Data'
-          }
         }
       },
       plugins: {
@@ -1215,28 +1239,31 @@ const renderizarGraficoComparativo = () => {
           callbacks: {
             label: function(context) {
               const value = context.parsed.y;
-              return `Preço: R$ ${value.toFixed(2)}`;
+              return `${context.dataset.label}: R$ ${value.toFixed(2)}`;
             }
           }
         },
         legend: {
           display: true,
-          position: 'top'
+          position: 'top',
+          labels: {
+            usePointStyle: true,
+            padding: 10
+          }
         },
         title: {
           display: true,
           text: grupoSelecionado.value ? 
             `Histórico de Preços - ${grupoSelecionado.value.nome}` : 
-            'Histórico de Preços',
+            'Gráfico Comparativo de Preços',
           font: {
             size: 16
+          },
+          padding: {
+            top: 10,
+            bottom: 20
           }
         }
-      },
-      interaction: {
-        mode: 'nearest',
-        axis: 'x',
-        intersect: false
       },
       animation: {
         duration: 1000
@@ -1410,10 +1437,22 @@ onMounted(() => {
   carregarDados()
 })
 
-// Ajustar o gráfico quando a janela mudar de tamanho
-window.addEventListener('resize', () => {
+// Función para ajustar el gráfico cuando la ventana cambie de tamaño
+const resizeHandler = () => {
   if (chartInstanceComparativo.value) {
     chartInstanceComparativo.value.resize()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('resize', resizeHandler)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeHandler)
+  if (chartInstanceComparativo.value) {
+    chartInstanceComparativo.value.destroy()
+    chartInstanceComparativo.value = null
   }
 })
 </script>
