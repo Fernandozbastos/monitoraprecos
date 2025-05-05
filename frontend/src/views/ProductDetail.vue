@@ -66,9 +66,9 @@
             <price-history-chart
               :carregando-historico="carregandoHistorico"
               :historico-precos="historicoPrecos"
-              @refresh="carregarHistoricoCompleto"
+              @refresh="carregarHistorico"
               @verify-price="verificarPreco"
-              ref="priceChart"
+              ref="priceChartComponent"
             />
           </v-col>
         </v-row>
@@ -80,7 +80,7 @@
   </template>
   
   <script setup>
-  import { ref, watch, onMounted, onUnmounted } from 'vue'
+  import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
   import { useRouter } from 'vue-router'
   
   // Composables
@@ -126,32 +126,64 @@
   const {
     historicoPrecos,
     carregandoHistorico,
+    priceChart,
+    chartContainer,
     carregarHistoricoCompleto,
     atualizarTituloGrafico,
     resizeChart
   } = usePriceHistory()
   
   // Referência para o componente de gráfico
-  const priceChart = ref(null)
+  const priceChartComponent = ref(null)
   
-  // Carregar histórico quando o produto for carregado
-  watch(() => produto.value.id, (produtoId) => {
-    if (produtoId) {
-      carregarHistoricoCompleto(produtoId)
+  // Conectar refs do gráfico
+  const conectarRefsGrafico = () => {
+    nextTick(() => {
+      if (priceChartComponent.value) {
+        const { priceChart: chartRef, chartContainer: containerRef } = priceChartComponent.value
+        priceChart.value = chartRef
+        chartContainer.value = containerRef
+      }
+    })
+  }
+  
+  // Carregar histórico
+  const carregarHistorico = async () => {
+    if (produto.value.id) {
+      await carregarHistoricoCompleto(produto.value.id)
       if (produto.value.nome && produto.value.concorrente) {
         atualizarTituloGrafico(produto.value.nome, produto.value.concorrente)
       }
     }
-  })
+  }
   
   // Lifecycle hooks
   onMounted(() => {
+    carregarProduto()
     window.addEventListener('resize', resizeChart)
   })
   
   onUnmounted(() => {
     window.removeEventListener('resize', resizeChart)
   })
+  
+  // Watch para recarregar produto
+  watch(() => produto.value.id, async (newId) => {
+    if (newId) {
+      conectarRefsGrafico()
+      await carregarHistorico()
+    }
+  })
+  
+  // Watch para quando o produto for carregado 
+  watch(() => produto.value.id, () => {
+    if (produto.value.id) {
+      nextTick(() => {
+        conectarRefsGrafico()
+        carregarHistorico()
+      })
+    }
+  }, { immediate: true })
   </script>
   
   <style scoped>
