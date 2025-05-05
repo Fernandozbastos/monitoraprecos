@@ -440,10 +440,10 @@
                 dense
                 hide-details
                 class="mb-4"
+                @update:modelValue="onFiltroChanged"
               ></v-select>
             </v-col>
             <v-col cols="12" sm="4">
-              <!-- Mudado para suportar múltipla seleção -->
               <v-select
                 v-model="filtroGrafico.produtosIds"
                 :items="produtosParaFiltro"
@@ -457,6 +457,7 @@
                 multiple
                 chips
                 closable-chips
+                @update:modelValue="onFiltroChanged"
               ></v-select>
             </v-col>
             <v-col cols="12" sm="4">
@@ -470,6 +471,7 @@
                 dense
                 hide-details
                 class="mb-4"
+                @update:modelValue="onFiltroChanged"
               ></v-select>
             </v-col>
           </v-row>
@@ -535,11 +537,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick, onUnmounted } from 'vue'
+import { ref, onMounted, computed, nextTick, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import api from '@/services/api'
 import Chart from 'chart.js/auto'
+import 'chartjs-adapter-date-fns'
 
 const router = useRouter()
 const store = useStore()
@@ -581,9 +584,19 @@ const filtroGrafico = ref({
   periodo: '30'
 })
 
-// Produtos formatados para o filtro
+// Produtos formatados para o filtro - CORRIGIDO
 const produtosParaFiltro = computed(() => {
-  return produtos.value.map(p => ({
+  let produtosFiltradosPorTipo = produtos.value
+
+  // Corrigir a lógica de filtragem
+  if (filtroGrafico.value.tipoProduto !== 'todos') {
+    produtosFiltradosPorTipo = produtos.value.filter(p => {
+      // Verificar se o tipo_produto do produto bate com o filtro selecionado
+      return p.tipo_produto === filtroGrafico.value.tipoProduto
+    })
+  }
+
+  return produtosFiltradosPorTipo.map(p => ({
     id: p.id,
     nome_completo: `${p.nome} (${p.concorrente})`,
     nome: p.nome,
@@ -1031,14 +1044,18 @@ const abrirGraficoComparativo = () => {
   grupoSelecionado.value = null;
   mostrarGraficoComparativo.value = true;
   
-  // Se não tiver produtos selecionados, selecionar os primeiros
-  if (!filtroGrafico.value.produtosIds.length && produtosParaFiltro.value.length > 0) {
-    // Selecionar os 3 primeiros produtos por padrão
-    filtroGrafico.value.produtosIds = produtosParaFiltro.value.slice(0, 3).map(p => p.id);
-  }
-  
-  // Carregar dados do histórico
-  carregarHistoricoComparativo();
+  // Aguardar o próximo tick para garantir que os produtos foram carregados
+  nextTick(() => {
+    // Se não tiver produtos selecionados, selecionar os primeiros
+    if (!filtroGrafico.value.produtosIds.length && produtos.value.length > 0) {
+      // Selecionar os primeiros 3 produtos por padrão
+      const primeirosProdutos = produtos.value.slice(0, 3).map(p => p.id);
+      filtroGrafico.value.produtosIds = primeirosProdutos;
+    }
+    
+    // Carregar dados do histórico
+    carregarHistoricoComparativo();
+  });
 }
 
 // Fechar o modal do gráfico
@@ -1058,11 +1075,29 @@ const atualizarGraficoComparativo = () => {
   carregarHistoricoComparativo();
 }
 
+// Função para atualizar gráfico quando filtros mudam
+const onFiltroChanged = () => {
+  // Quando o tipo de produto muda, limpar os produtos selecionados
+  if (filtroGrafico.value.tipoProduto !== 'todos') {
+    filtroGrafico.value.produtosIds = [];
+  }
+  
+  carregarHistoricoComparativo();
+}
+
+// Watch para detectar mudanças no tipo de produto e atualizar os produtos disponíveis
+watch(() => filtroGrafico.value.tipoProduto, () => {
+  // Quando o tipo muda, limpar seleções se não forem compatíveis
+  filtroGrafico.value.produtosIds = filtroGrafico.value.produtosIds.filter(id => {
+    const produto = produtos.value.find(p => p.id === id);
+    return produto && (filtroGrafico.value.tipoProduto === 'todos' || produto.tipo_produto === filtroGrafico.value.tipoProduto);
+  });
+});
+
 // Carregar histórico de preços para o gráfico comparativo
 const carregarHistoricoComparativo = async () => {
   if (!filtroGrafico.value.produtosIds.length) {
     dadosHistoricoComparativo.value = [];
-    mostrarSnackbar('Selecione um ou mais produtos para visualizar o histórico', 'warning');
     return;
   }
   
@@ -1174,7 +1209,7 @@ const renderizarGraficoComparativo = () => {
     const cor = cores[index % cores.length];
     
     // Criar o array de dados alinhado com todas as datas
-    const dados =历史rico.dados.map(item => ({
+    const dados = histórico.dados.map(item => ({
       x: new Date(item.data),
       y: parseFloat(item.preco)
     }));
@@ -1506,6 +1541,10 @@ onUnmounted(() => {
 
 .transform-rotate-90 {
   transform: rotate(90deg);
+}
+
+.transition-swing {
+  transition: transform 0.3s ease;
 }
 
 .resumo-grupo {
