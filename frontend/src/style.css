@@ -65,6 +65,15 @@ button:focus-visible {
   text-align: center;
 }
 
+/* Estilo específico para garantir que os ícones sejam visíveis */
+.v-icon {
+  color: inherit !important;
+}
+
+.v-btn--icon .v-icon {
+  color: inherit !important;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

@@ -8,15 +8,24 @@ import store from './store'
 import { Chart, registerables } from 'chart.js'
 Chart.register(...registerables)
 
-// Importar Vuetify
+// Importar Vuetify e configurações de ícones
 import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import '@mdi/font/css/materialdesignicons.css'
 
 const vuetify = createVuetify({
   components,
   directives,
+  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
 })
 
 const app = createApp(App)
