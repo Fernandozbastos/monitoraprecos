@@ -789,3 +789,4 @@ INFO 2025-04-22 09:55:08,578 autoreload 7 281473478828064 /app/scraper/services/
 INFO 2025-04-22 09:55:09,704 autoreload 14 281473063075872 Watching for file changes with StatReloader
 INFO 2025-04-22 10:01:45,288 autoreload 14 281473063075872 /app/scraper/services/playwright_service.py changed, reloading.
 INFO 2025-04-22 10:01:46,586 autoreload 17 281473614311456 Watching for file changes with StatReloader
+INFO 2025-05-07 14:44:17,971 autoreload 8 281472999211040 Watching for file changes with StatReloader
