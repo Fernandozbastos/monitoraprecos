@@ -109,8 +109,8 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import api from '@/services/api'
-import CustomSnackbar from '@/components/common/CustomSnackbar.vue'
+import api from './services/api'
+import CustomSnackbar from './components/common/CustomSnackbar.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -166,7 +166,10 @@ const carregarClientes = async () => {
   
   carregandoClientes.value = true
   try {
-    const response = await api.get('/clientes/')
+    console.log('Carregando clientes...')
+    const response = await api.get('clientes/')
+    console.log('Resposta da API clientes:', response.data)
+    
     clientesDisponiveis.value = response.data.results || []
     
     // Define o cliente atual se o usuário já tiver um
@@ -190,10 +193,11 @@ const atualizarClienteAtual = async () => {
   if (!clienteAtual.value) return
   
   try {
-    await api.post('/user/set-cliente/', { cliente_atual: clienteAtual.value })
+    console.log('Atualizando cliente atual para:', clienteAtual.value)
+    await api.post('user/set-cliente/', { cliente_atual: clienteAtual.value })
     
     // Atualiza o usuário no Vuex store
-    const userInfo = await api.get('/user/info/')
+    const userInfo = await api.get('user/info/')
     store.commit('auth/setUser', userInfo.data)
     
     // Recarrega a página atual para atualizar os dados

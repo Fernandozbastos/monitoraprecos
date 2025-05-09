@@ -7,10 +7,12 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
 const authService = {
   login(credentials) {
+    console.log('Attempting login to:', `${BASE_URL}/api/token/`)
     return axios.post(`${BASE_URL}/api/token/`, credentials)
   },
   
   refreshToken(refreshToken) {
+    console.log('Refreshing token')
     return axios.post(`${BASE_URL}/api/token/refresh/`, { refresh: refreshToken })
   },
   
@@ -19,15 +21,16 @@ const authService = {
   },
   
   getUserInfo() {
-    return api.get('/user/info/')
+    console.log('Getting user info')
+    return api.get('user/info/')  // No leading slash, api.js will add it
   },
   
   changePassword(passwords) {
-    return api.post('/user/change-password/', passwords)
+    return api.post('user/change-password/', passwords)
   },
   
   setClienteAtual(clienteId) {
-    return api.post('/user/set-cliente/', { cliente_atual: clienteId })
+    return api.post('user/set-cliente/', { cliente_atual: clienteId })
   }
 }
 

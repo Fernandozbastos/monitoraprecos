@@ -790,3 +790,476 @@ INFO 2025-04-22 09:55:09,704 autoreload 14 281473063075872 Watching for file cha
 INFO 2025-04-22 10:01:45,288 autoreload 14 281473063075872 /app/scraper/services/playwright_service.py changed, reloading.
 INFO 2025-04-22 10:01:46,586 autoreload 17 281473614311456 Watching for file changes with StatReloader
 INFO 2025-05-07 14:44:17,971 autoreload 8 281472999211040 Watching for file changes with StatReloader
+INFO 2025-05-07 14:59:14,991 autoreload 8 281473281904672 Watching for file changes with StatReloader
+ERROR 2025-05-07 14:59:15,733 tasks 12 281473421570080 Erro ao atualizar posições na fila: connection to server at "db" (172.21.0.3), port 5432 failed: FATAL:  password authentication failed for user "monitoraprecos_prod"
+
+INFO 2025-05-07 15:03:55,743 autoreload 7 281473879998496 Watching for file changes with StatReloader
+INFO 2025-05-07 15:11:52,346 autoreload 7 281473116577824 Watching for file changes with StatReloader
+ERROR 2025-05-07 15:11:53,209 tasks 11 281473703284768 Erro ao atualizar posições na fila: relation "core_produto" does not exist
+LINE 1: ...o_fila", "core_produto"."verificacao_manual" FROM "core_prod...
+                                                             ^
+
+INFO 2025-05-07 15:12:03,413 basehttp 7 281473013838240 "GET /admin/ HTTP/1.1" 301 0
+INFO 2025-05-07 15:12:03,421 basehttp 7 281473013838240 code 400, message Bad request version ('F±öº\\îØï]Ã:Ú\x93\x9aþ[\x97\x07Dùuµvû')
+ERROR 2025-05-07 15:12:03,422 basehttp 7 281473013838240 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:12:03,423 basehttp 7 281473013838240 code 400, message Bad request version ('$8`Ç')
+ERROR 2025-05-07 15:12:03,423 basehttp 7 281473013838240 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 15:12:09,649 exception 7 281473003352480 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:12:09,661 log 7 281473003352480 Bad Request: /admin/
+WARNING 2025-05-07 15:12:09,662 basehttp 7 281473003352480 "GET /admin/ HTTP/1.1" 400 143
+ERROR 2025-05-07 15:12:24,360 exception 7 281473013838240 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:12:24,363 log 7 281473013838240 Bad Request: /api/token/
+WARNING 2025-05-07 15:12:24,364 basehttp 7 281473013838240 "OPTIONS /api/token/ HTTP/1.1" 400 143
+INFO 2025-05-07 15:16:59,803 autoreload 8 281473099173920 Watching for file changes with StatReloader
+INFO 2025-05-07 15:17:47,983 basehttp 8 281472986575264 code 400, message Bad request version ('\x03ªJÀª*Ó\x1bMiQ\x8c\x07\x11\x83!DÕ\x01v\x18¢)Ó¢ºÿÒ\x95{QF¤y?')
+ERROR 2025-05-07 15:17:47,986 basehttp 8 281472986575264 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:17:47,987 basehttp 8 281472986575264 code 400, message Bad request version ('JJ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x063\x8a\x8a\x00\x00\x00')
+ERROR 2025-05-07 15:17:47,988 basehttp 8 281472986575264 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:17:56,183 basehttp 8 281472976089504 code 400, message Bad request version ('hGZ/Ú{Q\x8fr\x89®')
+ERROR 2025-05-07 15:17:56,185 basehttp 8 281472976089504 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:17:56,187 basehttp 8 281472976089504 code 400, message Bad request version ('WçR\x95n²Ääí@\x8f3Úõö©ðZ$\x9eA\x86IH9\x07úéOÕÌm\x00\x90Ù\x88(\x96\x80\x98\x8a#OÓâ')
+ERROR 2025-05-07 15:17:56,188 basehttp 8 281472976089504 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:19:16,227 basehttp 8 281472976089504 code 400, message Bad request version ('ªª\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06sÚÚ\x00\x00\x00')
+ERROR 2025-05-07 15:19:16,231 basehttp 8 281472976089504 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:19:16,233 basehttp 8 281472976089504 code 400, message Bad request version ('dL')
+ERROR 2025-05-07 15:19:16,233 basehttp 8 281472976089504 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:19:23,479 autoreload 8 281473290694688 Watching for file changes with StatReloader
+INFO 2025-05-07 15:19:25,866 basehttp 8 281473095627168 code 400, message Bad request version ('ÚÚ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06sªª\x00\x00ÿ\x01\x00\x01\x00DÍ\x00\x05\x00\x03\x02h2\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00+\x00\x07\x06jj\x03\x04\x03\x03\x00\x12\x00\x00\x00-\x00\x02\x01\x01\x00')
+ERROR 2025-05-07 15:19:25,867 basehttp 8 281473095627168 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:19:25,868 basehttp 8 281473095627168 code 400, message Bad request version (')Û>\x10oñx&')
+ERROR 2025-05-07 15:19:25,869 basehttp 8 281473095627168 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:19:28,293 basehttp 8 281473187901856 "GET / HTTP/1.1" 301 0
+INFO 2025-05-07 15:19:28,295 basehttp 8 281473187901856 code 400, message Bad request version ('ü`ò©}')
+ERROR 2025-05-07 15:19:28,296 basehttp 8 281473187901856 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:19:28,299 basehttp 8 281473187901856 code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00+\x00\x07\x06**\x03\x04\x03\x03\x00\x1b\x00\x03\x02\x00\x02\x00#\x00\x00ÿ\x01\x00\x01\x00\x00\x12\x00\x00\x00')
+ERROR 2025-05-07 15:19:28,299 basehttp 8 281473187901856 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 15:19:35,548 exception 8 281473187901856 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:19:35,558 log 8 281473187901856 Bad Request: /
+WARNING 2025-05-07 15:19:35,559 basehttp 8 281473187901856 "GET / HTTP/1.1" 400 143
+ERROR 2025-05-07 15:19:47,129 exception 8 281473187901856 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:19:47,133 log 8 281473187901856 Bad Request: /
+WARNING 2025-05-07 15:19:47,134 basehttp 8 281473187901856 "GET / HTTP/1.1" 400 143
+INFO 2025-05-07 15:20:21,182 basehttp 8 281473177416096 "GET / HTTP/1.1" 301 0
+INFO 2025-05-07 15:20:21,187 basehttp 8 281473187901856 code 400, message Bad request version ('cë\x14¶R')
+ERROR 2025-05-07 15:20:21,187 basehttp 8 281473187901856 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:20:21,189 basehttp 8 281473187901856 code 400, message Bad request version ('\x02h2\x08http/1.1ÿ\x01\x00\x01\x00\x00')
+ERROR 2025-05-07 15:20:21,189 basehttp 8 281473187901856 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:20:24,383 basehttp 8 281473187901856 code 400, message Bad request syntax ('\x16\x03\x01\x06À\x01\x00\x06¼\x03\x03±îßléá\x8bÏ\x1bª\x03w\xadÕ¬\x86\x12\x82tÌ9\x17')
+ERROR 2025-05-07 15:20:24,384 basehttp 8 281473187901856 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:20:24,385 basehttp 8 281473187901856 code 400, message Bad request version ('\x04,R\x8e&')
+ERROR 2025-05-07 15:20:24,386 basehttp 8 281473187901856 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:20:27,593 basehttp 8 281473187901856 "GET /admin HTTP/1.1" 301 0
+INFO 2025-05-07 15:20:27,596 basehttp 8 281473187901856 code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x06')
+ERROR 2025-05-07 15:20:27,596 basehttp 8 281473187901856 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:20:27,600 basehttp 8 281473187901856 code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x06')
+ERROR 2025-05-07 15:20:27,600 basehttp 8 281473187901856 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:20:30,107 basehttp 8 281473187901856 code 400, message Bad request version (';õsF\x9b³\x9cß~Míu«Ýæ\x003\x04ï\x04ízz\x00\x01\x00\x11ì\x04À\x7fAÏu[\x01\x15\x05oIR')
+ERROR 2025-05-07 15:20:30,108 basehttp 8 281473187901856 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:20:30,110 basehttp 8 281473187901856 code 400, message Bad request syntax ('\x16\x03\x01\x06À\x01\x00\x06¼\x03\x030\x8d\x08û¹\x8f<6·\\Ð¾s»,µ')
+ERROR 2025-05-07 15:20:30,111 basehttp 8 281473187901856 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:21:46,009 autoreload 8 281473640296480 Watching for file changes with StatReloader
+INFO 2025-05-07 15:21:48,522 basehttp 8 281473538126240 code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00+\x00\x07\x06ÊÊ\x03\x04\x03\x03\x00\x1b\x00\x03\x02\x00\x02ÿ\x01\x00\x01\x00\x00')
+ERROR 2025-05-07 15:21:48,524 basehttp 8 281473538126240 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:21:48,527 basehttp 8 281473538126240 code 400, message Bad request version ('í\x8e=\x11x\x8d\x16W$@B\x8càrÅ\x9cº\x197»NI\x19;]Å\x95\x9a\x7f6')
+ERROR 2025-05-07 15:21:48,527 basehttp 8 281473538126240 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:21:58,377 basehttp 8 281473538126240 code 400, message Bad request version ('$\x93hFçÌ^6pU8»sw6Ê\x04£\x19§"L\x12u')
+ERROR 2025-05-07 15:21:58,379 basehttp 8 281473538126240 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:21:58,381 basehttp 8 281473538126240 code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00#\x00\x00\x00')
+ERROR 2025-05-07 15:21:58,382 basehttp 8 281473538126240 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:22:02,252 basehttp 8 281473538126240 code 400, message Bad request version ('ëÌ\x9aÖìPW')
+ERROR 2025-05-07 15:22:02,253 basehttp 8 281473538126240 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:22:02,255 basehttp 8 281473538126240 code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x07\x00\x01\x00\x06ü\x03\x03I\xad\x13Ó\x0f\x88rÃX_+Tâù\x10\x8e·')
+ERROR 2025-05-07 15:22:02,255 basehttp 8 281473538126240 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 15:22:16,926 exception 8 281473538126240 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:22:16,931 log 8 281473538126240 Bad Request: /
+WARNING 2025-05-07 15:22:16,933 basehttp 8 281473538126240 "GET / HTTP/1.1" 400 143
+ERROR 2025-05-07 15:22:22,395 exception 8 281473538126240 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:22:22,398 log 8 281473538126240 Bad Request: /
+WARNING 2025-05-07 15:22:22,399 basehttp 8 281473538126240 "GET / HTTP/1.1" 400 143
+ERROR 2025-05-07 15:22:26,032 exception 8 281473527640480 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:22:26,036 log 8 281473527640480 Bad Request: /admin/
+WARNING 2025-05-07 15:22:26,037 basehttp 8 281473527640480 "GET /admin/ HTTP/1.1" 400 143
+INFO 2025-05-07 15:24:30,392 autoreload 8 281473471467552 Watching for file changes with StatReloader
+ERROR 2025-05-07 15:24:53,539 exception 8 281473286468000 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:24:53,544 log 8 281473286468000 Bad Request: /admin/
+WARNING 2025-05-07 15:24:53,544 basehttp 8 281473286468000 "GET /admin/ HTTP/1.1" 400 143
+ERROR 2025-05-07 15:24:58,274 exception 8 281473296953760 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:24:58,279 log 8 281473296953760 Bad Request: /admin/
+WARNING 2025-05-07 15:24:58,280 basehttp 8 281473296953760 "GET /admin/ HTTP/1.1" 400 143
+INFO 2025-05-07 15:29:32,852 autoreload 8 281473126928416 Watching for file changes with StatReloader
+INFO 2025-05-07 15:30:39,304 autoreload 8 281473727504416 Watching for file changes with StatReloader
+ERROR 2025-05-07 15:30:43,344 exception 8 281473559097760 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:30:43,358 log 8 281473559097760 Bad Request: /admin/
+WARNING 2025-05-07 15:30:43,359 basehttp 8 281473559097760 "GET /admin/ HTTP/1.1" 400 143
+ERROR 2025-05-07 15:31:23,049 exception 8 281473548612000 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:31:23,057 log 8 281473548612000 Bad Request: /
+WARNING 2025-05-07 15:31:23,059 basehttp 8 281473548612000 "GET / HTTP/1.1" 400 143
+ERROR 2025-05-07 15:31:28,135 exception 8 281473559097760 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:31:28,138 log 8 281473559097760 Bad Request: /
+WARNING 2025-05-07 15:31:28,140 basehttp 8 281473559097760 "GET / HTTP/1.1" 400 143
+INFO 2025-05-07 15:32:52,303 autoreload 8 281473153433632 Watching for file changes with StatReloader
+INFO 2025-05-07 15:33:12,525 basehttp 8 281473051586976 "GET /admin/ HTTP/1.1" 301 0
+INFO 2025-05-07 15:33:12,530 basehttp 8 281473051586976 code 400, message Bad request version ('Bö\x19\x01|LìÄéº\x1b¡Üù\x8b\x04[ÞX¥¾\x11a\x00\x17\x00\x00\x00\x1b\x00\x03\x02\x00\x02\x00')
+ERROR 2025-05-07 15:33:12,530 basehttp 8 281473051586976 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:33:12,532 basehttp 8 281473051586976 code 400, message Bad request version ('\x04Áçê«BSc')
+ERROR 2025-05-07 15:33:12,532 basehttp 8 281473051586976 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:33:53,050 basehttp 8 281473041101216 "GET /admin/ HTTP/1.1" 301 0
+INFO 2025-05-07 15:33:53,054 basehttp 8 281473051586976 code 400, message Bad request version ('\xadn¥/½+dÉ\x8ew½óUx\x00\x05\x00\x05\x01\x00\x00\x00\x00ÿ\x01\x00\x01\x00\x00\x12\x00\x00\x00#\x00\x00\x00')
+ERROR 2025-05-07 15:33:53,057 basehttp 8 281473051586976 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:33:53,061 basehttp 8 281473051586976 code 400, message Bad request version ('\x8c\x87\x0fq"%«,\x89ÛÔÇéQXd')
+ERROR 2025-05-07 15:33:53,062 basehttp 8 281473051586976 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:34:30,097 basehttp 8 281473051586976 code 400, message Bad request version ('(ªoFð¤ä\x02ä©¼')
+ERROR 2025-05-07 15:34:30,105 basehttp 8 281473051586976 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:34:30,107 basehttp 8 281473051586976 code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x06')
+ERROR 2025-05-07 15:34:30,108 basehttp 8 281473051586976 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:34:44,347 basehttp 8 281472961409440 code 400, message Bad request version ('\x81Å£M»ìb\x16Ò')
+ERROR 2025-05-07 15:34:44,349 basehttp 8 281472961409440 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:34:44,353 basehttp 8 281472961409440 code 400, message Bad request version ('ZZ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06\x93\x1a\x1a\x00\x00\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00\x17\x00\x00\x00\x12\x00\x00\x00')
+ERROR 2025-05-07 15:34:44,353 basehttp 8 281472961409440 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:34:47,972 basehttp 8 281473051586976 code 400, message Bad request version ('ê\x8aa')
+ERROR 2025-05-07 15:34:47,973 basehttp 8 281473051586976 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:34:47,975 basehttp 8 281473051586976 code 400, message Bad request version ('\x119ëq«ùê\x9cQÂ3M¤')
+ERROR 2025-05-07 15:34:47,975 basehttp 8 281473051586976 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:35:57,742 basehttp 8 281473041101216 "GET / HTTP/1.1" 301 0
+INFO 2025-05-07 15:35:57,745 basehttp 8 281473051586976 code 400, message Bad request version ('\x02h2\x08http/1.1\x00-\x00\x02\x01\x01\x00')
+ERROR 2025-05-07 15:35:57,746 basehttp 8 281473051586976 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:35:57,747 basehttp 8 281473051586976 code 400, message Bad request version ('\x13\x98\x08')
+ERROR 2025-05-07 15:35:57,748 basehttp 8 281473051586976 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:38:21,126 autoreload 8 281473648177184 Watching for file changes with StatReloader
+INFO 2025-05-07 15:38:25,221 basehttp 8 281473546514848 code 400, message Bad request version ('²qw')
+ERROR 2025-05-07 15:38:25,230 basehttp 8 281473546514848 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:38:25,230 basehttp 8 281473536029088 code 400, message Bad request version ('\x08Á\x00\x12\x00\x00\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00+\x00\x07\x06úú\x03\x04\x03\x03\x00\x1b\x00\x03\x02\x00\x02\x00')
+ERROR 2025-05-07 15:38:25,231 basehttp 8 281473536029088 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:38:25,233 basehttp 8 281473546514848 code 400, message Bad request version ('\x02h2\x08http/1.1\x00\x17\x00\x00ÿ\x01\x00\x01\x00\x00')
+ERROR 2025-05-07 15:38:25,233 basehttp 8 281473546514848 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:38:25,233 basehttp 8 281473536029088 code 400, message Bad request version ('\x0e±±=kÌ2\x94*Ã\x89A\x81é\x18IÕöÏ«\x17|¤X\x0fþ§Â\x95U?z\x9a\x8b\x07´\x91\x9b')
+ERROR 2025-05-07 15:38:25,233 basehttp 8 281473536029088 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:38:29,656 basehttp 8 281473525543328 code 400, message Bad request version ('êê\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06E\x8a\x8a\x00\x00\x00+\x00\x07\x06')
+ERROR 2025-05-07 15:38:29,656 basehttp 8 281473525543328 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:38:29,658 basehttp 8 281473525543328 code 400, message Bad request version ('2Å=ì{ìº:ÑÒ')
+ERROR 2025-05-07 15:38:29,658 basehttp 8 281473525543328 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:38:53,308 basehttp 8 281473525543328 code 400, message Bad request version ("}áI.Vã'Ëã§%h)y¢vCsL\x8a\x99\x19ßÔ¤é")
+INFO 2025-05-07 15:38:53,311 basehttp 8 281473515057568 code 400, message Bad request version ('Àöä¸\x9d!q\x00')
+ERROR 2025-05-07 15:38:53,311 basehttp 8 281473525543328 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 15:38:53,311 basehttp 8 281473515057568 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:38:53,321 basehttp 8 281473515057568 code 400, message Bad request version ('.')
+INFO 2025-05-07 15:38:53,321 basehttp 8 281473525543328 code 400, message Bad request version ('Û¢Æ»2\x06\x9cF)E6Ñ0(_J.5[hwé\x1a\x8a00êÌ')
+ERROR 2025-05-07 15:38:53,322 basehttp 8 281473515057568 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 15:38:53,322 basehttp 8 281473525543328 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:38:56,617 basehttp 8 281473525543328 code 400, message Bad request version ('localhost\x00\x12\x00\x00\x00\x17\x00\x00DÍ\x00\x05\x00\x03\x02h2\x00')
+ERROR 2025-05-07 15:38:56,618 basehttp 8 281473525543328 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:38:56,620 basehttp 8 281473525543328 code 400, message Bad request version ('\x89\x82©¬óÇÝÇPM±«§ÂF¾¡G8Üjp\x9bdvð\x83â`')
+ERROR 2025-05-07 15:38:56,621 basehttp 8 281473525543328 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:45:39,696 autoreload 8 281473531990048 Watching for file changes with StatReloader
+INFO 2025-05-07 15:45:50,528 basehttp 8 281473359868320 code 400, message Bad request version ("ËO\x05Åo³8¼¢h\x9a¼ohÓZ'ÔR")
+ERROR 2025-05-07 15:45:50,533 basehttp 8 281473359868320 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:45:50,537 basehttp 8 281473359868320 code 400, message Bad request version ('\x00\x02\x01\x00\x00')
+ERROR 2025-05-07 15:45:50,538 basehttp 8 281473359868320 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:45:55,238 basehttp 8 281473338896800 code 400, message Bad request version ('«\x12Ùºuì%\x92Û*5Ó\x80\x91\x9fÕ\x015TÆ!ÄÅ¸ªEeT\x86$Ð6\x8dê³')
+ERROR 2025-05-07 15:45:55,239 basehttp 8 281473338896800 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:45:55,242 basehttp 8 281473338896800 code 400, message Bad request version ('+F½×¿\x1bÇ\x99ã^æ,s\x82KÞTÉè\x17E%Â_')
+ERROR 2025-05-07 15:45:55,242 basehttp 8 281473338896800 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 15:46:17,054 exception 8 281473338896800 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:46:17,068 log 8 281473338896800 Bad Request: /admin/
+WARNING 2025-05-07 15:46:17,069 basehttp 8 281473338896800 "GET /admin/ HTTP/1.1" 400 143
+ERROR 2025-05-07 15:46:17,125 exception 8 281473338896800 Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/usr/local/lib/python3.9/site-packages/django/middleware/security.py", line 28, in process_request
+    host = self.redirect_host or request.get_host()
+  File "/usr/local/lib/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'localhost:8000'. You may need to add 'localhost' to ALLOWED_HOSTS.
+WARNING 2025-05-07 15:46:17,125 log 8 281473338896800 Bad Request: /favicon.ico
+WARNING 2025-05-07 15:46:17,125 basehttp 8 281473338896800 "GET /favicon.ico HTTP/1.1" 400 143
+INFO 2025-05-07 15:51:59,281 autoreload 8 281473491370016 Watching for file changes with StatReloader
+INFO 2025-05-07 15:53:27,426 autoreload 7 281473093697568 Watching for file changes with StatReloader
+INFO 2025-05-07 15:55:50,964 autoreload 8 281472926375968 Watching for file changes with StatReloader
+INFO 2025-05-07 15:56:00,758 basehttp 8 281472745402784 code 400, message Bad request version ('ªª\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06e\x1a\x1a\x00\x00\x00')
+ERROR 2025-05-07 15:56:00,760 basehttp 8 281472745402784 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:56:00,762 basehttp 8 281472745402784 code 400, message Bad request version ('±T¥S')
+ERROR 2025-05-07 15:56:00,762 basehttp 8 281472745402784 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:56:05,446 basehttp 8 281472755888544 code 400, message Bad request version ('Qe/²[\x06ÐÑ)\x00')
+ERROR 2025-05-07 15:56:05,448 basehttp 8 281472755888544 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:56:05,448 basehttp 8 281472734917024 code 400, message Bad request version ('9ç\x13Á\x99')
+ERROR 2025-05-07 15:56:05,449 basehttp 8 281472734917024 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:56:05,450 basehttp 8 281472755888544 code 400, message Bad request version ('*[Æ×~\x9b¢')
+INFO 2025-05-07 15:56:05,451 basehttp 8 281472734917024 code 400, message Bad request version ('ÊÊ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06eºº\x00\x00\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00\x17\x00\x00\x00')
+ERROR 2025-05-07 15:56:05,451 basehttp 8 281472755888544 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 15:56:05,451 basehttp 8 281472734917024 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:56:08,164 basehttp 8 281472745402784 code 400, message Bad request version ('\x8a\x8a\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06EÊÊ\x00\x00\x00')
+ERROR 2025-05-07 15:56:08,165 basehttp 8 281472745402784 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 15:56:08,167 basehttp 8 281472745402784 code 400, message Bad request version ('localhost\x00\x1b\x00\x03\x02\x00\x02\x00-\x00\x02\x01\x01\x00\x12\x00\x00\x00')
+ERROR 2025-05-07 15:56:08,167 basehttp 8 281472745402784 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:01:34,858 basehttp 8 281472755888544 code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00\x17\x00\x00DÍ\x00\x05\x00\x03\x02h2\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00')
+ERROR 2025-05-07 16:01:34,863 basehttp 8 281472755888544 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:01:34,865 basehttp 8 281472755888544 code 400, message Bad request version ('JJ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06E**\x00\x00\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00')
+ERROR 2025-05-07 16:01:34,866 basehttp 8 281472755888544 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:01:59,852 basehttp 8 281472755888544 code 400, message Bad request syntax ('\x16\x03\x01\x07\x00\x01\x00\x06ü\x03\x03»×¬±Ö&@ÂNFHê\x18¹\x8f*')
+ERROR 2025-05-07 16:01:59,854 basehttp 8 281472755888544 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:01:59,858 basehttp 8 281472755888544 code 400, message Bad request version ('7dh\x06´\x17pQ\xad')
+ERROR 2025-05-07 16:01:59,858 basehttp 8 281472755888544 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:02:11,972 basehttp 8 281472734917024 "HEAD / HTTP/1.1" 301 0
+INFO 2025-05-07 16:03:44,365 autoreload 8 281473672126496 Watching for file changes with StatReloader
+INFO 2025-05-07 16:03:45,022 basehttp 8 281473477308832 code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00')
+ERROR 2025-05-07 16:03:45,022 basehttp 8 281473477308832 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:03:45,024 basehttp 8 281473477308832 code 400, message Bad request version ('=!\x87²L½w\x8dö÷b\xad\x98\x9a\x01T\x82"%0')
+ERROR 2025-05-07 16:03:45,024 basehttp 8 281473477308832 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:03:47,376 basehttp 8 281473487794592 code 400, message Bad request version ('\x00\x02\x01\x00\x00')
+ERROR 2025-05-07 16:03:47,378 basehttp 8 281473487794592 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:03:47,380 basehttp 8 281473487794592 code 400, message Bad request version ('\x00&X%Gtq¦,juá\x1bu\x86')
+ERROR 2025-05-07 16:03:47,380 basehttp 8 281473487794592 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:05:08,187 basehttp 8 281473498280352 code 400, message Bad request version ('0ãÃ/[\x04ÂÅ´d')
+ERROR 2025-05-07 16:05:08,192 basehttp 8 281473498280352 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:05:08,198 basehttp 8 281473466823072 code 400, message Bad request version ('\x86ð·®TÈ4?X©0')
+ERROR 2025-05-07 16:05:08,199 basehttp 8 281473466823072 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:05:18,004 autoreload 8 281473224814624 Watching for file changes with StatReloader
+INFO 2025-05-07 16:05:18,617 basehttp 8 281473124987296 code 400, message Bad request version (',q\x00°s\x11½\xad:ì')
+INFO 2025-05-07 16:05:18,618 basehttp 8 281473114501536 code 400, message Bad request version ('localhost\x00')
+ERROR 2025-05-07 16:05:18,618 basehttp 8 281473124987296 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 16:05:18,618 basehttp 8 281473114501536 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:05:18,619 basehttp 8 281473114501536 code 400, message Bad request version ('\x00+\x00\x07\x06ºº\x03\x04\x03\x03\x00-\x00\x02\x01\x01\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00')
+ERROR 2025-05-07 16:05:18,620 basehttp 8 281473114501536 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:05:18,620 basehttp 8 281473124987296 code 400, message Bad request syntax ('\x16\x03\x01\x06²\x01\x00\x06®\x03\x03²£«ÚJSýÿ\x8b§ytâ÷JA\x1aÈ\x11\x97¥\x93b')
+ERROR 2025-05-07 16:05:18,620 basehttp 8 281473124987296 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:05:19,727 basehttp 8 281473124987296 code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00-\x00\x02\x01\x01\x00')
+INFO 2025-05-07 16:05:19,728 basehttp 8 281473114501536 code 400, message Bad request version ('ò\x04fý\x80\x9f=|ÉÂX\x8a\x11$')
+ERROR 2025-05-07 16:05:19,728 basehttp 8 281473124987296 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 16:05:19,728 basehttp 8 281473114501536 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:05:19,731 basehttp 8 281473114501536 code 400, message Bad request version ('&\x8ciº\x7f\x8cg\xad\x16\x1bmbòç\x0f*&H\x9cÓ©\x8c\x05erÕÚ\x13\x9d\x92Ç|\x7fç')
+ERROR 2025-05-07 16:05:19,732 basehttp 8 281473114501536 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:05:19,732 basehttp 8 281473124987296 code 400, message Bad request version ('\x00')
+ERROR 2025-05-07 16:05:19,732 basehttp 8 281473124987296 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:10:56,865 autoreload 8 281473348825120 Watching for file changes with StatReloader
+INFO 2025-05-07 16:10:57,625 basehttp 8 281473248719264 code 400, message Bad request version ('9j×m\x93±u\x9byD¿Ø\x88\x12K:\x86"\x0e7~\x00ð`4¹D\x8c')
+ERROR 2025-05-07 16:10:57,625 basehttp 8 281473248719264 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:10:57,629 basehttp 8 281473248719264 code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x06²\x01\x00\x06®\x03\x03²Y]U\x90ðá\x91ç)')
+ERROR 2025-05-07 16:10:57,629 basehttp 8 281473248719264 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:10:57,630 basehttp 8 281473162736032 code 400, message Bad request version ('hÀ\x82yæ\x1b÷D\x07Ë\x95pmW')
+ERROR 2025-05-07 16:10:57,631 basehttp 8 281473162736032 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:10:57,634 basehttp 8 281473162736032 code 400, message Bad request version ('\x95#âFå')
+ERROR 2025-05-07 16:10:57,634 basehttp 8 281473162736032 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:11:02,217 basehttp 8 281473162736032 code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x06ò\x01\x00\x06î\x03\x03`')
+ERROR 2025-05-07 16:11:02,218 basehttp 8 281473162736032 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:11:02,221 basehttp 8 281473162736032 code 400, message Bad request version ('è\x08æ/W\x10Î·\x8dàÕç')
+ERROR 2025-05-07 16:11:02,221 basehttp 8 281473162736032 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:11:08,863 basehttp 8 281473152250272 "GET /admin/ HTTP/1.1" 301 0
+INFO 2025-05-07 16:11:09,286 basehttp 8 281473152250272 code 400, message Bad request version ('/ÔÈ´á\x9cºÚ³1_áÂ\x02øZ\x84LdÏú\x06»\x9bñ\x80')
+ERROR 2025-05-07 16:11:09,287 basehttp 8 281473152250272 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:11:09,291 basehttp 8 281473152250272 code 400, message Bad request version ('\x02~$')
+ERROR 2025-05-07 16:11:09,291 basehttp 8 281473152250272 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:11:50,577 autoreload 8 281473075806240 Watching for file changes with StatReloader
+INFO 2025-05-07 16:11:51,122 basehttp 8 281472883814816 code 400, message Bad request version ('ªª\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06¥')
+ERROR 2025-05-07 16:11:51,123 basehttp 8 281472883814816 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:11:51,129 basehttp 8 281472883814816 code 400, message Bad request version ('D.,$-\x9eEÃSî\x99ÓMUë\x06s=/\x1b\x8e\x00')
+ERROR 2025-05-07 16:11:51,129 basehttp 8 281472883814816 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 16:11:51,454 tasks 11 281472826888224 Erro ao atualizar posições na fila: relation "core_produto" does not exist
+LINE 1: ...o_fila", "core_produto"."verificacao_manual" FROM "core_prod...
+                                                             ^
+
+INFO 2025-05-07 16:12:25,963 autoreload 7 281473352388640 Watching for file changes with StatReloader
+INFO 2025-05-07 16:12:29,815 basehttp 7 281473250816416 code 400, message Bad request version ('\x1a\x1a\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06¥\x1a\x1a\x00\x00\x00-\x00\x02\x01\x01\x00+\x00\x07\x06êê\x03\x04\x03\x03\x00')
+ERROR 2025-05-07 16:12:29,821 basehttp 7 281473250816416 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:12:29,825 basehttp 7 281473250816416 code 400, message Bad request syntax ('\x16\x03\x01\x06Ò\x01\x00\x06Î\x03\x03\x90\x9cçyÖgæÛ¬\x92Ã´NÆ[')
+ERROR 2025-05-07 16:12:29,825 basehttp 7 281473250816416 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:21:07,714 basehttp 7 281473152250272 code 400, message Bad request version ('Ø\x11Ê:¼5"}üM')
+INFO 2025-05-07 16:21:07,715 basehttp 7 281473162736032 code 400, message Bad request version ('ä3')
+ERROR 2025-05-07 16:21:07,719 basehttp 7 281473152250272 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 16:21:07,719 basehttp 7 281473162736032 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:21:07,722 basehttp 7 281473162736032 code 400, message Bad request version ('IÅ\x8eÒ\x19D\x99hY\x0f\x84"4\x81\x04Y¸R#gG=«Áå#6YT¯å%3DÌ\x80ÓE\x9dºX+Äð-(|\'\x8avfhuÉu')
+ERROR 2025-05-07 16:21:07,722 basehttp 7 281473162736032 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:21:07,722 basehttp 7 281473152250272 code 400, message Bad request version ('pyW\x1b\x11)Cèó\x95[\x94\x073}\x14ýwgåWejvS¦ÐÊ\x82n\x1a')
+ERROR 2025-05-07 16:21:07,723 basehttp 7 281473152250272 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:22:13,824 autoreload 7 281473444347936 Watching for file changes with StatReloader
+INFO 2025-05-07 16:25:54,852 basehttp 7 281473343091104 "GET /api/token/ HTTP/1.1" 301 0
+INFO 2025-05-07 16:25:54,854 basehttp 7 281473322119584 code 400, message Bad request version ('::\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06E')
+ERROR 2025-05-07 16:25:54,858 basehttp 7 281473322119584 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:25:54,859 basehttp 7 281473322119584 code 400, message Bad request version ('localhost\x00')
+ERROR 2025-05-07 16:25:54,859 basehttp 7 281473322119584 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:27:11,948 autoreload 7 281472930816032 Watching for file changes with StatReloader
+INFO 2025-05-07 16:27:18,643 basehttp 7 281472760082848 code 400, message Bad request version ('\x0e\x91Y\x9b\x9eUE')
+INFO 2025-05-07 16:27:18,645 basehttp 7 281472749597088 code 400, message Bad request version ('localhost\x00\x1b\x00\x03\x02\x00\x02\x00-\x00\x02\x01\x01\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00')
+ERROR 2025-05-07 16:27:18,646 basehttp 7 281472760082848 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 16:27:18,647 basehttp 7 281472749597088 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:27:18,652 basehttp 7 281472739111328 code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x06²\x01\x00\x06®\x03\x03i9xU\x1b\x06<§F/@h\x03\x9e>sôÔ$Q¾¼`FeÕÐE1\x06Ò\x98')
+ERROR 2025-05-07 16:27:18,653 basehttp 7 281472739111328 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:27:18,653 basehttp 7 281472749597088 code 400, message Bad request version ('êê\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06E')
+ERROR 2025-05-07 16:27:18,654 basehttp 7 281472749597088 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:31:22,222 autoreload 7 281473390940192 Watching for file changes with StatReloader
+INFO 2025-05-07 16:31:48,900 basehttp 7 281473221456288 code 400, message Bad request version ('\x9a\x9a\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06eJJ\x00\x00\x00#\x00\x00\x00\x12\x00\x00\x00-\x00\x02\x01\x01\x003\x04ï\x04í\x8a\x8a\x00\x01\x00\x11ì\x04À5')
+INFO 2025-05-07 16:31:48,901 basehttp 7 281473210970528 code 400, message Bad request version ('ÊÊ\x00\x00\x00')
+ERROR 2025-05-07 16:31:48,903 basehttp 7 281473221456288 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 16:31:48,903 basehttp 7 281473210970528 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:31:48,907 basehttp 7 281473221456288 code 400, message Bad request version ('T3ü\x93®5p\x87C"\x066"\x9d=\x15µT5')
+INFO 2025-05-07 16:31:48,907 basehttp 7 281473210970528 code 400, message Bad request version ('\x02h2\x08http/1.1\x00\x1b\x00\x03\x02\x00\x02\x00-\x00\x02\x01\x01\x00')
+ERROR 2025-05-07 16:31:48,907 basehttp 7 281473221456288 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-07 16:31:48,908 basehttp 7 281473210970528 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:33:05,724 autoreload 7 281473316634656 Watching for file changes with StatReloader
+INFO 2025-05-07 16:33:07,489 basehttp 7 281473215164832 code 400, message Bad request version ('CÖvü¢\x03lb\x80ÿ\x00')
+ERROR 2025-05-07 16:33:07,490 basehttp 7 281473215164832 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:33:07,492 basehttp 7 281473215164832 code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x07\x12\x01\x00\x07\x0e\x03\x03h\x90¸Ú\x06÷Ò·ën\x08{Y+8\x9cã\x9eÑWT¹©ØûÓ\x83f\\ó²W')
+ERROR 2025-05-07 16:33:07,492 basehttp 7 281473215164832 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:33:07,493 basehttp 7 281473204679072 code 400, message Bad request version ('localhostÿ\x01\x00\x01\x00\x00-\x00\x02\x01\x01\x00')
+ERROR 2025-05-07 16:33:07,493 basehttp 7 281473204679072 You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-05-07 16:33:07,495 basehttp 7 281473204679072 code 400, message Bad request version ('ºº\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06')
+ERROR 2025-05-07 16:33:07,496 basehttp 7 281473204679072 You're accessing the development server over HTTPS, but it only supports HTTP.
+ERROR 2025-05-09 15:36:04,120 playwright_service 82043 8162097216 Erro ao raspar preço com Playwright da URL https://produto.mercadolivre.com.br/MLB-1908838335-quebra-cabeca-o-puzzle-flores-penias-1000-pecas-em-madeira-_JM\#polycard_client\=recommendations_home_navigation-trend-recommendations\&reco_backend\=machinalis-homes-univb\&reco_client\=home_navigation-trend-recommendations\&reco_item_pos\=1\&reco_backend_type\=function\&reco_id\=81e7f515-20a0-4388-bcff-abec427ce5ca\&wid\=MLB1908838335\&sid\=recos\&c_id\=/home/navigation-trend-recommendations/element\&c_uid\=760996e2-c140-4fd9-8341-23f3991740d6: BrowserType.launch: Executable doesn't exist at /Users/fernandobastos/Library/Caches/ms-playwright/chromium_headless_shell-1161/chrome-mac/headless_shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     playwright install                                     ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+ERROR 2025-05-09 15:36:04,340 selenium_service 82043 8162097216 Erro ao raspar preço com Selenium da URL https://produto.mercadolivre.com.br/MLB-1908838335-quebra-cabeca-o-puzzle-flores-penias-1000-pecas-em-madeira-_JM\#polycard_client\=recommendations_home_navigation-trend-recommendations\&reco_backend\=machinalis-homes-univb\&reco_client\=home_navigation-trend-recommendations\&reco_item_pos\=1\&reco_backend_type\=function\&reco_id\=81e7f515-20a0-4388-bcff-abec427ce5ca\&wid\=MLB1908838335\&sid\=recos\&c_id\=/home/navigation-trend-recommendations/element\&c_uid\=760996e2-c140-4fd9-8341-23f3991740d6: Message: Unable to obtain driver for chrome; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors/driver_location
+
+ERROR 2025-05-09 15:58:24,787 playwright_service 88770 8162097216 Erro ao raspar preço com Playwright da URL https://produto.mercadolivre.com.br/MLB-1908838335-quebra-cabeca-o-puzzle-flores-penias-1000-pecas-em-madeira-_JM\#polycard_client\=recommendations_home_navigation-trend-recommendations\&reco_backend\=machinalis-homes-univb\&reco_client\=home_navigation-trend-recommendations\&reco_item_pos\=1\&reco_backend_type\=function\&reco_id\=81e7f515-20a0-4388-bcff-abec427ce5ca\&wid\=MLB1908838335\&sid\=recos\&c_id\=/home/navigation-trend-recommendations/element\&c_uid\=760996e2-c140-4fd9-8341-23f3991740d6: Executable doesn't exist at /Users/fernandobastos/Library/Caches/ms-playwright/chromium-1097/chrome-mac/Chromium.app/Contents/MacOS/Chromium
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     playwright install                                     ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+ERROR 2025-05-09 15:58:24,859 selenium_service 88770 8162097216 Erro ao raspar preço com Selenium da URL https://produto.mercadolivre.com.br/MLB-1908838335-quebra-cabeca-o-puzzle-flores-penias-1000-pecas-em-madeira-_JM\#polycard_client\=recommendations_home_navigation-trend-recommendations\&reco_backend\=machinalis-homes-univb\&reco_client\=home_navigation-trend-recommendations\&reco_item_pos\=1\&reco_backend_type\=function\&reco_id\=81e7f515-20a0-4388-bcff-abec427ce5ca\&wid\=MLB1908838335\&sid\=recos\&c_id\=/home/navigation-trend-recommendations/element\&c_uid\=760996e2-c140-4fd9-8341-23f3991740d6: Message: Unable to obtain driver for chrome; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors/driver_location
+
+INFO 2025-05-09 16:01:53,847 playwright_service 92571 8162097216 Acessando página inicial: https://produto.mercadolivre.com.br
+INFO 2025-05-09 16:01:59,291 playwright_service 92571 8162097216 Acessando URL do produto: https://produto.mercadolivre.com.br/MLB-1908838335-quebra-cabeca-o-puzzle-flores-penias-1000-pecas-em-madeira-_JM\#polycard_client\=recommendations_home_navigation-trend-recommendations\&reco_backend\=machinalis-homes-univb\&reco_client\=home_navigation-trend-recommendations\&reco_item_pos\=1\&reco_backend_type\=function\&reco_id\=81e7f515-20a0-4388-bcff-abec427ce5ca\&wid\=MLB1908838335\&sid\=recos\&c_id\=/home/navigation-trend-recommendations/element\&c_uid\=760996e2-c140-4fd9-8341-23f3991740d6
+ERROR 2025-05-09 16:02:02,747 playwright_service 92571 8162097216 Erro ao raspar preço com Playwright da URL https://produto.mercadolivre.com.br/MLB-1908838335-quebra-cabeca-o-puzzle-flores-penias-1000-pecas-em-madeira-_JM\#polycard_client\=recommendations_home_navigation-trend-recommendations\&reco_backend\=machinalis-homes-univb\&reco_client\=home_navigation-trend-recommendations\&reco_item_pos\=1\&reco_backend_type\=function\&reco_id\=81e7f515-20a0-4388-bcff-abec427ce5ca\&wid\=MLB1908838335\&sid\=recos\&c_id\=/home/navigation-trend-recommendations/element\&c_uid\=760996e2-c140-4fd9-8341-23f3991740d6: Target page, context or browser has been closed
+ERROR 2025-05-09 16:02:03,097 selenium_service 92571 8162097216 Erro ao raspar preço com Selenium da URL https://produto.mercadolivre.com.br/MLB-1908838335-quebra-cabeca-o-puzzle-flores-penias-1000-pecas-em-madeira-_JM\#polycard_client\=recommendations_home_navigation-trend-recommendations\&reco_backend\=machinalis-homes-univb\&reco_client\=home_navigation-trend-recommendations\&reco_item_pos\=1\&reco_backend_type\=function\&reco_id\=81e7f515-20a0-4388-bcff-abec427ce5ca\&wid\=MLB1908838335\&sid\=recos\&c_id\=/home/navigation-trend-recommendations/element\&c_uid\=760996e2-c140-4fd9-8341-23f3991740d6: Message: Unable to obtain driver for chrome; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors/driver_location
+

@@ -1,3 +1,4 @@
+<!-- frontend/src/views/ProductForm.vue -->
 <template>
   <v-container fluid>
     <!-- Cabeçalho -->
@@ -437,7 +438,7 @@ const testarSeletor = async () => {
   
   try {
     // Endpoint fictício para testar extração - idealmente você criaria este endpoint no backend
-    const response = await api.post('/testes/extrator/', {
+    const response = await api.post('testes/extrator/', {
       url: produto.value.url,
       seletor: produto.value.plataforma.seletor_css
     })
@@ -466,13 +467,18 @@ const testarSeletor = async () => {
 
 // Carregar dados iniciais
 onMounted(async () => {
-  await Promise.all([carregarPlataformas(), carregarGrupos()])
-  
-  if (isEditMode.value) {
-    await carregarProduto(route.params.id)
-  } else {
-    // Aplicar grupo automaticamente para novos produtos
-    await aplicarGrupoUsuario()
+  try {
+    await Promise.all([carregarPlataformas(), carregarGrupos()])
+    
+    if (isEditMode.value) {
+      await carregarProduto(route.params.id)
+    } else {
+      // Aplicar grupo automaticamente para novos produtos
+      await aplicarGrupoUsuario()
+    }
+  } catch (error) {
+    console.error('Erro ao carregar dados iniciais:', error)
+    mostrarSnackbar('Erro ao carregar dados necessários. Por favor, tente novamente.', 'error')
   }
 })
 
@@ -480,7 +486,9 @@ onMounted(async () => {
 const carregarPlataformas = async () => {
   loadingPlataformas.value = true
   try {
-    const response = await api.get('/plataformas/')
+    console.log('Carregando plataformas...')
+    const response = await api.get('plataformas/')
+    console.log('Resposta plataformas:', response.data)
     plataformas.value = response.data.results || []
   } catch (error) {
     console.error('Erro ao carregar plataformas:', error)
@@ -494,11 +502,15 @@ const carregarPlataformas = async () => {
 const carregarGrupos = async () => {
   loadingGrupos.value = true
   try {
+    console.log('Carregando grupos...')
     // Obter o cliente atual do usuário
-    const userInfo = await api.get('/user/info/')
+    const userInfo = await api.get('user/info/')
+    console.log('User info:', userInfo.data)
+    
     if (userInfo.data.cliente_atual) {
       // Carregar apenas grupos associados ao cliente atual
-      const response = await api.get(`/grupos/?cliente=${userInfo.data.cliente_atual}`)
+      const response = await api.get(`grupos/?cliente=${userInfo.data.cliente_atual}`)
+      console.log('Grupos response:', response.data)
       grupos.value = response.data.results || []
     } else {
       grupos.value = []
@@ -514,13 +526,17 @@ const carregarGrupos = async () => {
 // Função para obter e aplicar o grupo do usuário ao produto
 const aplicarGrupoUsuario = async () => {
   try {
+    console.log('Aplicando grupo do usuário...')
     // Obter informações do usuário
-    const userInfo = await api.get('/user/info/')
+    const userInfo = await api.get('user/info/')
+    console.log('User info para aplicar grupo:', userInfo.data)
     
     // Obter grupos vinculados ao cliente atual do usuário
     if (userInfo.data.cliente_atual) {
       // Carregar grupos associados ao cliente atual
-      const gruposResponse = await api.get(`/grupos/?cliente=${userInfo.data.cliente_atual}`);
+      const gruposResponse = await api.get(`grupos/?cliente=${userInfo.data.cliente_atual}`);
+      console.log('Grupos para aplicar:', gruposResponse.data)
+      
       if (gruposResponse.data.results && gruposResponse.data.results.length > 0) {
         // Aplicar o primeiro grupo disponível
         produto.value.grupo = gruposResponse.data.results[0].id;
@@ -538,7 +554,8 @@ const aplicarGrupoUsuario = async () => {
 const carregarProduto = async (id) => {
   loading.value = true
   try {
-    const response = await api.get(`/produtos/${id}/`)
+    console.log(`Carregando produto ${id}...`)
+    const response = await api.get(`produtos/${id}/`)
     produto.value = response.data
     
     // Se for um produto do cliente, garantir que as propriedades específicas estejam definidas
@@ -563,7 +580,7 @@ const onSubmit = async () => {
     loading.value = true
     try {
       // Obtém o cliente atual do usuário
-      const userInfo = await api.get('/user/info/')
+      const userInfo = await api.get('user/info/')
       
       // Verifica se o cliente_atual está definido
       if (!userInfo.data.cliente_atual) {
@@ -647,7 +664,7 @@ const onSubmit = async () => {
       if (produtoParaEnviar.produto_cliente) {
         try {
           // Obter produtos com o mesmo nome
-          const produtosResponse = await api.get(`/produtos/?nome=${produtoParaEnviar.nome}&cliente=${clienteId}`)
+          const produtosResponse = await api.get(`produtos/?nome=${produtoParaEnviar.nome}&cliente=${clienteId}`)
           const produtosDoMesmoNome = produtosResponse.data.results || []
           
           // Filtrar apenas os que estão marcados como produto_cliente
@@ -672,12 +689,13 @@ const onSubmit = async () => {
         }
       }
       
+      console.log('Enviando produto:', produtoParaEnviar)
       let response;
       if (isEditMode.value) {
-        response = await api.put(`/produtos/${produto.value.id}/`, produtoParaEnviar)
+        response = await api.put(`produtos/${produto.value.id}/`, produtoParaEnviar)
         mostrarSnackbar('Produto atualizado com sucesso')
       } else {
-        response = await api.post('/produtos/', produtoParaEnviar)
+        response = await api.post('produtos/', produtoParaEnviar)
         mostrarSnackbar('Produto adicionado com sucesso')
       }
       
