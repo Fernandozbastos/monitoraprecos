@@ -82,15 +82,18 @@ class ProdutoViewSet(viewsets.ModelViewSet):
             # Log para depuração
             logger.info(f"Dados recebidos no PATCH: {request.data}")
             
-            # Adicione o cliente e grupo ao request.data se não estiverem presentes
-            if 'cliente' not in request.data:
-                request.data['cliente'] = instance.cliente.id
-                
-            if 'grupo' not in request.data:
-                request.data['grupo'] = instance.grupo.id
+            # Fazer uma cópia mutável dos dados recebidos
+            data = request.data.copy()
+
+            # Adicione o cliente e grupo aos dados se não estiverem presentes
+            if 'cliente' not in data:
+                data['cliente'] = instance.cliente.id
+
+            if 'grupo' not in data:
+                data['grupo'] = instance.grupo.id
             
             # Se estiver atualizando para produto_cliente=True
-            if request.data.get('produto_cliente') is True:
+            if data.get('produto_cliente') is True:
                 # Desmarcar outros produtos com o mesmo nome e do mesmo cliente
                 outros_produtos = Produto.objects.filter(
                     cliente=instance.cliente,
@@ -105,12 +108,18 @@ class ProdutoViewSet(viewsets.ModelViewSet):
                 
                 # Se o tipo for concorrente, alterar para cliente
                 if instance.tipo_produto == 'concorrente':
-                    if 'tipo_produto' not in request.data:
-                        request.data['tipo_produto'] = 'cliente'
-                        logger.info(f"Alterando automaticamente o tipo para 'cliente'. Dados atualizados: {request.data}")
-            
-            # Para atualizações parciais, usar o comportamento padrão
-            return super().partial_update(request, *args, **kwargs)
+                    if 'tipo_produto' not in data:
+                        data['tipo_produto'] = 'cliente'
+                        logger.info(
+                            "Alterando automaticamente o tipo para 'cliente'. Dados atualizados: %s",
+                            data,
+                        )
+            # Para atualizações parciais, utilizar a mesma lógica do mixin
+            serializer = self.get_serializer(instance, data=data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+
+            return Response(serializer.data)
         
         except Exception as e:
             logger.error(f"Erro ao atualizar produto: {str(e)}")
