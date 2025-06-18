@@ -24,6 +24,7 @@ def verificar_preco(self, produto_id):
     """Verifica o preço de um produto e atualiza o histórico."""
     # Cria um bloqueio para evitar verificações simultâneas do mesmo produto
     lock_id = f"produto_verificando_{produto_id}"
+    domain_lock_id = None
     
     # Verifica se já existe um bloqueio para este produto
     if cache.get(lock_id):
@@ -113,8 +114,10 @@ def verificar_preco(self, produto_id):
         self.retry(exc=e, countdown=countdown)
         
     finally:
-        # Remove o bloqueio quando terminar
+        # Remove os bloqueios quando terminar
         cache.delete(lock_id)
+        if domain_lock_id:
+            cache.delete(domain_lock_id)
 
 @app.task
 def verificar_todos_produtos(tamanho_lote=10, max_produtos=None):
